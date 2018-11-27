@@ -57,7 +57,7 @@ $(window).on('load', function () {
     $('.rendu').css('display', 'block')
     $('.down').css('opacity', 1)
     window.setTimeout(randomCircle, 1000)
-  }, 1500)
+  }, 0)
 
   $(document).scroll(function () {
     var imgOffset = $('.enaku-therunjathu>h2').offset().top
