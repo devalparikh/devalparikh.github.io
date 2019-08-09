@@ -52,7 +52,7 @@ $(window).on('load', function () {
     // Main Title
     $('.peru').text('Deval Parikh')
     // Sub Title
-    $('.seira-vela').text('Aspiring Developer')
+    $('.seira-vela').text('Computer Science Student')
     $('body').css('overflow', 'auto')
     $('.rendu').css('display', 'block')
     $('.down').css('opacity', 1)
