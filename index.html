@@ -12,7 +12,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="author" content="Deval Parikh">
     <meta name="description" content="Deval Parikh's personal website | Software Engineer">
 
@@ -85,8 +87,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         <a data-scroll href="#about" class="fancy">About Me</a>
         <a data-scroll href="#skills" class="fancy">Skills</a>
         <a data-scroll href="#experience" class="fancy">Experience</a>
+        <a data-scroll href="#education" class="fancy">Education</a>
         <a data-scroll href="#projects" class="fancy">Projects</a>
-        <a data-scroll href="#awards" class="fancy">Awards</a>
+        <a data-scroll href="#awards" class="fancy">Awards  </a>
       </div>
 
       <!-- Info Card -->
@@ -228,88 +231,75 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           </div>
         </div>
 
-        <!-- Experience -->
-
-        <div class="na-senjathu" id="experience">
-          <h2>Experience</h2>
-
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                -School & Education-
+      <!-- Resume (Experience and Education) -->
+      <div class="na-senjathu resume" id="experience">
+        <div class="content">
+          <div class="cols">
+            <div class="col col-md">
+              <div class="title">
+                <h2>Experience</h2>
               </div>
-              <!-- matravai - to the right -->
-              <div class="matravai">
-                <span><a class="fancy">Fairfax, VA</a></span>
-                <span><a class="fancy">August 2017 – May 2021</a></span>
+              <div class="resume-items">
+                <div class="resume-item active">
+                  <div class="date">May 2019 - August 2019</div>
+                  <div class="name">Reinventing Geospatial, Inc (RGi) - Fairfax, VA</div>
+                  <a class="name-title">Software Engineer Intern</a>
+                  <p class="ithu-enna-seiyum">
+                    Worked on the geospatial performance enhancing proxy team. Contributed to the full-stack web application.
+                    Familiarized with <b>CI/CD pipelines and Agile tools</b> like GitLab and Jira.<br/> <b>Javascript/React-Redux:</b> Developed many client-side features that increased the efficiency of user interactions with the
+                    services, logs, and dashboards.<br/> <b>Python/Django/SQL:</b> Contributed to the development of back-end services for map data caching and tile rendering.
+                    Developed, tested, and optimized API endpoints for application features
+                  </p>
+                </div>
+                <div class="resume-item">
+                  <div class="date">August 2018 - Present</div>
+                  <div class="name">Software Development Club, George Mason University</div>
+                  <a class="name-title">Co-Founder/Officer</a>
+                  <p class="ithu-enna-seiyum">
+                    A collaborative effort on expanding campus involvement in developing software tools.<br/> Organized/lead an introduction to Swift (iOS) programming workshop at PatriotHacks.
+                  </p>
+                </div>
+                <div class="resume-item">
+                  <div class="date">May 2018 - August 2018</div>
+                  <div class="name">Science Cosmos - Ashburn, VA</div>
+                  <p class="name-title">Course Director and Teacher</p>
+                  <p class="ithu-enna-seiyum">
+                    Created a curriculum on programming concepts in Python and Java and taught 30+ students.
+                    Used well written and spoken communication, leadership, organization, team collaboration, and teaching skills.
+                  </p>
+                </div>
               </div>
             </div>
-            <div class="ithu-enna-seiyum">
-              <b>George Mason University</b></br>
-              Bachelors of Science in Computer Science; GPA: <b>3.82</b></br>
-              <b>Dean’s List</b>: 2017 - Present</br>
-              Relevant Courses:  Data Structures (Java), Algorithms (Java), Object Oriented (Java), Python, Low-Level Programming
-              (C), Formal Methods and Models, Computer Systems and Programming (x86), Software Engineering, Linear Algebra, Discrete Math, Probability and Statistics</br>
-
+            <div class="col col-md" id="education">
+              <div class="title">
+                <h2>Education</h2>
+              </div>
+              <div class="resume-items">
+                <div class="resume-item">
+                  <div class="date">August 2017 – May 2021</div>
+                  <div class="name">George Mason University</div>
+                  <p class="ithu-enna-seiyum">
+                    Bachelors of Science in Computer Science</br>
+                    GPA: <b>3.82</b></br>
+                    <b>Dean’s List</b>: 2017 - Present</br>
+                    <b>Relevant Courses:</b>  Data Structures (Java), Algorithms (Java), Object Oriented (Java), Python, Low-Level Programming
+                    (C), Formal Methods and Models, Computer Systems and Programming (x86), Software Engineering, Linear Algebra, Discrete Math, Probability and Statistics</br>
+                  </p>
+                </div>
+                <!-- <div class="resume-item">
+                  <div class="date">2004 - 2006</div>
+                  <div class="name">Front-end Course</div>
+                  <p>
+                    Duis ipsum ligula, feugiat nec auctor vitae, porta sit amet urna. Praesent ex lorem, porta nec aliquet eu, 
+                    ullamcorper eget nibh.
+                  </p>
+                </div> -->
+              </div>
             </div>
           </div>
-
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                Reinventing Geospatial, Inc (RGi)
-              </div>
-              <!-- matravai - to the right -->
-              <div class="matravai">
-                <span><a class="fancy">Fairfax, VA</a></span>
-                <span><a class="fancy">May 2019 - August 2019</a></span>
-              </div>
-            </div>
-            <div class="ithu-enna-seiyum">
-              Software Engineering Intern</br>
-              <p>Worked on the geospatial performance enhancing proxy team. Contributed to the full-stack web application.
-                Familiarized with CI/CD pipelines and Agile tools like GitLab and Jira. Javascript/React-Redux: Developed many client-side features that increased the efficiency of user interactions with the
-                services, logs, and dashboards. Python/Django/SQL: Contributed to the development of back-end services for map data caching and tile rendering.
-                Developed, tested, and optimized API endpoints for application features</p>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                Software Development Club, George Mason University
-              </div>
-              <!-- matravai - to the right -->
-              <div class="matravai">
-                <span><a class="fancy">Fairfax, VA</a></span>
-                <span><a class="fancy">August 2018 - Present</a></span>
-              </div>
-            </div>
-            <div class="ithu-enna-seiyum">
-              Co-Founder/Officer</br>
-              <p>A collaborative effort on expanding campus involvement in developing software tools.  Organized/lead an introduction to Swift (iOS) programming workshop at PatriotHacks.</p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                Science Cosmos
-              </div>
-              <!-- matravai - to the right -->
-              <div class="matravai">
-                <span><a class="fancy">Ashburn, VA</a></span>
-                <span><a class="fancy">May 2018 - August 2018</a></span>
-              </div>
-            </div>
-            <div class="ithu-enna-seiyum">
-              Course Director and Teacher</br>
-              <p>Created a curriculum on programming concepts in Python and taught 30+ students.
-                Used well written and spoken communication, organization, team collaboration, teaching, Python.</p>
-            </div>
-          </div>
-
-
         </div>
+      </div>
+      
 
         <!-- Projects -->
 
