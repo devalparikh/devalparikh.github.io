@@ -4,6 +4,15 @@ body {
     overflow-x: hidden;
     width: 100%;
 }
+@media screen and (max-width: 667px) {
+  .body-scroll {
+      overflow-x: hidden !important;
+  }
+  .container {
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+  }
+}
 
 .rwd-break {
   display: block;
