@@ -301,173 +301,510 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       </div>
       
 
-        <!-- Projects -->
 
-        <div class="na-senjathu" id="projects">
-          <h2>Projects</h2>
+
+      <style>
+        
+        </style>
+
+        
+        <h2>Projects</h2>
+        
+        <div class="btn-container-proj ithu-enna-seiyum" id="myBtnContainer-proj">
+          <p>Click on projects for more info!</p>
+          <p>Click to filter through project types:</p>
+          <button class="btn active" onclick="filterSelection('all')"> Show all</button>
+          <button class="btn" onclick="filterSelection('fs')"> Full-Stack</button>
+          <button class="btn" onclick="filterSelection('backend')"> Backend</button>
+          <button class="btn" onclick="filterSelection('ml')"> Machine Learning</button>
+          <button class="btn" onclick="filterSelection('ios')"> iOS</button>
+        </div>
+        
+        <div class="container-proj ithu-enna-seiyum">
 
           <!-- Project Cards -->
-          <!-- <div class="button-iruku-inga">
+          <div class="filterDiv fs backend">
+            <!-- Trigger/Open The Modal -->
+            <p class="card-info">
+              <button style="padding: 0px; background: url(img/flipfeedpic.png); background-position: center; background-size: cover; background-repeat: no-repeat; color: #FFF" class="modal-btn"  href="#myModal1" id="myBtn">Open Modal</button>
+              <br/><h4>FLIPFEED</h4><br/>
+              <p class="tag-out">Full-Stack</p>
+              <p class="tag-out">Backend</p>
+            </p>
 
-            <div class="Pcard Pfront">
-              <div class="Ppersonal-intro">
-                <img style="border-radius: 50%; width:50%; margin: auto;"src="img/profile.jpg" alt="Avatar">
+            <!-- The Modal -->
+            <div id="myModal1" class="modal">
 
-              <font size="3px">
-
-                </font>
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+              <h3 style="margin-top: 40px;">FLIPFEED</h3><br/>
+              <h4>About:</h4>
+              <div class="ithu-enna-seiyum">
+                <p>A platform where users can share property flips and renovations. Developed the full stack web application. Developed server API in Node.js to handle back end functionality of the application, such as viewing the feed, other users' profiles, and creating posts. Using JSON Web Tokens, browser cookies, and bycrypt for user profile management and authentacation. Handles secure authentication and authorization. Developed a responsive user interface with modern user design principles using React. Using MongoDB Atlas cloud database as a storage solution.</p>
               </div>
-            </div>
-            <div class="Pcard Pfront">
-              <div class="Ppersonal-intro">
-
-              <font size="3px">
-                <p>Stuff</p>
-                </font>
+              <br/><h4>Technologies used:</h4>
+                <div class="mh-about-tag" data-wow-duration="0.8s" data-wow-delay="0.3s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.3s; animation-name: fadeInUp;">
+                  <ul>
+                      <li><span>MongoDB</span></li>
+                      <li><span>ExpressJS</span></li>
+                      <li><span>ReactJS</span></li>
+                      <li><span>NodeJS</span></li>
+                      <li><span>Axios</span></li>
+                      <li><span>JWT</span></li>
+                      <li><span>AWS</span></li>
+                  </ul>
               </div>
-            </div>
-          </div> -->
-
-          <div class="row">
-            <div class="col-sm-4"><a href=""><img style="width:90%; margin: auto;"src="img/Photographyguidemockup.png" alt="PhotographyIOSMockup"></a></div>
-            <div class="col-sm-4"><a href=""><img style="width:90%; margin: auto;"src="img/Coinfitmockup.png" alt="CoinfitMockup"></a></div>
-            <!-- <div class="col-sm-4"><a href="https://sdcgmu.org" target="_blank"><img style="width:100%;"src="img/SDCwebsitemockup1.png" alt="SDCMockup"></a></div> -->
-
-          </div>
-          <!-- <div class="row">
-            <div class="col-sm-4"><img style="width:180%;"src="img/SDCwebsitemockup.png" alt="SDCMockup"></div>
-          </div> -->
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                FLIPFEED (MongoDB/Express/React/Node)
+              <br/><h4>Links:</h4>
+              <ul class="list-inline list-social-icons mb-0">
+                <li class="list-inline-item">
+                  <a href="https://github.com/devalparikh">
+                    <span class="fa-stack fa-lg">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </a>
+                </li>
+              </ul>
               </div>
-              <div class="matravai">
-                <span><a href="" class="fancy">Personal Project</a></span>
-                <span><a href="" class="fancy">View Project</a></span>
-              </div>
-              <!-- Project Cards -->
-            </div>
-            <div class="ithu-enna-seiyum">
-              <p>A platform where users can share property flips and renovations. Developed the full stack web application. Developed server API in Node.js to handle back end functionality of the application, such as viewing the feed, other users' profiles, and creating posts. Using JSON Web Tokens, browser cookies, and bycrypt for user profile management and authentacation. Developed a responsive user interface with modern user design principles using React. Using MongoDB Atlas cloud database as a storage solution.</p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                EyeBank - Visually Impaired ATM (Python/ML)
-              </div>
-              <div class="matravai">
-                <span><a href="" class="fancy">(University of Maryland) Bitcamp 2019</a></span>
-                <span><a href="https://devpost.com/software/eyebank" class="fancy">View Project</a></span>
-              </div>
-              <!-- Project Cards -->
-            </div>
-            <div class="ithu-enna-seiyum">
-              <p>Won sponsor prices: Best Financial Hack by Capital One, Best Social Good Hack. Created software for ATMs that allow users to have a conversation with an ATM, replacing the need for buttons (assisting visually imparied). Used Python, Text-to-Speech library, Speech-to-Text library, Capital One API to obtain users' bank information, and facial recognition for authentacation.</p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                Weapon Detection (Python/ML)
-              </div>
-              <div class="matravai">
-                <span><a href="" class="fancy">(Georgetown University) Hoya Hacks 2019</a></span>
-                <span><a href="https://devpost.com/software/no-more-shootings-20" class="fancy">View Project</a></span>
-              </div>
-              <!-- Project Cards -->
-            </div>
-            <div class="ithu-enna-seiyum">
-              <p>Won sponsor prices: 1st Place Best Software Hack by Microsoft, 2nd place Amazon Web Services Hack, 3rd place Overall
-                Georgetown University Hackathon. Featured on AWS: <a href="https://aws.amazon.com/blogs/publicsector/students-hack-for-social-impact-hoya-hacks">View Blog Post</a>. Developed a product to detect weapons from camera footage in real-time and notify clients. Using python and convolutional neural network architecture.</p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                RecipeMaker Alexa Skill (NodeJS & AWS)
-              </div>
-              <div class="matravai">
-                <span><a href="" class="fancy">AWS Hackathon</a></span>
-                <span><a href="" class="fancy">Github</a></span>
-              </div>
-              <!-- Project Cards -->
-            </div>
-            <div class="ithu-enna-seiyum">
-              <p>Developed an Alexa Skill to minimize household wasted foods and creates recipes based on ingredients.
-                Developed AWS Lambda functions in Node JS to curate recipes based on ingredient data stored in back end relational database.
-                Implemented AWS Dynamodb NoSQL database for CRUD operations to handle ingredients</p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                PhotographyToolKit (Python Script)
-              </div>
-              <div class="matravai">
-                <span><a href="" class="fancy">Open Source</a></span>
-                <span><a href="" class="fancy">Github</a></span>
-              </div>
-              <!-- Project Cards -->
-            </div>
-            <div class="ithu-enna-seiyum">
-              <p>Developing a script to manipulate entire albums of photos based on content, format, and size. Implementing TensorFlow Object Detection API object classification algorithm to sort collections of photos
-                based on content of the photos. Implementing the Pillow library for the script to be able to create and organize folders
-                for the photos.</p>
-            </div>
-          </div>
-            <!-- <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                BlockChainNews (React Native)
-              </div>
-              <div class="matravai">
-                <span><a href="" class="fancy">Open Source</a></span>
-                <span><a href="" class="fancy">Github</a></span>
-              </div>
-
-            </div>
-            <div class="ithu-enna-seiyum">
-              <p>A cross platform mobile/web application to display blockchain news.
-                Developed ReactJS components to display JSON response from NewsAPI.</p>
-            </div>
-          </div> -->
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                YouOwe (Swift/iOS)
-              </div>
-              <div class="matravai">
-                <span><a href="" class="fancy">Open Source</a></span>
-                <span><a href="" class="fancy">Github</a></span>
-              </div>
-              <!-- Project Cards -->
-            </div>
-            <div class="ithu-enna-seiyum">
-              <p>Developed and deployed a mobile platform to manage debt between users' contacts.
-                  </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="thalaipu-matrum-matravai">
-              <div class="thalaipu">
-                Parkinson’s Disease Prediction Research Model (ML)
-              </div>
-              <div class="matravai">
-                <span><a href="" class="fancy">Intel Science and Engineering Fair</a></span>
-              </div>
-              <!-- Project Cards -->
-            </div>
-            <div class="ithu-enna-seiyum">
-              <p>Analyzed over 10,000 medical patient data from Parkinson’s Progression Markers Initiative.
-              Used Weka Open Source decision tree algorithms (j48 classifier and 10 fold cross validation)
-              Used Microsoft Excel to preprocess data to be formatted and inputted into Weka.
-              Developed a diagnostic model. Awarded Honorable Mention in 2016</p>
             </div>
           </div>
 
+          <div class="filterDiv ml backend">
+            <!-- Trigger/Open The Modal -->
+            <p class="card-info">
+              <button style="padding: 0px; background: url(https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/800/318/datas/gallery.jpg); background-position: center; background-size: fill; background-repeat: no-repeat; color: #FFF" class="modal-btn" href="#myModal2" id="myBtn">Open Modal</button>
+              <br/><h4>EyeBank - Visually Impaired ATM</h4>
+              <p class="tag-out">ML</p>
+              <p class="tag-out">Backend</p>
+            </p>
+            
+
+            <!-- The Modal -->
+            <div id="myModal2" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+              <h3 style="margin-top: 40px;">EyeBank, Visually Impaired ATM - (University of Maryland) Bitcamp 2019</h3><br/>
+              <img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/800/318/datas/gallery.jpg" width="300" height="231">
+              <h4>About:</h4>
+              <div class="ithu-enna-seiyum">
+                <p>Won sponsor prices: Best Financial Hack by Capital One, Best Social Good Hack. Created software for ATMs that allow users to have a conversation with an ATM, replacing the need for buttons (assisting visually imparied). Used Python, Text-to-Speech library, Speech-to-Text library, Capital One API to obtain users' bank information, and facial recognition for authentacation.</p>
+              </div>
+              <br/><h4>Technologies used:</h4>
+                <div class="mh-about-tag">
+                  <ul>
+                      <li><span>Neural Networks</span></li>
+                      <li><span>Darkflow CNN</span></li>
+                      <li><span>Python</span></li>
+                      <li><span>Google Voice Recognition API</span></li>
+                      <li><span>Capital One Bank API</span></li>
+                  </ul>
+              </div>
+              <br/><h4>Links:</h4>
+              <ul class="list-inline list-social-icons mb-0">
+                <li class="list-inline-item">
+                  <a href="https://github.com/devalparikh">
+                    <span class="fa-stack fa-lg">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="filterDiv ml backend fs">
+            <!-- Trigger/Open The Modal -->
+            <p class="card-info">
+              <button style="padding: 0px; background: url(https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/753/970/datas/gallery.jpg); background-position: center; background-size: contain; background-repeat: no-repeat; color: #FFF" class="modal-btn" href="#myModal3" id="myBtn">Open Modal</button>
+              <br/><h4>Weapon Detection</h4>
+              <p class="tag-out">ML</p>
+              <p class="tag-out">Full-Stack</p>
+              <p class="tag-out">Backend</p>
+            </p>
+
+            <!-- The Modal -->
+            <div id="myModal3" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+              <h3 style="margin-top: 40px;">Weapon Detection - (Georgetown University) Hoya Hacks 2019</h3><br/>
+              <h4>About:</h4>
+              <div class="ithu-enna-seiyum">
+                <p>Won sponsor prices: 1st Place Best Software Hack by Microsoft, 2nd place Amazon Web Services Hack, 3rd place Overall
+                  Georgetown University Hackathon. Featured on AWS: <a href="https://aws.amazon.com/blogs/publicsector/students-hack-for-social-impact-hoya-hacks">View Blog Post</a>.
+              </div>
+              <br/><h4>Technologies used:</h4>
+                <div class="mh-about-tag">
+                  <ul>
+                      <li><span>Neural Networks</span></li>
+                      <li><span>Darkflow CNN</span></li>
+                      <li><span>Python</span></li>
+                      <li><span>AWS SNS</span></li>
+                      <li><span>Google Maps API</span></li>
+
+                  </ul>
+              </div>
+              <br/><h4>Links:</h4>
+              <ul class="list-inline list-social-icons mb-0">
+                <li class="list-inline-item">
+                  <a href="https://github.com/devalparikh">
+                    <span class="fa-stack fa-lg">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="filterDiv backend">
+            <!-- Trigger/Open The Modal -->
+            <p class="card-info">
+              <button style="padding: 0px; background: url(https://b3h2.scene7.com/is/image/BedBathandBeyond/289496063158472p?$690$&wid=690&hei=690); background-position: center; background-size: cover; background-repeat: no-repeat; color: #FFF" class="modal-btn" href="#myModal4" id="myBtn">Open Modal</button>
+              <br/><h4>RecipeMaker Alexa Skill</h4>
+              <p class="tag-out">Backend</p>
+            </p>
+
+            <!-- The Modal -->
+            <div id="myModal4" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+              <h3 style="margin-top: 40px;">RecipeMaker Alexa Skill - AWS Hackathon</h3><br/>
+              <h4>About:</h4>
+              <div class="ithu-enna-seiyum">
+                <p>Developed an Alexa Skill to minimize household wasted foods and creates recipes based on ingredients.
+                  Developed AWS Lambda functions in Node JS to curate recipes based on ingredient data stored in back end relational database.
+                  Implemented AWS Dynamodb NoSQL database for CRUD operations to handle ingredients</p>
+              </div>
+              <br/><h4>Technologies used:</h4>
+                <div class="mh-about-tag">
+                  <ul>
+                      <li><span>AWS DyanmoDB</span></li>
+                      <li><span>AWS Lamda</span></li>
+                      <li><span>NodeJS</span></li>
+                      <li><span>Recipe API</span></li>
+                  </ul>
+              </div>
+              <br/><h4>Links:</h4>
+              <ul class="list-inline list-social-icons mb-0">
+                <li class="list-inline-item">
+                  <a href="https://github.com/devalparikh">
+                    <span class="fa-stack fa-lg">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="filterDiv backend ml">
+            <!-- Trigger/Open The Modal -->
+            <p class="card-info">
+              <button style="padding: 0px; background: url(https://github.com/devalparikh/PhotographyToolBox/raw/master/DemoPPTB.gif?raw=true); background-position: center; background-size: cover; background-repeat: no-repeat; color: #FFF" class="modal-btn" href="#myModal5" id="myBtn">Open Modal</button>
+              <br/><h4>PhotographyToolKit</h4><br/>
+              <p class="tag-out">ML</p>
+              <p class="tag-out">Backend</p>
+            </p>
+
+            <!-- The Modal -->
+            <div id="myModal5" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+              <h3 style="margin-top: 40px;">PhotographyToolKit</h3><br/>
+              <h4>About:</h4>
+              <div class="ithu-enna-seiyum">
+                <p>Developing a script to manipulate entire albums of photos based on content, format, and size. Implementing TensorFlow Object Detection API object classification algorithm to sort collections of photos
+                  based on content of the photos. Implementing the Pillow library for the script to be able to create and organize folders
+                  for the photos.</p>
+              </div>
+              <br/><h4>Technologies used:</h4>
+                <div class="mh-about-tag">
+                  <ul>
+                      <li><span>Python</span></li>
+                      <li><span>TensorFlow Object Detection</span></li>
+                      <li><span>Pillow</span></li>
+                  </ul>
+              </div>
+              <br/><h4>Links:</h4>
+              <ul class="list-inline list-social-icons mb-0">
+                <li class="list-inline-item">
+                  <a href="https://github.com/devalparikh">
+                    <span class="fa-stack fa-lg">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="filterDiv ios">
+            <!-- Trigger/Open The Modal -->
+            <p class="card-info">
+              <button  style="padding: 0px; background: url(https://github.com/devalparikh/CryptoNews-React-Native/raw/master/ScreenShotCryptoNews.png?raw=true); background-position: center; background-size: contain; background-repeat: no-repeat; color: #FFF" class="modal-btn" href="#myModal6" id="myBtn">Open Modal</button>
+              <br/><h4>BlockChainNews</h4><br/>
+              <p class="tag-out">iOS</p>
+            </p>
+
+            <!-- The Modal -->
+            <div id="myModal6" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+              <h3 style="margin-top: 40px;">BlockChainNews - Personal Project</h3><br/>
+              <h4>About:</h4>
+              <div class="ithu-enna-seiyum">
+                <p>A cross platform mobile/web application to display blockchain news.
+                  Developed ReactJS components to display JSON response from NewsAPI.</p>
+              </div>
+              <br/><h4>Technologies used:</h4>
+                <div class="mh-about-tag">
+                  <ul>
+                      <li><span>React Native</span></li>
+                      <li><span>ReactJS</span></li>
+                      <li><span>Javascript</span></li>
+                      <li><span>Blockchain API</span></li>
+                  </ul>
+              </div>
+              <br/><h4>Links:</h4>
+              <ul class="list-inline list-social-icons mb-0">
+                <li class="list-inline-item">
+                  <a href="https://github.com/devalparikh">
+                    <span class="fa-stack fa-lg">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="filterDiv ios">
+            <!-- Trigger/Open The Modal -->
+            <p class="card-info">
+              <button style="padding: 0px; background: url(https://is2-ssl.mzstatic.com/image/thumb/Purple128/v4/2a/e5/21/2ae5212a-997c-8bae-7239-d0ee4a02a1c1/pr_source.jpg/750x750bb.jpeg); background-position: center; background-size: cover; background-repeat: no-repeat; color: #FFF" class="modal-btn" href="#myModal7" id="myBtn">Open Modal</button>
+              <br/><h4>YouOwe</h4><br/>
+              <p class="tag-out">iOS</p>
+            </p>
+
+            <!-- The Modal -->
+            <div id="myModal7" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+              <h3 style="margin-top: 40px;">YouOwe - Personal Project</h3><br/>
+              <h4>About:</h4>
+              <div class="ithu-enna-seiyum">
+                <p>Developed and deployed a mobile platform to manage debt between users' contacts.</p>
+              </div>
+              <br/><h4>Technologies used:</h4>
+                <div class="mh-about-tag">
+                  <ul>
+                      <li><span>Swift</span></li>
+                      <li><span>Xcode</span></li>
+                  </ul>
+              </div>
+              <br/><h4>Links:</h4>
+              <ul class="list-inline list-social-icons mb-0">
+                <li class="list-inline-item">
+                  <a href="https://github.com/devalparikh">
+                    <span class="fa-stack fa-lg">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="filterDiv ml">
+            <!-- Trigger/Open The Modal -->
+            <p class="card-info">
+              <button style="padding: 0px; background: url(https://lh3.googleusercontent.com/proxy/4vLE7kUPUqW3HC9OsUysSJGNhkhyCia8PUMy126NINcRM19FmTgQIwJnXOsKMwJQGSVXRaBPclgKoxk6CZuTgM7YhE288A1zJcm0ZCDT0nIhvKq4N6aZ0JpiOj4); background-position: center; background-size: contain; background-repeat: no-repeat; color: #FFF" class="modal-btn" href="#myModal8" id="myBtn">Open Modal</button>
+              <br/><h4>Parkinson’s Disease Prediction Research</h4>
+              <p class="tag-out">ML</p>
+            </p>
+
+            <!-- The Modal -->
+            <div id="myModal8" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+              <h3 style="margin-top: 40px;">Parkinson’s Disease Prediction Research Model - Intel Science and Engineering Fair</h3><br/>
+              <h4>About:</h4>
+              <div class="ithu-enna-seiyum">
+                <p>Analyzed over 10,000 medical patient data from Parkinson’s Progression Markers Initiative.
+                  Used Weka Open Source decision tree algorithms (j48 classifier and 10 fold cross validation)
+                  Used Microsoft Excel to preprocess data to be formatted and inputted into Weka.
+                  Developed a diagnostic model. Awarded Honorable Mention in 2016</p>
+    
+              </div>
+              <br/><h4>Technologies used:</h4>
+                <div class="mh-about-tag">
+                  <ul>
+                      <li><span>Weka</span></li>
+                      <li><span>Machine Learning</span></li>
+                      <li><span>Random Forest</span></li>
+                  </ul>
+              </div>
+              <br/><h4>Links:</h4>
+              <ul class="list-inline list-social-icons mb-0">
+                <li class="list-inline-item">
+                  <a href="https://github.com/devalparikh">
+                    <span class="fa-stack fa-lg">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+          
         </div>
+        
+        <script>
+        filterSelection("all")
+        function filterSelection(c) {
+          var x, i;
+          x = document.getElementsByClassName("filterDiv");
+          if (c == "all") c = "";
+          for (i = 0; i < x.length; i++) {
+            w3RemoveClass(x[i], "show");
+            if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+          }
+        }
+        
+        function w3AddClass(element, name) {
+          var i, arr1, arr2;
+          arr1 = element.className.split(" ");
+          arr2 = name.split(" ");
+          for (i = 0; i < arr2.length; i++) {
+            if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+          }
+        }
+        
+        function w3RemoveClass(element, name) {
+          var i, arr1, arr2;
+          arr1 = element.className.split(" ");
+          arr2 = name.split(" ");
+          for (i = 0; i < arr2.length; i++) {
+            while (arr1.indexOf(arr2[i]) > -1) {
+              arr1.splice(arr1.indexOf(arr2[i]), 1);     
+            }
+          }
+          element.className = arr1.join(" ");
+        }
+        
+        // Add active class to the current button (highlight it)
+        var btnContainer = document.getElementById("myBtnContainer-proj");
+        var btns = btnContainer.getElementsByClassName("btn");
+        for (var i = 0; i < btns.length; i++) {
+          btns[i].addEventListener("click", function(){
+            var current = document.getElementsByClassName("active");
+            current[1].className = current[1].className.replace(" active", "");
+            this.className += " active";
+          });
+        }
+
+        // Get the button that opens the modal
+        var btn = document.querySelectorAll("button.modal-btn");
+
+        // All page modals
+        var modals = document.querySelectorAll('.modal');
+
+        // Get the <span> element that closes the modal
+        var spans = document.getElementsByClassName("close");
+
+        // When the user clicks the button, open the modal
+        for (var i = 0; i < btn.length; i++) {
+        btn[i].onclick = function(e) {
+            e.preventDefault();
+            modal = document.querySelector(e.target.getAttribute("href"));
+            modal.style.display = "block";
+        }
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        for (var i = 0; i < spans.length; i++) {
+        spans[i].onclick = function() {
+            for (var index in modals) {
+              if (typeof modals[index].style !== 'undefined') modals[index].style.display = "none";    
+            }
+        }
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+            for (var index in modals) {
+              if (typeof modals[index].style !== 'undefined') modals[index].style.display = "none";    
+            }
+            }
+        }
+
+        // // Get the modal
+        // var modal = document.getElementById("myModal");
+
+        // // Get the button that opens the modal
+        // var btn = document.getElementById("myBtn");
+
+        // // Get the <span> element that closes the modal
+        // var span = document.getElementsByClassName("close")[0];
+
+        // // When the user clicks on the button, open the modal
+        // btn.onclick = function() {
+        //   modal.style.display = "block";
+        // }
+
+        // // When the user clicks on <span> (x), close the modal
+        // span.onclick = function() {
+        //   modal.style.display = "none";
+        // }
+
+        // // When the user clicks anywhere outside of the modal, close it
+        // window.onclick = function(event) {
+        //   if (event.target == modal) {
+        //     modal.style.display = "none";
+        //   }
+        // }
+        </script>
+        
+
+      
+
 
         <!-- Awards -->
 
@@ -495,7 +832,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
               </div>
               <!-- matravai - to the right -->
               <div class="matravai">
-                <span><a class="fancy">(Georgetown University) Hoya Hacks 2019</a></span>
+                <span><a class="fancy">(University of Maryland) Bitcamp 2019</a></span>
                 <span><a class="fancy">2017 - Present</a></span>
               </div>
             </div>
