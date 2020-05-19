@@ -93,7 +93,7 @@ input[type=checkbox] {
 
 .filterDiv:hover {
   float: left;
-  background-color: #2b293a;
+  background-color: #333333;
   color: #ffffff;
   width: 200px;
   height: 340px;
