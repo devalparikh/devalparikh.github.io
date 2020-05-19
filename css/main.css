@@ -79,13 +79,28 @@ input[type=checkbox] {
 
 .filterDiv {
   float: left;
-  background-color: #716d9c;
+  background-color: #666666;
   color: #ffffff;
   width: 200px;
   height: 340px;
   /* line-height: 300px; */
   text-align: center;
-  margin: 2px;
+  margin: 6px;
+  display: none;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+.filterDiv:hover {
+  float: left;
+  background-color: #2b293a;
+  color: #ffffff;
+  width: 200px;
+  height: 340px;
+  box-shadow: 5px 5px 0 0 rgb(175, 169, 238);
+  /* line-height: 300px; */
+  text-align: center;
+  margin: 6px;
   display: none;
   padding: 5px;
   margin-top: 5px;
@@ -106,7 +121,7 @@ input[type=checkbox] {
 .card-info {
   height: 70%;
   border-width: 2px;
-  background-color: rgb(215, 211, 253);
+  background-color: #ebebeb;
 }
 
 .btn-container-proj {
