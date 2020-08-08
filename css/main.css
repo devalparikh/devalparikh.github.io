@@ -40,6 +40,12 @@ input[type=checkbox] {
   float: right;
   }
 
+.mh-about-awards {
+  list-style-position: inside;
+  text-align: left;
+  display: inline-block;
+}
+
 .mh-about-tag {
   word-break: break-all;
   margin-bottom: 10px;
