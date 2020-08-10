@@ -14,6 +14,19 @@ body {
   }
 }
 
+/* Pofile Picture */
+.profile-picture {
+  border-radius: 50%;
+  width:50%;
+  margin: auto;
+}
+
+.profile-picture:hover {
+  /* box-shadow: 0 1px 40px #0000108a, 0 0 2px, 0 0 1em #6356E5, 0 0 0.5em #6356E5, 0 0 0.1em #6356E5; */
+  /* box-shadow: 0 10px 6px #0000108a, 0 0 2px, 0 0 1em #6356E5, 0 0 0.5em #6356E5, 0 0 0.1em #6356E5; */
+  box-shadow: 0 10px 10px 5px #0000108a;
+}
+
 /* Projects */
 [id^=modal] {
   display: none;
