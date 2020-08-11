@@ -56,7 +56,7 @@ $(window).on('load', function () {
     $('body').css('overflow', 'auto')
     $('.rendu').css('display', 'block')
     $('.down').css('opacity', 1)
-    window.setTimeout(randomCircle, 1000)
+    // window.setTimeout(randomCircle, 1000)
   }, 0)
 
   $(document).scroll(function () {
