@@ -2,17 +2,17 @@
 /*                            External Dependencies                           */
 /* -------------------------------------------------------------------------- */
 
-import React, { useContext } from 'react';
-import styled from 'styled-components';
+import React, { useContext } from "react";
+import styled from "styled-components";
 
 /* -------------------------- Internal Dependencies ------------------------- */
 
-import Layout, { PageWrapper } from '../components/Layout';
-import FooterLink from '../components/Footer';
-import Tabs, { TabItems } from '../components/Tabs';
-import MansoryLayout from '../components/Mansory';
-import MansoryItem from '../components/Mansory/mansory-item';
-import { ProjectsContext } from '../components/Utils/context';
+import Layout, { PageWrapper } from "../components/Layout";
+import FooterLink from "../components/Footer";
+import Tabs, { TabItems } from "../components/Tabs";
+import MansoryLayout from "../components/Mansory";
+import MansoryItem from "../components/Mansory/mansory-item";
+import { ProjectsContext } from "../components/Utils/context";
 
 const Projects = () => {
   const projectsData = useContext(ProjectsContext);
@@ -33,7 +33,7 @@ const Projects = () => {
               <MansoryLayout>
                 {projectsData.map(
                   (item, index) =>
-                    item.type.includes('project') && (
+                    item.type.includes("project") && (
                       <MansoryItem key={index} index={index} item={item} />
                     )
                 )}
@@ -43,7 +43,7 @@ const Projects = () => {
               <MansoryLayout>
                 {projectsData.map(
                   (item, index) =>
-                    item.type.includes('fullstack') && (
+                    item.type.includes("fullstack") && (
                       <MansoryItem key={index} index={index} item={item} />
                     )
                 )}
@@ -53,7 +53,7 @@ const Projects = () => {
               <MansoryLayout>
                 {projectsData.map(
                   (item, index) =>
-                    item.type.includes('ml') && (
+                    item.type.includes("ml") && (
                       <MansoryItem key={index} index={index} item={item} />
                     )
                 )}
@@ -69,7 +69,7 @@ const Projects = () => {
 
       <PageWrapper>
         <FooterLink goto="/resume" className="mt-3 mb-5">
-          Lets Go To My Resume.
+          Let's Go To My Resume.
         </FooterLink>
         <br />
       </PageWrapper>

@@ -3,15 +3,15 @@
 /* -------------------------------------------------------------------------- */
 /*                            External Dependencies                           */
 /* -------------------------------------------------------------------------- */
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 /* -------------------------- Internal Dependencies ------------------------- */
-import Layout, { PageWrapper } from '../components/Layout';
-import FooterLink from '../components/Footer';
+import Layout, { PageWrapper } from "../components/Layout";
+import FooterLink from "../components/Footer";
 
 /* ---------------------------- Image Dependency ---------------------------- */
-import { Date } from '../components/Icons';
+import { Date } from "../components/Icons";
 
 const About = () => {
   return (
@@ -30,7 +30,7 @@ const About = () => {
                     <div className="experience__section">
                       <p className="company__text">Capital One</p>
                       <p className="float-right" tabIndex="-1">
-                        <Date /> <b>2021-2022</b>
+                        <Date /> <b>2022-Present</b>
                       </p>
                     </div>
                     <p className="position__text">Software Engineer II</p>
@@ -118,7 +118,7 @@ const About = () => {
 
       <PageWrapper>
         <FooterLink goto="/projects" className="mt-3 mb-5">
-          Lets Continue To Projects
+          Let's Continue To Projects
         </FooterLink>
         <br />
       </PageWrapper>
@@ -168,7 +168,7 @@ const PageSection = styled.div`
     list-style-type: none;
     position: relative;
     &:before {
-      content: ' ';
+      content: " ";
       background: var(--timeline);
       display: inline-block;
       position: absolute;
@@ -182,7 +182,7 @@ const PageSection = styled.div`
       margin: 3rem 0;
       padding-left: 20px;
       &:before {
-        content: ' ';
+        content: " ";
         background: var(--mark);
         display: inline-block;
         position: absolute;

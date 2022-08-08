@@ -3,7 +3,7 @@ const PROJECTS_DATA = [
     title: "Geogram",
     description: "A social network platform for travel.",
     about:
-      "Geogram is an web application where users can share and view travel ideas and itenararies.",
+      "Geogram is a web application where users can share and view travel ideas and itenararies.",
     link: "https://www.geogramapp.com/",
     imageUrl: "",
     github: "private",
