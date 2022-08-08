@@ -1,7 +1,7 @@
 /* -------------------------------------------------------------------------- */
 /*                            External Dependencies                           */
 /* -------------------------------------------------------------------------- */
-import Document, { Head, Main, NextScript } from "next/document";
+import Document, { Head, Html, Main, NextScript } from "next/document";
 import React from "react";
 import { ServerStyleSheet } from "styled-components";
 
@@ -20,7 +20,7 @@ export default class MyDocument extends Document {
 
   render() {
     return (
-      <html lang="en">
+      <Html lang="en">
         <Head>
           {this.props.styleTags}
           <meta name="author" content="Deval Parikh" />
@@ -28,7 +28,7 @@ export default class MyDocument extends Document {
             name="keywords"
             content="Deval Parikh, deval parikh, devalparikh, devalparikh.me."
           />
-          <meta property="og:image" content="img/devalparikhPreview.png" />
+          <meta property="og:image" content="/img/devalparikhPreview.png" />
           <meta property="og:locale" content="en-US" />
           <meta property="og:type" content="website" />
           <meta
@@ -46,7 +46,7 @@ export default class MyDocument extends Document {
             content="/icons/browserconfig.xml"
           />
           <meta name="twitter:site" content="" />
-          <meta name="twitter:image" content="img/devalparikhPreview.png" />
+          <meta name="twitter:image" content="/img/devalparikhPreview.png" />
           <link
             rel="preload"
             as="style"
@@ -184,7 +184,7 @@ export default class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     );
   }
 }
