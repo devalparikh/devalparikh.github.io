@@ -13,7 +13,7 @@
     "start": "next start",
     "export": "next export",
     "predeploy": "npm run build && npm run export",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -b master -d build",
     "lint": "eslint .",
     "fix": "eslint --fix .",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
