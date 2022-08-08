@@ -12,7 +12,7 @@
     "start": "next start",
     "export": "next export",
     "predeploy": "npm run build && npm run export",
-    "deploy": "gh-pages -b master -d build",
+    "deploy": "gh-pages -d out",
     "lint": "eslint .",
     "fix": "eslint --fix .",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
@@ -30,6 +30,7 @@
     "react-helmet": "^5.2.1",
     "react-progressive-image": "^0.6.0",
     "scoutbar": "^1.1.9",
+    "sharp": "^0.30.7",
     "styled-components": "^4.4.1",
     "url-loader": "^2.2.0"
   },
