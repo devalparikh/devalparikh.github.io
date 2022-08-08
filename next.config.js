@@ -11,7 +11,7 @@ module.exports = withPWA({
     disable: process.env.NODE_ENV === "development",
   },
   images: {
-    domains: ["devalparikh.github.io"],
+    domains: ["devalparikh.me"],
   },
   experimental: {
     publicDirectory: true,
