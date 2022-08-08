@@ -1,0 +1,49 @@
+{
+  "name": "devalparikh",
+  "version": "1.5.0",
+  "private": false,
+  "license": "MIT",
+  "repository": "https://github.com/devalparikh/devalparikh.github.io",
+  "homepage": "https://github.com/devalparikh/devalparikh.github.io",
+  "description": "Deval Parikh's Website",
+  "author": "Deval Parikh <devalpp@gmail.com> (https://devalparikh.me)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export",
+    "predeploy": "npm run build && npm run export",
+    "deploy": "npm run build && npm run export",
+    "lint": "eslint .",
+    "fix": "eslint --fix .",
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+    "check-packages": "yarn clean && yarn compile && yarn test && yarn lint"
+  },
+  "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "next": "10.0.4",
+    "next-page-transitions": "^1.0.0-beta.2",
+    "next-pwa": "^5.4.1",
+    "react": "16.9.0",
+    "react-dom": "16.8.6",
+    "react-ga": "^2.7.0",
+    "react-helmet": "^5.2.1",
+    "react-progressive-image": "^0.6.0",
+    "scoutbar": "^1.1.9",
+    "styled-components": "^4.4.1",
+    "url-loader": "^2.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "husky": "^3.1.0",
+    "lint-staged": "^9.5.0",
+    "prettier": "1.19.1"
+  }
+}
