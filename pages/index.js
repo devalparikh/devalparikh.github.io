@@ -2,17 +2,17 @@
 /*                            External Dependencies                           */
 /* -------------------------------------------------------------------------- */
 
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import Link from 'next/link';
+import React, { useState } from "react";
+import styled from "styled-components";
+import Link from "next/link";
 
 /* -------------------------- Internal Dependencies ------------------------- */
 
-import Layout, { PageWrapper } from '../components/Layout';
-import FooterLink from '../components/Footer';
+import Layout, { PageWrapper } from "../components/Layout";
+import FooterLink from "../components/Footer";
 
 const Home = () => {
-  const [color] = useState('#5856d6');
+  const [color] = useState("#5856d6");
 
   return (
     <Layout>
@@ -30,24 +30,27 @@ const Home = () => {
               I'm currently working on full stack technology at Capital One.
             </p>
             <p>
-              View my{' '}
-              <Link href="/about">
+              View my{" "}
+              <Link href="/about" as="/about">
                 <a aria-label="Go to About Page">
                   <button type="button" tabIndex="-1">
                     Experience
                   </button>
                 </a>
               </Link>
-              ,{' '}
-              <Link href="/projects">
+              ,{" "}
+              <Link href="/projects" as="/projects">
                 <a aria-label="Go to Projects Page">
                   <button type="button" tabIndex="-1">
                     Projects
                   </button>
                 </a>
               </Link>
-              ,{' '}
-              <Link href="https://devalparikh.me/DevalParikhResume.pdf">
+              ,{" "}
+              <Link
+                href="https://devalparikh.me/DevalParikhResume.pdf"
+                as="https://devalparikh.me/DevalParikhResume.pdf"
+              >
                 <a
                   aria-label="Go to Resume Page"
                   target="_blank"

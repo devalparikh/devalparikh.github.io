@@ -1,15 +1,15 @@
 /* -------------------------------------------------------------------------- */
 /*                             External Dependency                            */
 /* -------------------------------------------------------------------------- */
-import React, { useContext } from 'react';
+import React, { useContext } from "react";
 
 /* -------------------------- Internal Dependencies ------------------------- */
-import { Header } from '../Layout/style';
-import Link from '../ActiveLink';
-import AppContext from '../Utils/context';
+import { Header } from "../Layout/style";
+import Link from "../ActiveLink";
+import AppContext from "../Utils/context";
 
 /* ---------------------------- Image Dependency ---------------------------- */
-import { Logo, Moon, Icon } from '../Icons';
+import { Logo, Moon, Icon } from "../Icons";
 
 const Navbar = () => {
   const { show, handleopen, setTheme, closeShow, theme } = useContext(
@@ -20,12 +20,12 @@ const Navbar = () => {
       <Header>
         <nav className="navbar navbar-expand-lg bg-light navbar-light">
           <div className="container">
-            <Link href="/">
+            <Link href="/" as="/">
               <a
                 href="#!"
                 className="navbar-brand"
                 aria-label="Deval Parikh Home"
-                tabIndex={show ? '-1' : undefined}
+                tabIndex={show ? "-1" : undefined}
               >
                 <p className="logo__text">
                   <b>Deval Parikh's Portfolio</b>
@@ -37,14 +37,14 @@ const Navbar = () => {
               className="navbar-toggler pr-0"
               type="button"
               onClick={handleopen}
-              tabIndex={show ? '-1' : undefined}
+              tabIndex={show ? "-1" : undefined}
               aria-label="Open Button Toggle"
             >
               <span className="navbar-toggler-icon" />
             </button>
 
             <div
-              className={`collapse navbar-collapse  ${show && 'show'}`}
+              className={`collapse navbar-collapse  ${show && "show"}`}
               id="collapsibleNavbar"
             >
               <button
@@ -56,7 +56,7 @@ const Navbar = () => {
 
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item hover__bottom d-block d-md-none">
-                  <Link href="/" activeClassName="is-active">
+                  <Link href="/" as="/" activeClassName="is-active">
                     <a
                       className="nav-link"
                       id="cardHover"
@@ -70,7 +70,7 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li className="nav-item hover__bottom">
-                  <Link href="/" activeClassName="is-active">
+                  <Link href="/" as="/" activeClassName="is-active">
                     <a
                       className="nav-link"
                       id="cardHover"
@@ -84,7 +84,7 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li className="nav-item hover__bottom">
-                  <Link href="/about" activeClassName="is-active">
+                  <Link href="/about" as="/about" activeClassName="is-active">
                     <a
                       className="nav-link"
                       id="cardHover"
@@ -98,7 +98,11 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li className="nav-item hover__bottom">
-                  <Link href="/projects" activeClassName="is-active">
+                  <Link
+                    href="/projects"
+                    as="/projects"
+                    activeClassName="is-active"
+                  >
                     <a
                       className="nav-link"
                       id="cardHover"
@@ -112,7 +116,7 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li className="nav-item hover__bottom">
-                  <Link href="/resume" activeClassName="is-active">
+                  <Link href="/resume" as="/resume" activeClassName="is-active">
                     <a
                       className="nav-link"
                       id="cardHover"
@@ -140,11 +144,11 @@ const Navbar = () => {
                   </Link>
                 </li> */}
                 <li className="nav-item pl-md-3">
-                  <Link href="#0">
+                  <Link href="#0" as="#0">
                     <a
                       className="nav-link nav-svg"
                       aria-label={`Turn On ${
-                        theme === false ? 'Light' : 'Dark'
+                        theme === false ? "Light" : "Dark"
                       } Mood`}
                       onClick={setTheme}
                       href="#!"

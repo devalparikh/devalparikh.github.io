@@ -1,10 +1,10 @@
 /* -------------------------------------------------------------------------- */
 /*                            External Dependencies                           */
 /* -------------------------------------------------------------------------- */
-import React from 'react';
-import Link from 'next/link';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import React from "react";
+import Link from "next/link";
+import PropTypes from "prop-types";
+import styled from "styled-components";
 
 /* -------------------------- Image Dependecy -------------------------- */
 
@@ -17,10 +17,10 @@ import {
   Instagram,
   Dribble,
   Email,
-} from '../Icons';
+} from "../Icons";
 
 /* ---------------------------- Style Dependency ---------------------------- */
-import { SocialMedia } from '../Layout/style';
+import { SocialMedia } from "../Layout/style";
 
 /* -------------------------- FooterLink PropTypes -------------------------- */
 const propTypes = {
@@ -38,7 +38,7 @@ const FooterLink = ({ children, goto, ...rest }) => {
   return (
     <>
       <FooterStyle>
-        <Link href={`${goto}`}>
+        <Link href={`${goto}`} as={`${goto}`}>
           <a aria-label={children}>
             <p {...rest}>
               {children}
