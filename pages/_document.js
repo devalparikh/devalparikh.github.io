@@ -47,6 +47,11 @@ export default class MyDocument extends Document {
           />
 
           <meta name="twitter:image" content="./img/devalparikhPreview.png" />
+          <meta
+            http-equiv="Content-Security-Policy"
+            content="upgrade-insecure-requests"
+          />
+
           <link
             rel="preload"
             as="style"
