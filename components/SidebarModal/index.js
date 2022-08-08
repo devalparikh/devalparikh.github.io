@@ -1,12 +1,12 @@
 /* -------------------------------------------------------------------------- */
 /*                            External Dependencies                           */
 /* -------------------------------------------------------------------------- */
-import React, { useCallback, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import styled, { css, createGlobalStyle } from 'styled-components';
+import React, { useCallback, useEffect } from "react";
+import PropTypes from "prop-types";
+import styled, { css, createGlobalStyle } from "styled-components";
 
 /* --------------------------- Image Dependencies --------------------------- */
-import { Close, Github, Product } from '../Icons';
+import { Close, Github, Medium, Product } from "../Icons";
 
 /* ------------------------- SideBarModal propTypes ------------------------ */
 const propTypes = {
@@ -22,8 +22,8 @@ const propTypes = {
 const defaultProps = {
   show: false,
   closeShow: () => {},
-  size: 'md',
-  overlayColor: 'rgba(0, 0, 0, 0.8)',
+  size: "md",
+  overlayColor: "rgba(0, 0, 0, 0.8)",
   css: {},
 };
 
@@ -36,17 +36,17 @@ const SideBarModal = ({
   data,
 }) => {
   const handleKeyPress = useCallback((e) => {
-    if (e.key === 'Escape') {
-      console.log('sdsdsd');
+    if (e.key === "Escape") {
+      console.log("sdsdsd");
       closeShow();
     }
   }, []);
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyPress);
+      window.removeEventListener("keydown", handleKeyPress);
     };
   }, []);
   return (
@@ -100,24 +100,54 @@ const SideBarModal = ({
                       ))}
                     </p>
                   )}
-                  <h4>
-                    <Product /> Website
-                  </h4>
-                  <p>
-                    <a
-                      href={data.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {data.link}
-                    </a>
-                  </p>
+                  {data.awards && (
+                    <>
+                      <h4>🏆 Awards</h4>
+                      <p>
+                        {data.awards.map((award, index) => (
+                          <p key={index}>🏅 {award}</p>
+                        ))}
+                      </p>
+                    </>
+                  )}
+                  {data.article && (
+                    <>
+                      <IconAndTitle>
+                        <Medium /> Medium Article
+                      </IconAndTitle>
+                      <p>
+                        <a
+                          href={data.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {data.article}
+                        </a>
+                      </p>
+                    </>
+                  )}
+                  {data.link && (
+                    <>
+                      <IconAndTitle>
+                        <Product /> Website
+                      </IconAndTitle>
+                      <p>
+                        <a
+                          href={data.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {data.link}
+                        </a>
+                      </p>
+                    </>
+                  )}
 
                   {data.github && (
                     <>
-                      <h4>
+                      <IconAndTitle>
                         <Github /> Github
-                      </h4>
+                      </IconAndTitle>
                       <p>
                         <a
                           href={data.github}
@@ -137,7 +167,7 @@ const SideBarModal = ({
                   id="cardHover"
                   rel="noopener noreferrer"
                 >
-                  Open Project{' '}
+                  Open Project{" "}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -157,16 +187,16 @@ const SideBarModal = ({
 };
 
 const generateSize = (size) => {
-  if (size === 'sm')
+  if (size === "sm")
     return css`
       width: 21.8em;
       padding: 1.5rem;
     `;
-  if (size === 'lg')
+  if (size === "lg")
     return css`
       width: 34em;
     `;
-  if (size === 'md')
+  if (size === "md")
     return css`
       width: 29em;
       padding: 2rem;
@@ -313,7 +343,12 @@ const Overlay = styled.div`
   width: 100%;
   top: 0;
   right: 0;
-  background: ${(props) => props.overlayColor || 'rgba(0, 0, 0, 0.8)'};
+  background: ${(props) => props.overlayColor || "rgba(0, 0, 0, 0.8)"};
+`;
+
+const IconAndTitle = styled.h4`
+  display: flex;
+  align-items: center;
 `;
 
 SideBarModal.propTypes = propTypes;

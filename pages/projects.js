@@ -59,6 +59,16 @@ const Projects = () => {
                 )}
               </MansoryLayout>
             </TabItems>
+            <TabItems label="Articles">
+              <MansoryLayout>
+                {projectsData.map(
+                  (item, index) =>
+                    item.type.includes("article") && (
+                      <MansoryItem key={index} index={index} item={item} />
+                    )
+                )}
+              </MansoryLayout>
+            </TabItems>
             <TabItems
               label="Photography"
               href="https://unsplash.com/@devalpp/"

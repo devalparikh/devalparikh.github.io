@@ -5,7 +5,7 @@ const PROJECTS_DATA = [
     about:
       "Geogram is a web application where users can share and view travel ideas and itenararies.",
     link: "https://www.geogramapp.com/",
-    imageUrl: "",
+    imageUrl: "https://devalparikh.me/img/geogram.png",
     github: "private",
     type: ["project", "fullstack"],
     technologies: ["React", "Javascript", "Java", "Spring", "MongoDB"],
@@ -28,7 +28,7 @@ const PROJECTS_DATA = [
     about:
       "A platform where users can share property flips and renovations. Developed a scalable full stack web application. This project was designed as a multi-teired architecture to optimize reliability at higher scale. System architecture includes Redis, NGINX Reverse Proxy, Caching, and Microservices.",
     link: "https://h-helper.herokuapp.com/",
-    imageUrl: "	https://devalparikh.me/img/flipfeedpic.png",
+    imageUrl: "https://devalparikh.me/img/flipfeed.png",
     github: "https://github.com/devalparikh/housinghelper",
     type: ["project", "fullstack"],
     technologies: ["React", "Javascript", "NodeJs", "MongoDB", "AWS"],
@@ -41,8 +41,7 @@ const PROJECTS_DATA = [
       "Created software for ATMs that allow users to have a conversation with an ATM, replacing the need for buttons (assisting visually impaired).",
     link: "https://devpost.com/software/eyebank",
     github: "private",
-    imageUrl:
-      "https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/800/318/datas/gallery.jpg",
+    imageUrl: "https://devalparikh.me/img/eyebank.png",
     type: ["project", "ml"],
     technologies: [
       "Python",
@@ -51,6 +50,10 @@ const PROJECTS_DATA = [
       "Darkflow CNN",
       "Google ML API",
       "Capital One Bank API",
+    ],
+    awards: [
+      "1st Place Best Financial Software Hack - Capital One",
+      "1st Place Bitcamp Compass Challenge",
     ],
   },
   {
@@ -71,6 +74,32 @@ const PROJECTS_DATA = [
       "AWS",
       "Google ML API",
     ],
+    awards: [
+      "1st Place Best Software Hack by Microsoft",
+      "2nd place Amazon Web Services Hack",
+      "3rd place Overall Georgetown University Hackathon",
+    ],
+  },
+  {
+    title: "NLPChatApp",
+    description: "A chat app with ML NLP sentiment analysis and tone detection",
+    about:
+      "Entity detection / tone detection real time chat app using NLP and web sockets",
+    github: "https://github.com/devalparikh/NLPChatApp",
+    imageUrl: "https://miro.medium.com/max/1400/1*KmVHS7miXDwxMc1ZRMKXqQ.gif",
+    type: ["project", "ml", "article"],
+    technologies: [
+      "Python",
+      "Machine Learning",
+      "NLP",
+      "TensorFlow JS Deep Learning API",
+      "IBM Cloud",
+      "React",
+      "NodeJS",
+      "Web Sockets",
+    ],
+    article:
+      "https://towardsdatascience.com/building-a-real-time-chat-application-with-nlp-super-powers-ce800e19cb2b",
   },
 ];
 
