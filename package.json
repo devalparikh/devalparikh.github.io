@@ -4,6 +4,7 @@
   "private": false,
   "license": "MIT",
   "homepage": "https://devalparikh.me/",
+  "proxy": "http://localhost:3000",
   "description": "Deval Parikh's Website",
   "author": "Deval Parikh <devalpp@gmail.com> (https://devalparikh.me)",
   "scripts": {
