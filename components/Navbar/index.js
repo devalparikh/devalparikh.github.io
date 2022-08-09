@@ -55,20 +55,6 @@ const Navbar = () => {
               </button>
 
               <ul className="navbar-nav ml-auto">
-                <li className="nav-item hover__bottom d-block d-md-none">
-                  <Link href="/" as="/" activeClassName="is-active">
-                    <a
-                      className="nav-link"
-                      id="cardHover"
-                      onClick={closeShow}
-                      href="#!"
-                      aria-label="Go Home"
-                      title="Home"
-                    >
-                      Home
-                    </a>
-                  </Link>
-                </li>
                 <li className="nav-item hover__bottom">
                   <Link href="/" as="/" activeClassName="is-active">
                     <a

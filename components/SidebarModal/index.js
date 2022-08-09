@@ -242,8 +242,9 @@ const Wrapper = styled.div`
     will-change: opacity, transform;
     &.fadeInLeft {
       animation-name: fadeLeft;
-      animation-duration: 0.5s;
+      animation-duration: 0.4s;
       animation-fill-mode: both;
+      animation-timing-function: ease;
     }
     .header {
       margin-bottom: 2rem;

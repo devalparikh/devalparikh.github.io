@@ -1,7 +1,7 @@
 /* -------------------------------------------------------------------------- */
 /*                            External Dependencies                           */
 /* -------------------------------------------------------------------------- */
-import styled, { createGlobalStyle, css } from 'styled-components';
+import styled, { createGlobalStyle, css } from "styled-components";
 
 const FontToken = css`
   @media (min-width: 787px) {
@@ -234,7 +234,7 @@ export const Header = styled.header`
         color: rgba(255, 255, 255, 0.5);
         border-color: transparent;
         &-icon{
-          /* filter: ${(props) => (props.theme ? 'invert(1)' : 'invert(0)')}; */
+          /* filter: ${(props) => (props.theme ? "invert(1)" : "invert(0)")}; */
           filter: invert(var(--theme-amount));
         }
     }
@@ -410,9 +410,9 @@ export const BackLay = styled.div`
     font-family: Abril FatFace;
     font-size: 29.42vmin;
     ${(props) =>
-      props.title === 'About Me' ||
-      props.title === 'Contact' ||
-      props.title === 'Home'
+      props.title === "About Me" ||
+      props.title === "Contact" ||
+      props.title === "Home"
         ? css`
             writing-mode: unset;
           `

@@ -200,21 +200,18 @@ const PageSection = styled.div`
     ul.timeline li p {
       display: block;
       float: none !important;
-      margin-top: 5px;
     }
   }
   @media (max-width: 989px) {
     ul.timeline li p {
       display: block;
       float: none !important;
-      margin-top: 5px;
     }
   }
   @media (max-width: 220px) {
     ul.timeline li p {
       display: block;
       float: none !important;
-      margin-top: 5px;
     }
   }
 `;
