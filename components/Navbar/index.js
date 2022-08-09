@@ -10,6 +10,7 @@ import AppContext from "../Utils/context";
 
 /* ---------------------------- Image Dependency ---------------------------- */
 import { Logo, Moon, Icon } from "../Icons";
+import { IconAndText } from "../Typography/IconAndTitle";
 
 const Navbar = () => {
   const { show, handleopen, setTheme, closeShow, theme } = useContext(
@@ -129,18 +130,20 @@ const Navbar = () => {
                     </a>
                   </Link>
                 </li> */}
-                <li className="nav-item pl-md-3">
+                <li className="nav-item">
                   <Link href="#0" as="#0">
-                    <a
-                      className="nav-link nav-svg"
-                      aria-label={`Turn On ${
-                        theme === false ? "Light" : "Dark"
-                      } Mood`}
-                      onClick={setTheme}
-                      href="#!"
-                    >
-                      <Moon />
-                    </a>
+                    <IconAndText>
+                      <a
+                        className="nav-link"
+                        aria-label={`Turn On ${
+                          theme === false ? "Light" : "Dark"
+                        } Mood`}
+                        onClick={setTheme}
+                        href="#!"
+                      >
+                        <Moon /> {theme === false ? "Dark" : "Light"} Mode
+                      </a>
+                    </IconAndText>
                   </Link>
                 </li>
               </ul>

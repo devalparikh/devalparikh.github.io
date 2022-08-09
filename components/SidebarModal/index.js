@@ -7,6 +7,7 @@ import styled, { css, createGlobalStyle } from "styled-components";
 
 /* --------------------------- Image Dependencies --------------------------- */
 import { Close, Github, Medium, Product } from "../Icons";
+import { IconAndTitle } from "../Typography/IconAndTitle";
 
 /* ------------------------- SideBarModal propTypes ------------------------ */
 const propTypes = {
@@ -345,11 +346,6 @@ const Overlay = styled.div`
   top: 0;
   right: 0;
   background: ${(props) => props.overlayColor || "rgba(0, 0, 0, 0.8)"};
-`;
-
-const IconAndTitle = styled.h4`
-  display: flex;
-  align-items: center;
 `;
 
 SideBarModal.propTypes = propTypes;
