@@ -118,7 +118,7 @@ const SideBarModal = ({
                       </IconAndTitle>
                       <p>
                         <a
-                          href={data.github}
+                          href={data.article}
                           target="_blank"
                           rel="noopener noreferrer"
                         >

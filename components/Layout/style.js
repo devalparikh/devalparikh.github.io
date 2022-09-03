@@ -258,7 +258,7 @@ export const Header = styled.header`
           z-index: -1;
           left: 51%;
           right: 51%;
-          bottom: 1.5px;
+          bottom: 3px;
           background:var(--article-color);
           height: 1px;
           -webkit-transition-property: left, right; 
