@@ -1,6 +1,15 @@
 const ARTICLE_DATA = [
   {
     title:
+      "Building a 6x Faster GraphRAG: Typed Graphs, FAISS, and Two-Phase Retrieval",
+    description:
+      "A custom GraphRAG system optimized for structured data like GitHub repos, achieving ~6x faster indexing with typed entity schemas and two-phase retrieval.",
+    link: "https://rolodex.dev/blog/custom-graphrag-architecture",
+    imageUrl: "https://rolodex.dev/share-image.png",
+    type: ["article"],
+  },
+  {
+    title:
       "Visualizing Backpropagation in Neural Network Training at Any Scale",
     description:
       "Using HiPlot to generate parallel coordinate plots to visualize deep learning model training.",

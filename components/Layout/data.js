@@ -62,7 +62,7 @@ export const actions = (theme) => [
         ),
       }),
       createScoutPage({
-        label: 'Articles',
+        label: 'Blog',
         children: ARTICLE_DATA.map((project) =>
           createScoutAction({
             label: project.title,

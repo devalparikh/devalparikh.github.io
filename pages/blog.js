@@ -15,10 +15,10 @@ import { PageSection } from './projects';
 const Articles = () => {
   const articles = useContext(ArticleContext);
   return (
-    <Layout title="Articles">
+    <Layout title="Blog">
       <PageSection>
         <PageWrapper>
-          <h1 className="intro__text">Reads.</h1> <br />
+          <h1 className="intro__text">Blog.</h1> <br />
           <Tabs>
             <TabItems label="All">
               <MansoryLayout>
@@ -32,26 +32,6 @@ const Articles = () => {
                 {articles.map(
                   (item, index) =>
                     item.type.includes('article') && (
-                      <MansoryItem key={index} index={index} item={item} />
-                    )
-                )}
-              </MansoryLayout>
-            </TabItems>
-            <TabItems label="Readings">
-              <MansoryLayout>
-                {articles.map(
-                  (item, index) =>
-                    item.type.includes('reading') && (
-                      <MansoryItem key={index} index={index} item={item} />
-                    )
-                )}
-              </MansoryLayout>
-            </TabItems>
-            <TabItems label="Videos">
-              <MansoryLayout>
-                {articles.map(
-                  (item, index) =>
-                    item.type.includes('video') && (
                       <MansoryItem key={index} index={index} item={item} />
                     )
                 )}
