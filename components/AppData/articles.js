@@ -6,7 +6,7 @@ const ARTICLE_DATA = [
       "A custom GraphRAG system optimized for structured data like GitHub repos, achieving ~6x faster indexing with typed entity schemas and two-phase retrieval.",
     link: "https://rolodex.dev/blog/custom-graphrag-architecture",
     imageUrl: "https://rolodex.dev/share-image.png",
-    type: ["article"],
+    type: ["article", "ai"],
   },
   {
     title:
@@ -16,7 +16,7 @@ const ARTICLE_DATA = [
     link:
       "https://towardsdatascience.com/visualizing-backpropagation-in-neural-network-training-2647f5977fdb",
     imageUrl: "https://miro.medium.com/max/1400/1*tveesbVZ-nCY_vZjlSCWOA.png",
-    type: ["article"],
+    type: ["article", "ml"],
   },
   {
     title: "Building a Real Time Chat Application with NLP Capabilities",
@@ -25,7 +25,7 @@ const ARTICLE_DATA = [
     link:
       "https://towardsdatascience.com/building-a-real-time-chat-application-with-nlp-super-powers-ce800e19cb2b",
     imageUrl: "https://miro.medium.com/max/1400/1*KmVHS7miXDwxMc1ZRMKXqQ.gif",
-    type: ["article"],
+    type: ["article", "fullstack"],
   },
 ];
 

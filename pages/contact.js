@@ -18,58 +18,36 @@ const Contact = () => {
           <h1 className="intro__text">Contact.</h1>
           <article>
             <p>
-              Get in touch or shoot me an email directly on{' '}
-              <b>devalpp@gmail.com</b>
+              Want to get in touch? Reach out through any of the links below.
             </p>
           </article>
           <br />
-          <form
-            method="POST"
-            action="https://formspree.io/adenekanwonderful41@gmail.com"
-          >
-            <div className="fields">
-              <div className="field half">
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  className="form-control"
-                  placeholder="Name"
-                  aria-required="true"
-                  required
-                />
-              </div>
-              <div className="field half">
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  className="form-control"
-                  placeholder="Email"
-                  aria-required="true"
-                  required
-                />
-              </div>
-              <div className="field">
-                <textarea
-                  name="message"
-                  id="message"
-                  rows="5"
-                  className="form-control"
-                  placeholder="Message"
-                  aria-required="true"
-                  required
-                />
-              </div>
-            </div>
-            <button
-              className="btn btn-default"
-              type="submit"
-              aria-label="Send Message"
+          <ContactLinks>
+            <a href="mailto:devalpp@gmail.com">
+              <span className="link-label">Email</span>
+              <span className="link-value">devalpp@gmail.com</span>
+            </a>
+            <a href="tel:+17327725327">
+              <span className="link-label">Phone</span>
+              <span className="link-value">(732) 772-5327</span>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/devalparikh1/"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Send Message
-            </button>
-          </form>
+              <span className="link-label">LinkedIn</span>
+              <span className="link-value">linkedin.com/in/devalparikh1</span>
+            </a>
+            <a
+              href="https://github.com/devalparikh"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="link-label">GitHub</span>
+              <span className="link-value">github.com/devalparikh</span>
+            </a>
+          </ContactLinks>
         </PageWrapper>
       </PageSection>
 
@@ -97,44 +75,52 @@ const PageSection = styled.div`
     font-weight: 400;
     color: var(--article-color) !important;
   }
-  input,
-  textarea {
-    background: transparent;
-    color: var(--cw) !important;
-    margin-bottom: 2rem;
-    box-shadow: none !important;
-    resize: none;
-    padding: 24px 21px !important;
-    border-color: var(--border-color) !important;
-    &:focus {
-      background-color: var(--bg);
+`;
+
+const ContactLinks = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  width: 60%;
+
+  a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--cw);
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--border-color);
     }
   }
-  button {
-    font-size: calc(var(--font-sm) + 1.1px);
-    background: var(--cw);
-    border: none;
-    color: var(--bg);
-    border-radius: 5px;
-    padding: 15px 40px;
-    margin-bottom: 3rem;
+
+  .link-label {
+    font-size: calc(var(--font-sm) + 1px);
+    font-weight: 600;
   }
-  form {
-    width: 60%;
+
+  .link-value {
+    font-size: calc(var(--font-sm) + 0.5px);
+    color: var(--article-color);
   }
-  @media (max-width: 585px) {
-    form {
-      width: 100% !important;
-    }
-  }
+
   @media (max-width: 989px) {
-    form {
-      width: 100% !important;
-    }
+    width: 100%;
   }
-  @media (max-width: 220px) {
-    form {
-      width: 100% !important;
+
+  @media (max-width: 585px) {
+    width: 100%;
+
+    a {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.3rem;
     }
   }
 `;
