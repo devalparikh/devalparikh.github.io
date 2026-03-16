@@ -295,10 +295,9 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
   );
 };
 
-/* ────────── RAF-based scroll hook (no React re-renders) ────────── */
-const useScrollRefs = () => {
+/* ────────── Scroll progress bar ────────── */
+const useScrollProgress = () => {
   const progressRef = useRef(null);
-  const lettersRef = useRef([]);
 
   useEffect(() => {
     let ticking = false;
@@ -310,19 +309,9 @@ const useScrollRefs = () => {
         const docHeight =
           document.documentElement.scrollHeight - window.innerHeight;
         const progress = docHeight > 0 ? scrollY / docHeight : 0;
-
         if (progressRef.current) {
           progressRef.current.style.transform = `scaleX(${progress})`;
         }
-
-        lettersRef.current.forEach((el, i) => {
-          if (el) {
-            el.style.transform = `translateY(${
-              scrollY * (0.02 + i * 0.008)
-            }px)`;
-          }
-        });
-
         ticking = false;
       });
     };
@@ -330,7 +319,111 @@ const useScrollRefs = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  return { progressRef, lettersRef };
+  return { progressRef };
+};
+
+/* ────────── Book opening scroll animation ────────── */
+const useBookAnimation = (sectionRef) => {
+  const assemblyRef = useRef(null);
+  const spineRef = useRef(null);
+  const pageRightRef = useRef(null);
+  const pageBottomRef = useRef(null);
+  const shadowRef = useRef(null);
+  const hintRef = useRef(null);
+  const openHintRef = useRef(null);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const update = () => {
+      const section = sectionRef.current;
+      const assembly = assemblyRef.current;
+      if (!section || !assembly) return;
+
+      const rect = section.getBoundingClientRect();
+      const scrollSpace = rect.height - window.innerHeight;
+      const raw = scrollSpace > 0 ? Math.max(0, -rect.top) / scrollSpace : 0;
+      const p = Math.min(1, raw);
+      const ease = 1 - Math.pow(1 - p, 2.5);
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      // Book natural dimensions (must match CSS)
+      const bookW = Math.min(0.55 * vw, 400);
+      const bookH = bookW * 1.45;
+
+      // Scale needed to fill viewport (slight overshoot to avoid edge gaps)
+      const targetScale = Math.max(vw / bookW, vh / bookH) * 1.05;
+      const currentScale = 1 + (targetScale - 1) * ease;
+
+      // 3D rotation — flattens as book zooms in
+      const rotY = -15 * (1 - ease);
+      const rotX = 4 * (1 - ease);
+
+      assembly.style.transform =
+        `perspective(1200px) rotateY(${rotY}deg) rotateX(${rotX}deg) scale(${currentScale})`;
+
+      // Set text sizes as CSS vars so they scale perfectly to match hero
+      const titleTarget = Math.max(56, Math.min(0.14 * vw, 176));
+      const authorTarget = Math.max(16, Math.min(0.03 * vw, 25.6));
+      assembly.style.setProperty("--title-size", `${titleTarget / targetScale}px`);
+      assembly.style.setProperty("--author-size", `${authorTarget / targetScale}px`);
+      assembly.style.setProperty("--title-ls", `${-2 / targetScale}px`);
+      assembly.style.setProperty("--author-ls", `${8 / targetScale}px`);
+
+      // Fade decorations (spine, pages) early
+      const decoFade = Math.max(0, 1 - ease * 2.5);
+      if (spineRef.current) spineRef.current.style.opacity = String(decoFade);
+      if (pageRightRef.current) pageRightRef.current.style.opacity = String(decoFade);
+      if (pageBottomRef.current) pageBottomRef.current.style.opacity = String(decoFade);
+
+      // Shadow fades as book fills viewport
+      if (shadowRef.current) {
+        shadowRef.current.style.opacity = String(Math.max(0, 0.8 * (1 - ease * 1.4)));
+      }
+
+      // "scroll" hint — visible initially, fades fast
+      if (openHintRef.current) {
+        openHintRef.current.style.opacity = String(Math.max(0, 1 - p * 5));
+      }
+
+      // Down-arrow — appears when book nearly fills screen
+      if (hintRef.current) {
+        hintRef.current.style.opacity = String(
+          p > 0.85 ? Math.min(1, (p - 0.85) / 0.15) : 0
+        );
+      }
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          update();
+          ticking = false;
+        });
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", update);
+    };
+  }, [sectionRef]);
+
+  return {
+    assemblyRef,
+    spineRef,
+    pageRightRef,
+    pageBottomRef,
+    shadowRef,
+    hintRef,
+    openHintRef,
+  };
 };
 
 /* ══════════════════════════════════════════════════════════════════════════ */
@@ -358,18 +451,26 @@ const PhotographyGlobalStyle = createGlobalStyle`
   nav svg, header svg {
     fill: ${warm.dark} !important;
   }
-
 `;
 
 const Photography = ({ heroImage, photos }) => {
-  const { progressRef, lettersRef } = useScrollRefs();
+  const { progressRef } = useScrollProgress();
   const [sectionRef, sectionVisible] = useReveal(0.05);
   const [lightboxIndex, setLightboxIndex] = useState(null);
-  const heroRef = useRef(null);
-
+  const bookSectionRef = useRef(null);
   const navAnchorRef = useRef(null);
 
-  // Move the navbar into our page flow (between hero and gallery)
+  const {
+    assemblyRef,
+    spineRef,
+    pageRightRef,
+    pageBottomRef,
+    shadowRef,
+    hintRef,
+    openHintRef,
+  } = useBookAnimation(bookSectionRef);
+
+  // Move navbar into page flow (between book hero and gallery)
   useEffect(() => {
     const header = document.querySelector("header");
     const nav = header?.parentElement;
@@ -377,27 +478,21 @@ const Photography = ({ heroImage, photos }) => {
     const anchor = navAnchorRef.current;
     if (!nav || !anchor) return;
 
-    // Remember original parent and position
     const origParent = nav.parentElement;
     const origNext = nav.nextElementSibling;
 
-    // Move navbar into our anchor point
     anchor.appendChild(nav);
-
-    // Make it sticky instead of fixed
     nav.style.position = "sticky";
     nav.style.top = "0";
     nav.style.left = "";
     nav.style.right = "";
     nav.style.zIndex = "1050";
 
-    // Hide the spacer
     if (spacer && spacer.style.height === "80px") {
       spacer.style.display = "none";
     }
 
     return () => {
-      // Move navbar back to original location
       if (origNext) {
         origParent.insertBefore(nav, origNext);
       } else {
@@ -418,33 +513,40 @@ const Photography = ({ heroImage, photos }) => {
     <Layout title="Photography" hideBackLay>
       <PhotographyGlobalStyle />
       <PageOverride>
-        {/* Scroll progress */}
         <ScrollProgress ref={progressRef} />
 
-        {/* ── Hero ── */}
-        <HeroSection ref={heroRef} $bg={heroImage}>
-          <HeroOverlay />
-          <HeroContent>
-            <HeroTitle>
-              {titleLetters.map((letter, i) => (
-                <HeroLetter
-                  key={i}
-                  ref={(el) => {
-                    lettersRef.current[i] = el;
-                  }}
-                  index={i}
-                >
-                  {letter}
-                </HeroLetter>
-              ))}
-            </HeroTitle>
+        {/* ── Book Hero ── */}
+        <BookSection ref={bookSectionRef}>
+          <BookStage>
+            <BookShadowEl ref={shadowRef} />
+            <BookAssembly ref={assemblyRef}>
+              {/* Spine — left edge */}
+              <BookSpineEl ref={spineRef} />
+              {/* Page edges — right */}
+              <BookPageRight ref={pageRightRef} />
+              {/* Page edges — bottom */}
+              <BookPageBottom ref={pageBottomRef} />
+              {/* Cover face */}
+              <BookCoverFace $bg={heroImage}>
+                <CoverOverlay />
+                <CoverContent>
+                  <CoverTitle>
+                    {titleLetters.map((letter, i) => (
+                      <CoverLetter key={i} index={i}>
+                        {letter}
+                      </CoverLetter>
+                    ))}
+                  </CoverTitle>
+                  <CoverAuthor>Deval Parikh</CoverAuthor>
+                </CoverContent>
+              </BookCoverFace>
+            </BookAssembly>
+            <BookOpenHint ref={openHintRef}>scroll</BookOpenHint>
+            <BookScrollHint ref={hintRef}>&#8595;</BookScrollHint>
+          </BookStage>
+        </BookSection>
 
-            <HeroAuthor>Deval Parikh</HeroAuthor>
-          </HeroContent>
-          <HeroScrollHint>&#8595;</HeroScrollHint>
-        </HeroSection>
-
-        {/* ── Navbar anchor: navbar gets moved here, sticky after hero ── */}
+        {/* ── Navbar anchor ── */}
         <NavAnchor ref={navAnchorRef} />
 
         {/* ── Gallery ── */}
@@ -480,7 +582,6 @@ const Photography = ({ heroImage, photos }) => {
         </GallerySection>
       </PageOverride>
 
-      {/* Lightbox */}
       {lightboxIndex !== null && photos.length > 0 && (
         <Lightbox
           photos={photos}
@@ -545,6 +646,11 @@ const lightboxIn = keyframes`
   to   { opacity: 1; transform: scale(1); }
 `;
 
+const floatUp = keyframes`
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(-6px); }
+`;
+
 /* ══════════════════════════════════════════════════════════════════════════ */
 /*  Styled Components                                                       */
 /* ══════════════════════════════════════════════════════════════════════════ */
@@ -560,7 +666,6 @@ const PageOverride = styled.div`
   }
 `;
 
-/* ── Nav anchor: navbar gets moved here between hero & gallery ── */
 const NavAnchor = styled.div`
   position: sticky;
   top: 0;
@@ -568,7 +673,6 @@ const NavAnchor = styled.div`
   background: ${warm.cream};
 `;
 
-/* ── Scroll progress ── */
 const ScrollProgress = styled.div`
   position: fixed;
   top: 0;
@@ -582,28 +686,156 @@ const ScrollProgress = styled.div`
   will-change: transform;
 `;
 
-/* ── Hero ── */
-const HeroSection = styled.section`
+/* ══════════════════════════════════════════════════════════════════════════ */
+/*  Book Hero                                                               */
+/* ══════════════════════════════════════════════════════════════════════════ */
+
+const BookSection = styled.section`
   position: relative;
-  width: 100%;
+  height: 250vh;
+`;
+
+const BookStage = styled.div`
+  position: sticky;
+  top: 0;
   height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${warm.cream};
+  overflow: hidden;
+  z-index: 100;
+`;
+
+/* Shadow sits behind the book */
+const BookShadowEl = styled.div`
+  position: absolute;
+  width: min(55vw, 400px);
+  aspect-ratio: 0.69;
+  border-radius: 4px;
+  box-shadow:
+    0 35px 70px rgba(0, 0, 0, 0.25),
+    0 12px 24px rgba(0, 0, 0, 0.18),
+    0 4px 8px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 0;
+`;
+
+/* The whole book assembly — gets scale + rotation via JS */
+const BookAssembly = styled.div`
+  position: relative;
+  width: min(55vw, 400px);
+  aspect-ratio: 0.69;
+  will-change: transform;
+  transform-origin: center center;
+  /* Initial 3D pose before JS kicks in */
+  transform: perspective(1200px) rotateY(-15deg) rotateX(4deg) scale(1);
+`;
+
+/* ── Book spine (left edge) ── */
+const BookSpineEl = styled.div`
+  position: absolute;
+  left: -20px;
+  top: -2px;
+  bottom: -2px;
+  width: 22px;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: 3px 0 0 3px;
+  background: linear-gradient(
+    to right,
+    #1a1510 0%,
+    #2e261e 20%,
+    #3a3028 45%,
+    #2a2219 65%,
+    #1e1914 100%
+  );
+  /* Subtle highlight stripe for spine curvature */
+  &::after {
+    content: "";
+    position: absolute;
+    left: 30%;
+    top: 0;
+    bottom: 0;
+    width: 25%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.06),
+      transparent
+    );
+  }
+`;
+
+/* ── Page edges (right side) ── */
+const BookPageRight = styled.div`
+  position: absolute;
+  right: -14px;
+  top: 3px;
+  bottom: 3px;
+  width: 14px;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 0 2px 2px 0;
+  background:
+    linear-gradient(to right, rgba(0, 0, 0, 0.06), transparent 40%, transparent),
+    repeating-linear-gradient(
+      to bottom,
+      #f0ebe3 0px,
+      #f0ebe3 1.5px,
+      #e5dfd6 1.5px,
+      #e5dfd6 3px
+    );
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+`;
+
+/* ── Page edges (bottom) ── */
+const BookPageBottom = styled.div`
+  position: absolute;
+  bottom: -14px;
+  left: 3px;
+  right: 3px;
+  height: 14px;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 0 0 2px 2px;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.06), transparent 40%, transparent),
+    repeating-linear-gradient(
+      to right,
+      #f0ebe3 0px,
+      #f0ebe3 1.5px,
+      #e5dfd6 1.5px,
+      #e5dfd6 3px
+    );
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+`;
+
+/* ── Book cover face ── */
+const BookCoverFace = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 3px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background: ${({ $bg }) =>
     $bg ? `url("${$bg}") center center / cover no-repeat` : warm.dark};
-  overflow: hidden;
+  /* Subtle border to define cover edge */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
 `;
 
-const HeroOverlay = styled.div`
+const CoverOverlay = styled.div`
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1;
 `;
 
-const HeroContent = styled.div`
+const CoverContent = styled.div`
   position: relative;
   z-index: 2;
   display: flex;
@@ -611,38 +843,22 @@ const HeroContent = styled.div`
   align-items: center;
 `;
 
-const HeroScrollHint = styled.div`
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1.5rem;
-
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-    40% { transform: translateX(-50%) translateY(-10px); }
-    60% { transform: translateX(-50%) translateY(-5px); }
-  }
-
-  animation: bounce 2s 1.5s infinite, ${fadeIn} 1s 1.5s ease both;
-`;
-
-const HeroTitle = styled.h1`
+/* ── Cover title with debossed effect ── */
+const CoverTitle = styled.h1`
   position: relative;
   z-index: 2;
   font-family: "Sora", "Outfit", sans-serif;
   font-weight: 700;
-  font-size: clamp(3.5rem, 14vw, 11rem);
-  letter-spacing: -2px;
+  font-size: var(--title-size, 3rem);
+  letter-spacing: var(--title-ls, -0.5px);
   line-height: 0.9;
   text-transform: lowercase;
   text-align: center;
   display: flex;
   perspective: 400px;
+  font-kerning: none;
 
-  /* Debossed dark lettering — premium cloth-bound book cover */
+  /* Debossed dark lettering */
   color: transparent !important;
   background: linear-gradient(
     170deg,
@@ -656,7 +872,6 @@ const HeroTitle = styled.h1`
   background-clip: text;
   -webkit-text-fill-color: transparent;
 
-  /* Inset / deboss shadow — pressed into the page */
   &::before {
     content: "photography";
     position: absolute;
@@ -669,6 +884,7 @@ const HeroTitle = styled.h1`
     line-height: inherit;
     text-transform: inherit;
     display: flex;
+    font-kerning: none;
     color: transparent;
     -webkit-text-stroke: 0;
     text-shadow:
@@ -678,7 +894,6 @@ const HeroTitle = styled.h1`
       0 0 12px rgba(40, 30, 20, 0.1);
   }
 
-  /* Subtle sheen — like light catching embossed cloth */
   &::after {
     content: "photography";
     position: absolute;
@@ -691,6 +906,7 @@ const HeroTitle = styled.h1`
     line-height: inherit;
     text-transform: inherit;
     display: flex;
+    font-kerning: none;
     background: linear-gradient(
       115deg,
       transparent 0%,
@@ -707,7 +923,7 @@ const HeroTitle = styled.h1`
   }
 `;
 
-const HeroLetter = styled.span`
+const CoverLetter = styled.span`
   display: inline-block;
   opacity: 0;
   animation: ${letterDrop} 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -718,19 +934,19 @@ const HeroLetter = styled.span`
   will-change: transform;
 `;
 
-const HeroAuthor = styled.span`
+const CoverAuthor = styled.span`
   position: relative;
   z-index: 2;
   font-family: "Sora", "Outfit", sans-serif;
   font-weight: 700;
-  font-size: clamp(1rem, 3vw, 1.6rem);
-  letter-spacing: 8px;
+  font-size: var(--author-size, 0.5rem);
+  letter-spacing: var(--author-ls, 2px);
   text-transform: uppercase;
-  margin-top: 1.25rem;
+  margin-top: 0.8em;
   opacity: 0;
   animation: ${fadeIn} 1s 0.8s ease both;
+  font-kerning: none;
 
-  /* Debossed lettering — lighter than title */
   color: transparent !important;
   background: linear-gradient(
     170deg,
@@ -745,7 +961,6 @@ const HeroAuthor = styled.span`
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 1px 2px rgba(30, 25, 20, 0.18));
 
-  /* Inset / deboss shadow */
   &::before {
     content: "Deval Parikh";
     position: absolute;
@@ -758,6 +973,7 @@ const HeroAuthor = styled.span`
     text-transform: inherit;
     display: flex;
     justify-content: center;
+    font-kerning: none;
     color: transparent;
     -webkit-text-stroke: 0;
     text-shadow:
@@ -767,7 +983,6 @@ const HeroAuthor = styled.span`
       0 0 12px rgba(40, 30, 20, 0.1);
   }
 
-  /* Sheen highlight */
   &::after {
     content: "Deval Parikh";
     position: absolute;
@@ -780,6 +995,7 @@ const HeroAuthor = styled.span`
     text-transform: inherit;
     display: flex;
     justify-content: center;
+    font-kerning: none;
     background: linear-gradient(
       115deg,
       transparent 0%,
@@ -796,19 +1012,53 @@ const HeroAuthor = styled.span`
   }
 `;
 
-const HeroLine = styled.div`
-  width: 60px;
-  height: 2px;
-  background: ${warm.accent};
-  margin: 1.5rem 0 1rem;
-  transform: scaleX(0);
-  animation: ${lineExpand} 0.8s 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* ── Hints ── */
+const BookOpenHint = styled.div`
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  font-family: "Outfit", sans-serif;
+  font-weight: 300;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: ${warm.mid} !important;
+  animation: ${floatUp} 2.5s 1.2s ease-in-out infinite,
+    ${fadeIn} 0.8s 1s ease both;
+  white-space: nowrap;
 `;
 
+const BookScrollHint = styled.div`
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
 
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    40% {
+      transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+      transform: translateX(-50%) translateY(-5px);
+    }
+  }
+  animation: bounce 2s infinite;
+`;
 
+/* ══════════════════════════════════════════════════════════════════════════ */
+/*  Gallery                                                                 */
+/* ══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Gallery section ── */
 const GallerySection = styled.section`
   position: relative;
   padding: 5rem 1.5rem 4rem;
@@ -864,7 +1114,6 @@ const GalleryDivider = styled.div`
     `}
 `;
 
-/* ── Masonry grid ── */
 const MasonryGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -957,7 +1206,6 @@ const ImageCaption = styled.span`
     `}
 `;
 
-/* ── Empty state ── */
 const EmptyState = styled.div`
   text-align: center;
   padding: 6rem 2rem;
@@ -987,7 +1235,10 @@ const EmptyState = styled.div`
   }
 `;
 
-/* ── Lightbox ── */
+/* ══════════════════════════════════════════════════════════════════════════ */
+/*  Lightbox                                                                */
+/* ══════════════════════════════════════════════════════════════════════════ */
+
 const LightboxOverlay = styled.div`
   position: fixed;
   inset: 0;
