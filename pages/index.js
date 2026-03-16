@@ -23,11 +23,11 @@ const Home = () => {
               <mark className="mark">I&apos;m Deval Parikh</mark>
             </h1>
             <p>
-              I'm a software engineer with interests in full stack development,
-              distributed systems, and artificial intelligence.
+              I'm a software engineer with interests in large scale
+              distributed systems and artificial intelligence.
             </p>
             <p>
-              I'm currently working on full stack technology at Capital One.
+              I'm currently building systems to scale secure supercomputing workloads at <br /> Microsoft Azure.
             </p>
             <p>
               View my{" "}

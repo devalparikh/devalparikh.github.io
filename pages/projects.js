@@ -79,13 +79,6 @@ export const PageSection = styled.div`
     margin: 4rem 0rem 1.5rem;
     position: relative;
   }
-  button {
-    font-size: calc(var(--font-sm) + 1.5px);
-    background: var(--mark);
-    border: none;
-    border-radius: 5px;
-    padding: 0px 9px;
-  }
 `;
 
 export default Projects;

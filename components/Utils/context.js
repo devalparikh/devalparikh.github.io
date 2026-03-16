@@ -2,7 +2,14 @@ import { createContext } from 'react';
 import ARTICLE_DATA from '../AppData/articles';
 import PROJECTS_DATA from '../AppData/projects';
 
-const AppContext = createContext();
+const AppContext = createContext({
+  theme: false,
+  loadTheme: () => {},
+  show: false,
+  setTheme: () => {},
+  handleopen: () => {},
+  closeShow: () => {},
+});
 export const ArticleContext = createContext(ARTICLE_DATA);
 export const ProjectsContext = createContext(PROJECTS_DATA);
 

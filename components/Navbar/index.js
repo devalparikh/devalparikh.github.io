@@ -19,19 +19,14 @@ import {
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
+  { href: "/about", label: "Experience" },
   { href: "/projects", label: "Projects" },
   { href: "/blog", label: "Blog" },
   { href: "/resume", label: "Resume" },
+  { href: "/photography", label: "Photography" },
 ];
 
-const EXTERNAL_LINKS = [
-  {
-    href: "https://unsplash.com/@devalpp/",
-    label: "Photography",
-    external: true,
-  },
-];
+const EXTERNAL_LINKS = [];
 
 const Navbar = () => {
   const { show, handleopen, setTheme, closeShow, theme } =

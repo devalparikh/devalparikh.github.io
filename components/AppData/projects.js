@@ -1,5 +1,17 @@
 const PROJECTS_DATA = [
   {
+    title: "Rolodex",
+    description:
+      "AI-powered talent discovery platform for organizations.",
+    about:
+      "Rolodex helps organizations quickly identify and assemble the right team members by analyzing employees' actual work contributions to create digital twins and match people based on real expertise rather than job titles.",
+    link: "https://rolodex.dev/",
+    imageUrl: "https://devalparikh.me/img/rolodex.png",
+    github: "private",
+    type: ["project", "fullstack", "ml"],
+    technologies: ["AI", "Machine Learning", "Embeddings", "Semantic Analysis"],
+  },
+  {
     title: "Geogram",
     description: "A social network platform for travel.",
     about:

@@ -16,7 +16,7 @@ const ARTICLE_DATA = [
     link:
       "https://towardsdatascience.com/visualizing-backpropagation-in-neural-network-training-2647f5977fdb",
     imageUrl: "https://miro.medium.com/max/1400/1*tveesbVZ-nCY_vZjlSCWOA.png",
-    type: ["article", "ml"],
+    type: ["article", "ai"],
   },
   {
     title: "Building a Real Time Chat Application with NLP Capabilities",

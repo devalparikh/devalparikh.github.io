@@ -28,18 +28,24 @@ const About = () => {
                 <div>
                   <div>
                     <div className="experience__section">
-                      <p className="company__text">Capital One</p>
+                      <p className="company__text">Microsoft, Azure</p>
                       <p className="float-right" tabIndex="-1">
-                        <Date /> <b>2022-Present</b>
+                        <Date /> <b>Jul 2024 - Present</b>
                       </p>
                     </div>
-                    <p className="position__text">Software Engineer II</p>
+                    <p className="position__text">Senior Software Engineer</p>
                   </div>
 
                   <p>
-                    Building identity APIs and OAuth microservices. <br />
-                    <b>Tech:</b> Java Spring, OAuth/OIDC, AWS,
-                    Architecture/System Design
+                    Leading the design, development, and launch of a greenfield,
+                    global cloud service that serves as core infrastructure for
+                    sovereign clouds and secure supercomputing workloads.
+                    <br />
+                    Architecting distributed systems and new disjoint network
+                    protocols for orchestrating data transfer and
+                    training/inference of multimodal ML systems. <br />
+                    <b>Tech:</b> Distributed Systems, Microservices, Azure,
+                    AI/ML, Cryptography, Authentication
                   </p>
                 </div>
               </li>
@@ -49,10 +55,36 @@ const About = () => {
                     <div className="experience__section">
                       <p className="company__text">Capital One</p>
                       <p className="float-right" tabIndex="-1">
-                        <Date /> <b>2021 - 2022</b>
+                        <Date /> <b>Feb 2022 - Jul 2024</b>
                       </p>
                     </div>
-                    <p className="position__text">Software Engineer I</p>
+                    <p className="position__text">Senior Software Engineer</p>
+                  </div>
+
+                  <p>
+                    Led a team of engineers through the design, development, and
+                    launch of novel identity applications, APIs, and distributed
+                    systems on a global scale.
+                    <br />
+                    Designed and developed large scale, fault-tolerant, and
+                    low-latency identity applications that eliminate social
+                    engineering vulnerabilities for over 100 million customers.{" "}
+                    <br />
+                    <b>Tech:</b> Java, AWS, Distributed Microservices,
+                    Multi-Threading, Distributed Database Design
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <div>
+                    <div className="experience__section">
+                      <p className="company__text">Capital One</p>
+                      <p className="float-right" tabIndex="-1">
+                        <Date /> <b>Feb 2021 - Feb 2022</b>
+                      </p>
+                    </div>
+                    <p className="position__text">Software Engineer</p>
                   </div>
 
                   <p>

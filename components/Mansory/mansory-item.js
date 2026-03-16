@@ -9,6 +9,12 @@ import { withRouter } from 'next/router';
 import Image from '../Image';
 import SideBarModal from '../SidebarModal';
 
+const TYPE_LABELS = {
+  ai: 'AI / ML',
+  fullstack: 'Full Stack',
+  ml: 'ML',
+};
+
 /* -------------------------- MansoryItem PropTypes ------------------------- */
 const propTypes = {
   item: PropTypes.object,
@@ -39,6 +45,15 @@ const MansoryItem = withRouter(({ item, router: { pathname } }) => {
           >
             <Image src={item.imageUrl} alt={item.imageUrl} />
             <div className="content__slate">
+              <p className="d-flex flex-wrap topic-tags">
+                {item.type
+                  .filter((t) => TYPE_LABELS[t])
+                  .map((t, i) => (
+                    <span key={i} className="d-block mb-1">
+                      {TYPE_LABELS[t]}
+                    </span>
+                  ))}
+              </p>
               <h3>{item.title}</h3>
               <p>{item.description}</p>
             </div>
@@ -139,15 +154,13 @@ const MansoryItemStyle = styled.div`
     bottom: 0px;
     left: 0px;
     opacity: 0.9;
-    /* background: linear-gradient(
-      191deg,
-      rgba(0, 0, 0, 0.1) 20%,
-      rgba(0, 0, 0, 0.76) 100%
-    ); */
     background: linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.1) 10%,
-      rgb(0 0 0 / 78%) 80%
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.03) 20%,
+      rgba(0, 0, 0, 0.35) 50%,
+      rgba(0, 0, 0, 0.82) 80%,
+      rgba(0, 0, 0, 0.92) 100%
     );
   }
   &:hover,
@@ -171,15 +184,21 @@ const MansoryItemStyle = styled.div`
     color: #d5d5d5 !important;
     font-size: calc(var(--font-sm) + 0.9px);
     span {
-      background: #696869;
-      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+      padding: 4px 12px;
       border-radius: 50px;
       text-transform: capitalize;
       font-size: 11px;
       margin-right: 6px;
       color: #fff;
       font-weight: 500;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      letter-spacing: 0.3px;
     }
+  }
+  p.topic-tags {
+    margin-bottom: 8px;
   }
 
   div.content__slate {

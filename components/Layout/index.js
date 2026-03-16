@@ -23,7 +23,7 @@ const propTypes = {
   title: PropTypes.string,
 };
 
-const Layout = ({ children, title = "Home" }) => {
+const Layout = ({ children, title = "Home", hideBackLay = false }) => {
   const { theme, loadTheme, show, setTheme } = useContext(AppContext);
 
   const logPage = () => {
@@ -52,11 +52,13 @@ const Layout = ({ children, title = "Home" }) => {
       </Helmet>
       <SkipToMain content="main-content" />
       <Navbar />
-      <BackLay title={title}>
-        <h1 aria-hidden="true">
-          {title === "Home" ? "Hello, There." : title.concat(".")}
-        </h1>
-      </BackLay>
+      {!hideBackLay && (
+        <BackLay title={title}>
+          <h1 aria-hidden="true">
+            {title === "Home" ? "Hello, There." : title.concat(".")}
+          </h1>
+        </BackLay>
+      )}
       {/* <Cursor /> */}
       <ScoutBar actions={actions(setTheme)} brandColor="var(--cw)" />
       {!show && <>{children}</>}

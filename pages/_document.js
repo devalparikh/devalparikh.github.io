@@ -57,6 +57,15 @@ export default class MyDocument extends Document {
             as="style"
             href="https://fonts.googleapis.com/css?family=Abril+Fatface&display=swap"
           />
+          <link
+            rel="preload"
+            as="style"
+            href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Outfit:wght@200;300;400;500;600;800;900&display=swap"
+          />
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Outfit:wght@200;300;400;500;600;800;900&display=swap"
+          />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
 
           <link rel="shortcut icon" href="./favicon.ico" />

@@ -27,21 +27,11 @@ const Articles = () => {
                 ))}
               </MansoryLayout>
             </TabItems>
-            <TabItems label="AI">
+            <TabItems label="AI / ML">
               <MansoryLayout>
                 {articles.map(
                   (item, index) =>
                     item.type.includes('ai') && (
-                      <MansoryItem key={index} index={index} item={item} />
-                    )
-                )}
-              </MansoryLayout>
-            </TabItems>
-            <TabItems label="Machine Learning">
-              <MansoryLayout>
-                {articles.map(
-                  (item, index) =>
-                    item.type.includes('ml') && (
                       <MansoryItem key={index} index={index} item={item} />
                     )
                 )}
