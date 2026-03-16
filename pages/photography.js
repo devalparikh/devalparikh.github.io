@@ -4,7 +4,14 @@ import fs from "fs";
 import path from "path";
 import Layout from "../components/Layout";
 
-const IMAGE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"]);
+const IMAGE_EXTENSIONS = new Set([
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".webp",
+  ".gif",
+  ".avif",
+]);
 
 export async function getStaticProps() {
   const dir = path.join(process.cwd(), "public", "img", "photography");
@@ -74,25 +81,27 @@ const useTilt = () => {
     const rect = el.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    el.style.transform = `perspective(600px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) scale(1.03)`;
+    el.style.transform = `perspective(600px) rotateY(${x * 8}deg) rotateX(${
+      -y * 8
+    }deg) scale(1.03)`;
   }, []);
 
   const handleLeave = useCallback(() => {
     const el = ref.current;
     if (!el) return;
-    el.style.transform = "perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)";
+    el.style.transform =
+      "perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)";
   }, []);
 
   return { ref, handleMove, handleLeave };
 };
 
 /* ────────── Gallery image with shutter reveal + tilt ────────── */
-const GalleryImage = ({ src, alt, index, onOpen }) => {
+const GalleryImage = memo(({ src, alt, index, onOpen }) => {
   const [revealRef, visible] = useReveal(0.1);
   const [loaded, setLoaded] = useState(false);
   const { ref: tiltRef, handleMove, handleLeave } = useTilt();
 
-  // Merge refs
   const mergedRef = useCallback(
     (node) => {
       revealRef.current = node;
@@ -101,8 +110,8 @@ const GalleryImage = ({ src, alt, index, onOpen }) => {
     [revealRef, tiltRef]
   );
 
-  // Alternate reveal directions for visual rhythm
-  const direction = index % 3 === 0 ? "left" : index % 3 === 1 ? "right" : "bottom";
+  const direction =
+    index % 3 === 0 ? "left" : index % 3 === 1 ? "right" : "bottom";
 
   return (
     <GalleryItem
@@ -127,7 +136,7 @@ const GalleryImage = ({ src, alt, index, onOpen }) => {
       </ImageCaption>
     </GalleryItem>
   );
-};
+});
 
 /* ────────── Lightbox ────────── */
 const Lightbox = ({ photos, activeIndex, onClose }) => {
@@ -143,7 +152,6 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
 
   useEffect(() => setCurrent(activeIndex), [activeIndex]);
 
-  // Lock body scroll while lightbox is open
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -151,13 +159,11 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
     };
   }, []);
 
-  // Reset zoom when switching photos
   useEffect(() => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
   }, [current]);
 
-  // Keyboard navigation
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") {
@@ -169,25 +175,24 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
         }
       }
       if (!isZoomed) {
-        if (e.key === "ArrowRight") setCurrent((c) => (c + 1) % photos.length);
-        if (e.key === "ArrowLeft") setCurrent((c) => (c - 1 + photos.length) % photos.length);
+        if (e.key === "ArrowRight")
+          setCurrent((c) => (c + 1) % photos.length);
+        if (e.key === "ArrowLeft")
+          setCurrent((c) => (c - 1 + photos.length) % photos.length);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose, photos.length, isZoomed]);
 
-  // Prevent scroll from affecting the lightbox
   const handleWheel = useCallback((e) => {
     e.preventDefault();
   }, []);
 
-  // Click to zoom in
   const handleImageClick = useCallback(
     (e) => {
       if (dragging) return;
       if (!isZoomed) {
-        // Zoom into click point
         const rect = imageRef.current?.getBoundingClientRect();
         if (rect) {
           const x = ((e.clientX - rect.left) / rect.width - 0.5) * -200;
@@ -200,7 +205,6 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
     [isZoomed, dragging]
   );
 
-  // Drag to pan when zoomed
   const handlePointerDown = useCallback(
     (e) => {
       if (!isZoomed) return;
@@ -231,7 +235,8 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
   }, []);
 
   const goNext = () => setCurrent((c) => (c + 1) % photos.length);
-  const goPrev = () => setCurrent((c) => (c - 1 + photos.length) % photos.length);
+  const goPrev = () =>
+    setCurrent((c) => (c - 1 + photos.length) % photos.length);
 
   return (
     <LightboxOverlay onClick={onClose}>
@@ -253,62 +258,79 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
             onClick={handleImageClick}
             draggable={false}
             style={{
-              transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${pan.y / zoom}px)`,
-              transition: dragging ? "none" : "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+              transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${
+                pan.y / zoom
+              }px)`,
+              transition: dragging
+                ? "none"
+                : "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           />
         </LightboxImageWrapper>
-        <LightboxCaption onClick={(e) => e.stopPropagation()}>{photos[current].alt}</LightboxCaption>
+        <LightboxCaption onClick={(e) => e.stopPropagation()}>
+          {photos[current].alt}
+        </LightboxCaption>
         {!isZoomed && (
           <LightboxNav onClick={(e) => e.stopPropagation()}>
-            <NavButton onClick={goPrev}>
-              &larr;
-            </NavButton>
+            <NavButton onClick={goPrev}>&larr;</NavButton>
             <LightboxCounter>
               {current + 1} / {photos.length}
             </LightboxCounter>
-            <NavButton onClick={goNext}>
-              &rarr;
-            </NavButton>
+            <NavButton onClick={goNext}>&rarr;</NavButton>
           </LightboxNav>
         )}
         {isZoomed && (
-          <ZoomBadge>
-            {Math.round(zoom * 100)}% — Esc to reset
-          </ZoomBadge>
+          <ZoomBadge>{Math.round(zoom * 100)}% — Esc to reset</ZoomBadge>
         )}
-        <CloseButton onClick={(e) => { e.stopPropagation(); onClose(); }}>&times;</CloseButton>
+        <CloseButton
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+        >
+          &times;
+        </CloseButton>
       </LightboxContent>
     </LightboxOverlay>
   );
 };
 
-/* ────────── Scroll progress bar ────────── */
-const useScrollProgress = () => {
-  const [progress, setProgress] = useState(0);
+/* ────────── RAF-based scroll hook (no React re-renders) ────────── */
+const useScrollRefs = () => {
+  const progressRef = useRef(null);
+  const lettersRef = useRef([]);
 
   useEffect(() => {
+    let ticking = false;
     const onScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(docHeight > 0 ? scrollTop / docHeight : 0);
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        const docHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? scrollY / docHeight : 0;
+
+        if (progressRef.current) {
+          progressRef.current.style.transform = `scaleX(${progress})`;
+        }
+
+        lettersRef.current.forEach((el, i) => {
+          if (el) {
+            el.style.transform = `translateY(${
+              scrollY * (0.02 + i * 0.008)
+            }px)`;
+          }
+        });
+
+        ticking = false;
+      });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  return progress;
-};
-
-/* ────────── Parallax hook ────────── */
-const useParallax = () => {
-  const [offset, setOffset] = useState(0);
-  useEffect(() => {
-    const onScroll = () => setOffset(window.scrollY);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  return offset;
+  return { progressRef, lettersRef };
 };
 
 /* ══════════════════════════════════════════════════════════════════════════ */
@@ -329,8 +351,6 @@ const warm = {
 const PhotographyGlobalStyle = createGlobalStyle`
   body, main {
     background: ${warm.cream} !important;
-    background-image:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='0.06'/%3E%3C/svg%3E") !important;
   }
   nav, nav *, header, header * {
     color: ${warm.dark} !important;
@@ -341,23 +361,18 @@ const PhotographyGlobalStyle = createGlobalStyle`
 `;
 
 const Photography = ({ heroImage, photos }) => {
-  const scrollY = useParallax();
-  const scrollProgress = useScrollProgress();
+  const { progressRef, lettersRef } = useScrollRefs();
   const [sectionRef, sectionVisible] = useReveal(0.05);
   const [lightboxIndex, setLightboxIndex] = useState(null);
 
-  // Split title into individual letters for staggered animation
   const titleLetters = "photography".split("");
 
   return (
     <Layout title="Photography" hideBackLay>
       <PhotographyGlobalStyle />
       <PageOverride>
-        {/* Film grain overlay */}
-        <FilmGrain />
-
         {/* Scroll progress */}
-        <ScrollProgress style={{ transform: `scaleX(${scrollProgress})` }} />
+        <ScrollProgress ref={progressRef} />
 
         {/* ── Hero ── */}
         <HeroSection>
@@ -365,8 +380,10 @@ const Photography = ({ heroImage, photos }) => {
             {titleLetters.map((letter, i) => (
               <HeroLetter
                 key={i}
+                ref={(el) => {
+                  lettersRef.current[i] = el;
+                }}
                 index={i}
-                style={{ transform: `translateY(${scrollY * (0.02 + i * 0.008)}px)` }}
               >
                 {letter}
               </HeroLetter>
@@ -383,7 +400,6 @@ const Photography = ({ heroImage, photos }) => {
               <HeroImageBorder />
             </HeroImageContainer>
           )}
-
         </HeroSection>
 
         {/* ── Gallery ── */}
@@ -417,7 +433,6 @@ const Photography = ({ heroImage, photos }) => {
             </EmptyState>
           )}
         </GallerySection>
-
       </PageOverride>
 
       {/* Lightbox */}
@@ -439,10 +454,10 @@ export default Photography;
 /* ══════════════════════════════════════════════════════════════════════════ */
 
 const letterDrop = keyframes`
-  0%   { opacity: 0; transform: translateY(-60px) rotateX(90deg); filter: blur(8px); }
-  60%  { opacity: 1; filter: blur(0); }
+  0%   { opacity: 0; transform: translateY(-60px) rotateX(90deg); }
+  60%  { opacity: 1; }
   80%  { transform: translateY(4px) rotateX(-5deg); }
-  100% { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) rotateX(0deg); }
 `;
 
 const lineExpand = keyframes`
@@ -456,18 +471,18 @@ const fadeIn = keyframes`
 `;
 
 const slideFromLeft = keyframes`
-  from { opacity: 0; transform: translateX(-60px) rotate(-2deg); }
-  to   { opacity: 1; transform: translateX(0) rotate(0deg); }
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
 `;
 
 const slideFromRight = keyframes`
-  from { opacity: 0; transform: translateX(60px) rotate(2deg); }
-  to   { opacity: 1; transform: translateX(0) rotate(0deg); }
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
 `;
 
 const slideFromBottom = keyframes`
-  from { opacity: 0; transform: translateY(50px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 `;
 
 const shutterOpen = keyframes`
@@ -475,30 +490,9 @@ const shutterOpen = keyframes`
   to   { clip-path: inset(0 0 0% 0); }
 `;
 
-const scrollDown = keyframes`
-  0%   { transform: scaleY(0); transform-origin: top; }
-  50%  { transform: scaleY(1); transform-origin: top; }
-  51%  { transform-origin: bottom; }
-  100% { transform: scaleY(0); transform-origin: bottom; }
-`;
-
 const numberCount = keyframes`
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
-`;
-
-const grainDrift = keyframes`
-  0%    { transform: translate(0, 0); }
-  10%   { transform: translate(-2%, -3%); }
-  20%   { transform: translate(3%, 1%); }
-  30%   { transform: translate(-1%, 3%); }
-  40%   { transform: translate(2%, -2%); }
-  50%   { transform: translate(-3%, 1%); }
-  60%   { transform: translate(1%, -1%); }
-  70%   { transform: translate(-2%, 2%); }
-  80%   { transform: translate(3%, -3%); }
-  90%   { transform: translate(-1%, 2%); }
-  100%  { transform: translate(0, 0); }
 `;
 
 const lightboxIn = keyframes`
@@ -512,9 +506,6 @@ const lightboxIn = keyframes`
 
 const PageOverride = styled.div`
   background: ${warm.cream};
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' seed='2' stitchTiles='stitch'/%3E%3CfeDiffuseLighting in='turbulence' lighting-color='%23EDE8E0' surfaceScale='1.5'%3E%3CfeDistantLight azimuth='45' elevation='55'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='0.35'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' seed='8' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='0.04'/%3E%3C/svg%3E");
   min-height: 100vh;
   overflow: hidden;
   color: ${warm.dark};
@@ -523,20 +514,6 @@ const PageOverride = styled.div`
   * {
     color: ${warm.dark};
   }
-`;
-
-/* ── Film grain overlay ── */
-const FilmGrain = styled.div`
-  position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  z-index: 100;
-  pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='5' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  animation: ${grainDrift} 8s steps(10) infinite;
 `;
 
 /* ── Scroll progress ── */
@@ -548,7 +525,9 @@ const ScrollProgress = styled.div`
   height: 2px;
   background: ${warm.accent};
   transform-origin: left;
+  transform: scaleX(0);
   z-index: 999;
+  will-change: transform;
 `;
 
 /* ── Hero ── */
@@ -583,11 +562,11 @@ const HeroTitle = styled.h1`
   color: transparent !important;
   background: linear-gradient(
     170deg,
-    #2c2420 0%,
-    #3d332c 25%,
-    #1e1916 50%,
-    #3a302a 75%,
-    #261f1b 100%
+    #1e1916 0%,
+    #302824 25%,
+    #151210 50%,
+    #2c2420 75%,
+    #1a1613 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -609,10 +588,10 @@ const HeroTitle = styled.h1`
     color: transparent;
     -webkit-text-stroke: 0;
     text-shadow:
-      0 1px 1px rgba(255, 255, 255, 0.25),
-      0 -1px 1px rgba(0, 0, 0, 0.15),
-      1px 1px 2px rgba(255, 255, 255, 0.12),
-      0 0 8px rgba(40, 30, 20, 0.06);
+      0 2px 1px rgba(255, 255, 255, 0.35),
+      0 -1px 1px rgba(0, 0, 0, 0.25),
+      1px 2px 3px rgba(255, 255, 255, 0.18),
+      0 0 12px rgba(40, 30, 20, 0.1);
   }
 
   /* Subtle sheen — like light catching embossed cloth */
@@ -632,8 +611,8 @@ const HeroTitle = styled.h1`
       115deg,
       transparent 0%,
       transparent 40%,
-      rgba(255, 255, 255, 0.08) 48%,
-      rgba(255, 255, 255, 0.03) 52%,
+      rgba(255, 255, 255, 0.14) 48%,
+      rgba(255, 255, 255, 0.05) 52%,
       transparent 60%,
       transparent 100%
     );
@@ -651,7 +630,8 @@ const HeroLetter = styled.span`
   animation-delay: ${({ index }) => 0.1 + index * 0.05}s;
   color: inherit !important;
   -webkit-text-fill-color: inherit;
-  filter: drop-shadow(0 1px 2px rgba(30, 25, 20, 0.1));
+  filter: drop-shadow(0 1px 2px rgba(30, 25, 20, 0.18));
+  will-change: transform;
 `;
 
 const HeroLine = styled.div`
@@ -662,6 +642,7 @@ const HeroLine = styled.div`
   transform: scaleX(0);
   animation: ${lineExpand} 0.8s 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 `;
+
 
 
 const HeroImageContainer = styled.div`
@@ -713,36 +694,6 @@ const HeroImageBorder = styled.div`
     inset: -12px;
     border-radius: 32px;
   }
-`;
-
-/* ── Scroll cue ── */
-const ScrollCue = styled.div`
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  opacity: 0;
-  animation: ${fadeIn} 1s 2s ease both;
-`;
-
-const ScrollLine = styled.div`
-  width: 1px;
-  height: 40px;
-  background: ${warm.accent};
-  animation: ${scrollDown} 2s ease-in-out infinite;
-`;
-
-const ScrollText = styled.span`
-  font-family: "Outfit", sans-serif;
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: ${warm.mid} !important;
 `;
 
 /* ── Gallery section ── */
@@ -828,15 +779,15 @@ const GalleryItem = styled.div`
   overflow: visible;
   opacity: 0;
   cursor: pointer;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 
   ${({ visible, index, direction }) =>
     visible &&
     css`
-      animation: ${revealAnimation[direction] || slideFromBottom} 0.8s
-        ${index * 0.12}s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: ${revealAnimation[direction] || slideFromBottom} 0.6s
+        ${Math.min(index * 0.08, 0.4)}s cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
     `}
 
   &:hover {
@@ -858,11 +809,12 @@ const ShutterMask = styled.div`
     display: block;
     border-radius: 12px;
     filter: saturate(0.8) contrast(1.05);
-    transition: filter 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: filter 0.4s ease,
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     ${({ loaded }) =>
       loaded
         ? css`
-            animation: ${shutterOpen} 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation: ${shutterOpen} 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
           `
         : css`
             opacity: 0;
@@ -888,7 +840,8 @@ const ImageCaption = styled.span`
   ${({ visible, index }) =>
     visible &&
     css`
-      animation: ${fadeIn} 0.6s ${0.3 + index * 0.12}s ease both;
+      animation: ${fadeIn} 0.4s ${Math.min(0.2 + index * 0.08, 0.5)}s ease
+        both;
     `}
 `;
 
@@ -920,28 +873,6 @@ const EmptyState = styled.div`
     border-radius: 6px;
     font-size: 0.8rem;
   }
-`;
-
-/* ── Footer ── */
-const FooterSection = styled.footer`
-  text-align: center;
-  padding: 3rem 1rem 4rem;
-
-  p {
-    font-family: "Outfit", sans-serif;
-    font-weight: 300;
-    font-size: 0.75rem;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: ${warm.mid} !important;
-  }
-`;
-
-const FooterLine = styled.div`
-  width: 30px;
-  height: 1px;
-  background: ${warm.sand};
-  margin: 0 auto 1.5rem;
 `;
 
 /* ── Lightbox ── */
