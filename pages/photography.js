@@ -358,12 +358,59 @@ const PhotographyGlobalStyle = createGlobalStyle`
   nav svg, header svg {
     fill: ${warm.dark} !important;
   }
+
 `;
 
 const Photography = ({ heroImage, photos }) => {
   const { progressRef, lettersRef } = useScrollRefs();
   const [sectionRef, sectionVisible] = useReveal(0.05);
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const heroRef = useRef(null);
+
+  const navAnchorRef = useRef(null);
+
+  // Move the navbar into our page flow (between hero and gallery)
+  useEffect(() => {
+    const header = document.querySelector("header");
+    const nav = header?.parentElement;
+    const spacer = nav?.nextElementSibling;
+    const anchor = navAnchorRef.current;
+    if (!nav || !anchor) return;
+
+    // Remember original parent and position
+    const origParent = nav.parentElement;
+    const origNext = nav.nextElementSibling;
+
+    // Move navbar into our anchor point
+    anchor.appendChild(nav);
+
+    // Make it sticky instead of fixed
+    nav.style.position = "sticky";
+    nav.style.top = "0";
+    nav.style.left = "";
+    nav.style.right = "";
+    nav.style.zIndex = "1050";
+
+    // Hide the spacer
+    if (spacer && spacer.style.height === "80px") {
+      spacer.style.display = "none";
+    }
+
+    return () => {
+      // Move navbar back to original location
+      if (origNext) {
+        origParent.insertBefore(nav, origNext);
+      } else {
+        origParent.appendChild(nav);
+      }
+      nav.style.position = "";
+      nav.style.top = "";
+      nav.style.left = "";
+      nav.style.right = "";
+      nav.style.zIndex = "";
+      if (spacer) spacer.style.display = "";
+    };
+  }, []);
 
   const titleLetters = "photography".split("");
 
@@ -375,32 +422,30 @@ const Photography = ({ heroImage, photos }) => {
         <ScrollProgress ref={progressRef} />
 
         {/* ── Hero ── */}
-        <HeroSection>
-          <HeroTitle>
-            {titleLetters.map((letter, i) => (
-              <HeroLetter
-                key={i}
-                ref={(el) => {
-                  lettersRef.current[i] = el;
-                }}
-                index={i}
-              >
-                {letter}
-              </HeroLetter>
-            ))}
-          </HeroTitle>
+        <HeroSection ref={heroRef} $bg={heroImage}>
+          <HeroOverlay />
+          <HeroContent>
+            <HeroTitle>
+              {titleLetters.map((letter, i) => (
+                <HeroLetter
+                  key={i}
+                  ref={(el) => {
+                    lettersRef.current[i] = el;
+                  }}
+                  index={i}
+                >
+                  {letter}
+                </HeroLetter>
+              ))}
+            </HeroTitle>
 
-          <HeroLine />
-
-          {heroImage && (
-            <HeroImageContainer>
-              <HeroImageInner>
-                <img src={heroImage} alt="Featured photograph" />
-              </HeroImageInner>
-              <HeroImageBorder />
-            </HeroImageContainer>
-          )}
+            <HeroAuthor>Deval Parikh</HeroAuthor>
+          </HeroContent>
+          <HeroScrollHint>&#8595;</HeroScrollHint>
         </HeroSection>
+
+        {/* ── Navbar anchor: navbar gets moved here, sticky after hero ── */}
+        <NavAnchor ref={navAnchorRef} />
 
         {/* ── Gallery ── */}
         <GallerySection ref={sectionRef} visible={sectionVisible}>
@@ -507,13 +552,20 @@ const lightboxIn = keyframes`
 const PageOverride = styled.div`
   background: ${warm.cream};
   min-height: 100vh;
-  overflow: hidden;
   color: ${warm.dark};
   position: relative;
 
   * {
     color: ${warm.dark};
   }
+`;
+
+/* ── Nav anchor: navbar gets moved here between hero & gallery ── */
+const NavAnchor = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 1050;
+  background: ${warm.cream};
 `;
 
 /* ── Scroll progress ── */
@@ -534,15 +586,47 @@ const ScrollProgress = styled.div`
 const HeroSection = styled.section`
   position: relative;
   width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 3rem 1.25rem 4rem;
-  min-height: 100vh;
+  justify-content: center;
+  background: ${({ $bg }) =>
+    $bg ? `url("${$bg}") center center / cover no-repeat` : warm.dark};
+  overflow: hidden;
+`;
 
-  @media (min-width: 768px) {
-    padding: 3rem 2.5rem 5rem;
+const HeroOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+`;
+
+const HeroContent = styled.div`
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const HeroScrollHint = styled.div`
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.5rem;
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
   }
+
+  animation: bounce 2s 1.5s infinite, ${fadeIn} 1s 1.5s ease both;
 `;
 
 const HeroTitle = styled.h1`
@@ -634,6 +718,84 @@ const HeroLetter = styled.span`
   will-change: transform;
 `;
 
+const HeroAuthor = styled.span`
+  position: relative;
+  z-index: 2;
+  font-family: "Sora", "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1rem, 3vw, 1.6rem);
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  margin-top: 1.25rem;
+  opacity: 0;
+  animation: ${fadeIn} 1s 0.8s ease both;
+
+  /* Debossed lettering — lighter than title */
+  color: transparent !important;
+  background: linear-gradient(
+    170deg,
+    #4a403a 0%,
+    #5c514a 25%,
+    #3e3530 50%,
+    #544a44 75%,
+    #463d38 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 2px rgba(30, 25, 20, 0.18));
+
+  /* Inset / deboss shadow */
+  &::before {
+    content: "Deval Parikh";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    display: flex;
+    justify-content: center;
+    color: transparent;
+    -webkit-text-stroke: 0;
+    text-shadow:
+      0 2px 1px rgba(255, 255, 255, 0.35),
+      0 -1px 1px rgba(0, 0, 0, 0.25),
+      1px 2px 3px rgba(255, 255, 255, 0.18),
+      0 0 12px rgba(40, 30, 20, 0.1);
+  }
+
+  /* Sheen highlight */
+  &::after {
+    content: "Deval Parikh";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(
+      115deg,
+      transparent 0%,
+      transparent 40%,
+      rgba(255, 255, 255, 0.14) 48%,
+      rgba(255, 255, 255, 0.05) 52%,
+      transparent 60%,
+      transparent 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    pointer-events: none;
+  }
+`;
+
 const HeroLine = styled.div`
   width: 60px;
   height: 2px;
@@ -645,56 +807,6 @@ const HeroLine = styled.div`
 
 
 
-const HeroImageContainer = styled.div`
-  position: relative;
-  width: 100%;
-  max-width: 1000px;
-  opacity: 0;
-  animation: ${fadeIn} 1.2s 0.6s ease both;
-`;
-
-const HeroImageInner = styled.div`
-  position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-
-  @media (min-width: 768px) {
-    border-radius: 24px;
-  }
-
-  img {
-    width: 100%;
-    height: auto;
-    display: block;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    filter: saturate(0.85) contrast(1.05);
-    transition: filter 0.6s ease;
-
-    @media (min-width: 768px) {
-      aspect-ratio: 16 / 10;
-    }
-
-    &:hover {
-      filter: saturate(1) contrast(1);
-    }
-  }
-`;
-
-const HeroImageBorder = styled.div`
-  position: absolute;
-  inset: -8px;
-  border: 1px solid ${warm.sand};
-  border-radius: 20px;
-  pointer-events: none;
-  opacity: 0;
-  animation: ${fadeIn} 1s 1.4s ease both;
-
-  @media (min-width: 768px) {
-    inset: -12px;
-    border-radius: 32px;
-  }
-`;
 
 /* ── Gallery section ── */
 const GallerySection = styled.section`
