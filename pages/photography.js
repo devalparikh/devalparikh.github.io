@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback, memo } from "react";
 import styled, { keyframes, css, createGlobalStyle } from "styled-components";
 import fs from "fs";
 import path from "path";
+import exifr from "exifr";
 import Layout from "../components/Layout";
 
 const IMAGE_EXTENSIONS = new Set([
@@ -31,13 +32,67 @@ export async function getStaticProps() {
     (f) => path.basename(f, path.extname(f)).toLowerCase() === "hero"
   );
 
-  const photos = images
-    .filter((f) => f !== heroFile)
-    .map((f) => {
+  const galleryFiles = images.filter((f) => f !== heroFile);
+
+  const photos = await Promise.all(
+    galleryFiles.map(async (f) => {
       const name = path.basename(f, path.extname(f));
       const alt = name.replace(/[-_]/g, " ");
-      return { src: `/img/photography/${f}`, alt };
-    });
+      const filePath = path.join(dir, f);
+
+      let meta = null;
+      try {
+        const exif = await exifr.parse(filePath, {
+          pick: [
+            "Make",
+            "Model",
+            "FocalLength",
+            "FNumber",
+            "ExposureTime",
+            "ISO",
+            "DateTimeOriginal",
+            "LensModel",
+          ],
+        });
+        if (exif) {
+          meta = {};
+          if (exif.Make || exif.Model) {
+            const make = (exif.Make || "").trim();
+            const model = (exif.Model || "").trim();
+            meta.camera = model.startsWith(make)
+              ? model
+              : `${make} ${model}`.trim();
+          }
+          if (exif.LensModel) meta.lens = exif.LensModel;
+          if (exif.FocalLength) meta.focalLength = `${Math.round(exif.FocalLength)}mm`;
+          if (exif.FNumber) meta.aperture = `f/${exif.FNumber}`;
+          if (exif.ExposureTime) {
+            meta.shutter =
+              exif.ExposureTime < 1
+                ? `1/${Math.round(1 / exif.ExposureTime)}s`
+                : `${exif.ExposureTime}s`;
+          }
+          if (exif.ISO) meta.iso = `ISO ${exif.ISO}`;
+          if (exif.DateTimeOriginal) {
+            const d = new Date(exif.DateTimeOriginal);
+            if (!isNaN(d)) {
+              meta.date = d.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              });
+            }
+          }
+          // Remove meta if completely empty
+          if (Object.keys(meta).length === 0) meta = null;
+        }
+      } catch {
+        // no EXIF data available
+      }
+
+      return { src: `/img/photography/${f}`, alt, meta };
+    })
+  );
 
   return {
     props: {
@@ -238,6 +293,8 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
   const goPrev = () =>
     setCurrent((c) => (c - 1 + photos.length) % photos.length);
 
+  const meta = photos[current].meta;
+
   return (
     <LightboxOverlay onClick={onClose}>
       <LightboxContent>
@@ -267,9 +324,6 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
             }}
           />
         </LightboxImageWrapper>
-        <LightboxCaption onClick={(e) => e.stopPropagation()}>
-          {photos[current].alt}
-        </LightboxCaption>
         {!isZoomed && (
           <LightboxNav onClick={(e) => e.stopPropagation()}>
             <NavButton onClick={goPrev}>&larr;</NavButton>
@@ -281,6 +335,17 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
         )}
         {isZoomed && (
           <ZoomBadge>{Math.round(zoom * 100)}% — Esc to reset</ZoomBadge>
+        )}
+        {meta && (
+          <LightboxMetaBar onClick={(e) => e.stopPropagation()}>
+            {meta.camera && <MetaItem><MetaLabel>Camera</MetaLabel><MetaValue>{meta.camera}</MetaValue></MetaItem>}
+            {meta.lens && <MetaItem><MetaLabel>Lens</MetaLabel><MetaValue>{meta.lens}</MetaValue></MetaItem>}
+            {meta.focalLength && <MetaItem><MetaLabel>Focal</MetaLabel><MetaValue>{meta.focalLength}</MetaValue></MetaItem>}
+            {meta.aperture && <MetaItem><MetaLabel>Aperture</MetaLabel><MetaValue>{meta.aperture}</MetaValue></MetaItem>}
+            {meta.shutter && <MetaItem><MetaLabel>Shutter</MetaLabel><MetaValue>{meta.shutter}</MetaValue></MetaItem>}
+            {meta.iso && <MetaItem><MetaLabel>ISO</MetaLabel><MetaValue>{meta.iso}</MetaValue></MetaItem>}
+            {meta.date && <MetaItem><MetaLabel>Date</MetaLabel><MetaValue>{meta.date}</MetaValue></MetaItem>}
+          </LightboxMetaBar>
         )}
         <CloseButton
           onClick={(e) => {
@@ -1149,7 +1214,6 @@ const revealAnimation = {
 };
 
 const GalleryItem = styled.div`
-  border-radius: 12px;
   overflow: visible;
   opacity: 0;
   cursor: pointer;
@@ -1173,7 +1237,6 @@ const GalleryItem = styled.div`
 const ShutterMask = styled.div`
   width: 100%;
   overflow: hidden;
-  border-radius: 12px;
   background: ${warm.sand};
 
   img {
@@ -1181,7 +1244,6 @@ const ShutterMask = styled.div`
     height: 100%;
     object-fit: cover;
     display: block;
-    border-radius: 12px;
     filter: saturate(0.8) contrast(1.05);
     transition: filter 0.4s ease,
       transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1280,7 +1342,6 @@ const LightboxContent = styled.div`
 const LightboxImageWrapper = styled.div`
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
   max-width: 90vw;
   max-height: calc(100vh - 160px);
   display: flex;
@@ -1296,21 +1357,9 @@ const LightboxImage = styled.img`
   max-width: 90vw;
   max-height: calc(100vh - 160px);
   object-fit: contain;
-  border-radius: 8px;
   filter: saturate(0.9) contrast(1.02);
   transform-origin: center center;
   pointer-events: auto;
-`;
-
-const LightboxCaption = styled.p`
-  font-family: "Outfit", sans-serif;
-  font-weight: 300;
-  font-size: 0.8rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: ${warm.sand} !important;
-  margin-top: 1rem;
-  flex-shrink: 0;
 `;
 
 const LightboxNav = styled.div`
@@ -1383,4 +1432,48 @@ const CloseButton = styled.button`
   &:hover {
     color: ${warm.cream} !important;
   }
+`;
+
+const LightboxMetaBar = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  flex-wrap: wrap;
+
+  @media (max-width: 640px) {
+    gap: 1rem;
+    padding: 0.6rem 1rem;
+  }
+`;
+
+const MetaItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+`;
+
+const MetaLabel = styled.span`
+  font-family: "Outfit", sans-serif;
+  font-weight: 400;
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: ${warm.mid} !important;
+`;
+
+const MetaValue = styled.span`
+  font-family: "Outfit", sans-serif;
+  font-weight: 300;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  color: ${warm.sand} !important;
+  white-space: nowrap;
 `;
