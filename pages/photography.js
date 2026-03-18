@@ -323,17 +323,19 @@ const useScrollProgress = () => {
 };
 
 /* ────────── Book opening scroll animation ────────── */
+/*  Animates real width/height/font-size (not transform: scale)              */
+/*  so text and edges stay crisp at every scroll position.                   */
 const useBookAnimation = (sectionRef) => {
   const assemblyRef = useRef(null);
   const spineRef = useRef(null);
   const pageRightRef = useRef(null);
-  const pageBottomRef = useRef(null);
-  const shadowRef = useRef(null);
   const hintRef = useRef(null);
   const openHintRef = useRef(null);
 
   useEffect(() => {
     let ticking = false;
+
+    const lerp = (a, b, t) => a + (b - a) * t;
 
     const update = () => {
       const section = sectionRef.current;
@@ -349,38 +351,59 @@ const useBookAnimation = (sectionRef) => {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
 
-      // Book natural dimensions (must match CSS)
+      // Book natural dimensions & aspect ratio
+      const bookRatio = 1.45; // h / w
       const bookW = Math.min(0.55 * vw, 400);
-      const bookH = bookW * 1.45;
+      const bookH = bookW * bookRatio;
 
-      // Scale needed to fill viewport (slight overshoot to avoid edge gaps)
-      const targetScale = Math.max(vw / bookW, vh / bookH) * 1.05;
-      const currentScale = 1 + (targetScale - 1) * ease;
+      // Final size: covers the entire viewport while keeping book proportions
+      // (excess is clipped by the stage's overflow: hidden)
+      const finalW = Math.max(vw, vh / bookRatio);
+      const finalH = finalW * bookRatio;
 
-      // 3D rotation — flattens as book zooms in
+      // Grow uniformly — aspect ratio stays constant, feels like zooming in
+      const w = lerp(bookW, finalW, ease);
+      const h = lerp(bookH, finalH, ease);
+      assembly.style.width = `${w}px`;
+      assembly.style.height = `${h}px`;
+
+      // 3D rotation only — NO scale()
       const rotY = -15 * (1 - ease);
       const rotX = 4 * (1 - ease);
-
       assembly.style.transform =
-        `perspective(1200px) rotateY(${rotY}deg) rotateX(${rotX}deg) scale(${currentScale})`;
+        `perspective(1200px) rotateY(${rotY}deg) rotateX(${rotX}deg)`;
 
-      // Set text sizes as CSS vars so they scale perfectly to match hero
-      const titleTarget = Math.max(56, Math.min(0.14 * vw, 176));
-      const authorTarget = Math.max(16, Math.min(0.03 * vw, 25.6));
-      assembly.style.setProperty("--title-size", `${titleTarget / targetScale}px`);
-      assembly.style.setProperty("--author-size", `${authorTarget / targetScale}px`);
-      assembly.style.setProperty("--title-ls", `${-2 / targetScale}px`);
-      assembly.style.setProperty("--author-ls", `${8 / targetScale}px`);
+      // Cover border-radius
+      assembly.style.setProperty("--cover-radius", `${3 * (1 - ease)}px`);
 
-      // Fade decorations (spine, pages) early
-      const decoFade = Math.max(0, 1 - ease * 2.5);
-      if (spineRef.current) spineRef.current.style.opacity = String(decoFade);
-      if (pageRightRef.current) pageRightRef.current.style.opacity = String(decoFade);
-      if (pageBottomRef.current) pageBottomRef.current.style.opacity = String(decoFade);
+      // Font sizes — keep proportional to current book width so text
+      // feels printed on the cover and scales uniformly with it
+      assembly.style.setProperty("--title-size", `${w * 0.11}px`);
+      assembly.style.setProperty("--author-size", `${Math.max(8, w * 0.028)}px`);
+      assembly.style.setProperty("--title-ls", `${-(w * 0.002)}px`);
+      assembly.style.setProperty("--author-ls", `${w * 0.008}px`);
+      assembly.style.setProperty("--title-gap", `${w * 0.03}px`);
 
-      // Shadow fades as book fills viewport
-      if (shadowRef.current) {
-        shadowRef.current.style.opacity = String(Math.max(0, 0.8 * (1 - ease * 1.4)));
+      // Spine — shrink width (no opacity fade to prevent color blending)
+      if (spineRef.current) {
+        const sw = 22 * (1 - Math.min(ease * 1.8, 1));
+        spineRef.current.style.width = `${sw}px`;
+        spineRef.current.style.left = `${-sw}px`;
+      }
+
+      // Page edges — shrink (no opacity fade)
+      if (pageRightRef.current) {
+        const pw = 14 * (1 - Math.min(ease * 1.8, 1));
+        pageRightRef.current.style.width = `${pw}px`;
+        pageRightRef.current.style.right = `${-pw}px`;
+      }
+
+      // Shadow — applied directly on assembly to avoid misaligned separate element
+      const shadowAlpha = Math.max(0, 0.8 * (1 - ease * 1.4));
+      if (shadowAlpha > 0) {
+        assembly.style.boxShadow = `0 35px 70px rgba(0,0,0,${(0.25 * shadowAlpha).toFixed(3)}), 0 12px 24px rgba(0,0,0,${(0.18 * shadowAlpha).toFixed(3)}), 0 4px 8px rgba(0,0,0,${(0.1 * shadowAlpha).toFixed(3)})`;
+      } else {
+        assembly.style.boxShadow = 'none';
       }
 
       // "scroll" hint — visible initially, fades fast
@@ -419,8 +442,6 @@ const useBookAnimation = (sectionRef) => {
     assemblyRef,
     spineRef,
     pageRightRef,
-    pageBottomRef,
-    shadowRef,
     hintRef,
     openHintRef,
   };
@@ -464,8 +485,6 @@ const Photography = ({ heroImage, photos }) => {
     assemblyRef,
     spineRef,
     pageRightRef,
-    pageBottomRef,
-    shadowRef,
     hintRef,
     openHintRef,
   } = useBookAnimation(bookSectionRef);
@@ -518,14 +537,11 @@ const Photography = ({ heroImage, photos }) => {
         {/* ── Book Hero ── */}
         <BookSection ref={bookSectionRef}>
           <BookStage>
-            <BookShadowEl ref={shadowRef} />
             <BookAssembly ref={assemblyRef}>
               {/* Spine — left edge */}
               <BookSpineEl ref={spineRef} />
               {/* Page edges — right */}
               <BookPageRight ref={pageRightRef} />
-              {/* Page edges — bottom */}
-              <BookPageBottom ref={pageBottomRef} />
               {/* Cover face */}
               <BookCoverFace $bg={heroImage}>
                 <CoverOverlay />
@@ -693,6 +709,7 @@ const ScrollProgress = styled.div`
 const BookSection = styled.section`
   position: relative;
   height: 250vh;
+  background: #E8E0D4;
 `;
 
 const BookStage = styled.div`
@@ -702,34 +719,53 @@ const BookStage = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${warm.cream};
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(210, 195, 170, 0.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 80%, rgba(195, 180, 160, 0.3) 0%, transparent 50%),
+    #E8E0D4;
   overflow: hidden;
   z-index: 100;
+
+  /* Paper fiber texture */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.32;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+  }
+
+  /* Subtle paper speckle */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.08;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='speck'%3E%3CfeTurbulence type='turbulence' baseFrequency='2.5' numOctaves='2' seed='8' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23speck)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
 `;
 
-/* Shadow sits behind the book */
-const BookShadowEl = styled.div`
-  position: absolute;
-  width: min(55vw, 400px);
-  aspect-ratio: 0.69;
-  border-radius: 4px;
-  box-shadow:
-    0 35px 70px rgba(0, 0, 0, 0.25),
-    0 12px 24px rgba(0, 0, 0, 0.18),
-    0 4px 8px rgba(0, 0, 0, 0.1);
-  pointer-events: none;
-  z-index: 0;
-`;
-
-/* The whole book assembly — gets scale + rotation via JS */
+/* The whole book assembly — width/height/transform set by JS */
 const BookAssembly = styled.div`
   position: relative;
+  /* Fallback before JS sets dimensions */
   width: min(55vw, 400px);
   aspect-ratio: 0.69;
-  will-change: transform;
+  will-change: width, height, transform;
   transform-origin: center center;
-  /* Initial 3D pose before JS kicks in */
-  transform: perspective(1200px) rotateY(-15deg) rotateX(4deg) scale(1);
+  transform: perspective(1200px) rotateY(-15deg) rotateX(4deg);
 `;
 
 /* ── Book spine (left edge) ── */
@@ -789,34 +825,12 @@ const BookPageRight = styled.div`
   border-left: 1px solid rgba(0, 0, 0, 0.08);
 `;
 
-/* ── Page edges (bottom) ── */
-const BookPageBottom = styled.div`
-  position: absolute;
-  bottom: -14px;
-  left: 3px;
-  right: 3px;
-  height: 14px;
-  z-index: 1;
-  pointer-events: none;
-  border-radius: 0 0 2px 2px;
-  background:
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.06), transparent 40%, transparent),
-    repeating-linear-gradient(
-      to right,
-      #f0ebe3 0px,
-      #f0ebe3 1.5px,
-      #e5dfd6 1.5px,
-      #e5dfd6 3px
-    );
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-`;
-
 /* ── Book cover face ── */
 const BookCoverFace = styled.div`
   position: absolute;
   inset: 0;
   z-index: 2;
-  border-radius: 3px;
+  border-radius: var(--cover-radius, 3px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -824,7 +838,6 @@ const BookCoverFace = styled.div`
   justify-content: center;
   background: ${({ $bg }) =>
     $bg ? `url("${$bg}") center center / cover no-repeat` : warm.dark};
-  /* Subtle border to define cover edge */
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
 `;
 
@@ -942,7 +955,7 @@ const CoverAuthor = styled.span`
   font-size: var(--author-size, 0.5rem);
   letter-spacing: var(--author-ls, 2px);
   text-transform: uppercase;
-  margin-top: 0.8em;
+  margin-top: var(--title-gap, 12px);
   opacity: 0;
   animation: ${fadeIn} 1s 0.8s ease both;
   font-kerning: none;
