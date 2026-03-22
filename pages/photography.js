@@ -202,6 +202,8 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
   const dragStart = useRef({ x: 0, y: 0 });
   const panStart = useRef({ x: 0, y: 0 });
   const imageRef = useRef(null);
+  const touchStart = useRef({ x: 0, y: 0, time: 0 });
+  const [swipeOffset, setSwipeOffset] = useState(0);
 
   const isZoomed = zoom > 1;
 
@@ -293,6 +295,34 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
   const goPrev = () =>
     setCurrent((c) => (c - 1 + photos.length) % photos.length);
 
+  const handleTouchStart = useCallback(
+    (e) => {
+      if (isZoomed) return;
+      const touch = e.touches[0];
+      touchStart.current = { x: touch.clientX, y: touch.clientY, time: Date.now() };
+      setSwipeOffset(0);
+    },
+    [isZoomed]
+  );
+
+  const handleTouchMove = useCallback(
+    (e) => {
+      if (isZoomed) return;
+      const dx = e.touches[0].clientX - touchStart.current.x;
+      setSwipeOffset(dx);
+    },
+    [isZoomed]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    if (isZoomed) return;
+    const elapsed = Date.now() - touchStart.current.time;
+    const threshold = elapsed < 300 ? 30 : 60;
+    if (swipeOffset < -threshold) goNext();
+    else if (swipeOffset > threshold) goPrev();
+    setSwipeOffset(0);
+  }, [isZoomed, swipeOffset, goNext, goPrev]);
+
   const meta = photos[current].meta;
 
   return (
@@ -306,6 +336,9 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           $isZoomed={isZoomed}
           $dragging={dragging}
         >
@@ -315,10 +348,10 @@ const Lightbox = ({ photos, activeIndex, onClose }) => {
             onClick={handleImageClick}
             draggable={false}
             style={{
-              transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${
+              transform: `scale(${zoom}) translate(${(pan.x + (isZoomed ? 0 : swipeOffset)) / zoom}px, ${
                 pan.y / zoom
               }px)`,
-              transition: dragging
+              transition: dragging || swipeOffset !== 0
                 ? "none"
                 : "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
@@ -599,15 +632,12 @@ const Photography = ({ heroImage, photos }) => {
       <PageOverride>
         <ScrollProgress ref={progressRef} />
 
-        {/* ── Book Hero ── */}
+        {/* ── Book Hero (temporarily disabled) ──
         <BookSection ref={bookSectionRef}>
           <BookStage>
             <BookAssembly ref={assemblyRef}>
-              {/* Spine — left edge */}
               <BookSpineEl ref={spineRef} />
-              {/* Page edges — right */}
               <BookPageRight ref={pageRightRef} />
-              {/* Cover face */}
               <BookCoverFace $bg={heroImage}>
                 <CoverOverlay />
                 <CoverContent>
@@ -627,8 +657,8 @@ const Photography = ({ heroImage, photos }) => {
           </BookStage>
         </BookSection>
 
-        {/* ── Navbar anchor ── */}
         <NavAnchor ref={navAnchorRef} />
+        */}
 
         {/* ── Gallery ── */}
         <GallerySection ref={sectionRef} visible={sectionVisible}>
@@ -1139,9 +1169,13 @@ const BookScrollHint = styled.div`
 
 const GallerySection = styled.section`
   position: relative;
-  padding: 5rem 1.5rem 4rem;
+  padding: 3rem 1rem 3rem;
   max-width: 1400px;
   margin: 0 auto;
+
+  @media (min-width: 480px) {
+    padding: 4rem 1.5rem 4rem;
+  }
 
   @media (min-width: 768px) {
     padding: 6rem 3rem 5rem;
@@ -1150,7 +1184,11 @@ const GallerySection = styled.section`
 
 const GalleryIntro = styled.div`
   text-align: center;
-  margin-bottom: 5rem;
+  margin-bottom: 2.5rem;
+
+  @media (min-width: 768px) {
+    margin-bottom: 5rem;
+  }
 
   h2 {
     font-family: "Sora", "Outfit", sans-serif;
@@ -1194,8 +1232,13 @@ const GalleryDivider = styled.div`
 
 const MasonryGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
 
   @media (min-width: 640px) {
     grid-template-columns: repeat(3, 1fr);
@@ -1336,14 +1379,18 @@ const LightboxContent = styled.div`
   justify-content: center;
   cursor: default;
   animation: ${lightboxIn} 0.15s ease-out;
-  padding: 1rem;
+  padding: 0.5rem;
+
+  @media (min-width: 640px) {
+    padding: 1rem;
+  }
 `;
 
 const LightboxImageWrapper = styled.div`
   position: relative;
   overflow: hidden;
-  max-width: 90vw;
-  max-height: calc(100vh - 160px);
+  max-width: 95vw;
+  max-height: calc(100vh - 120px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1351,38 +1398,59 @@ const LightboxImageWrapper = styled.div`
     $dragging ? "grabbing" : $isZoomed ? "grab" : "zoom-in"};
   touch-action: none;
   user-select: none;
+
+  @media (min-width: 640px) {
+    max-width: 90vw;
+    max-height: calc(100vh - 160px);
+  }
 `;
 
 const LightboxImage = styled.img`
-  max-width: 90vw;
-  max-height: calc(100vh - 160px);
+  max-width: 95vw;
+  max-height: calc(100vh - 120px);
   object-fit: contain;
   filter: saturate(0.9) contrast(1.02);
   transform-origin: center center;
   pointer-events: auto;
+
+  @media (min-width: 640px) {
+    max-width: 90vw;
+    max-height: calc(100vh - 160px);
+  }
 `;
 
 const LightboxNav = styled.div`
   display: flex;
   align-items: center;
-  gap: 2rem;
-  margin-top: 0.75rem;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
   flex-shrink: 0;
+
+  @media (min-width: 640px) {
+    gap: 2rem;
+    margin-top: 0.75rem;
+  }
 `;
 
 const NavButton = styled.button`
   background: none;
   border: 1px solid ${warm.mid};
   color: ${warm.cream} !important;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  font-size: 1.2rem;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+
+  @media (min-width: 640px) {
+    width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
+  }
 
   &:hover:not(:disabled) {
     background: ${warm.accent};
@@ -1417,17 +1485,27 @@ const ZoomBadge = styled.div`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 1rem;
-  right: 1.5rem;
+  top: 0.5rem;
+  right: 0.5rem;
   background: none;
   border: none;
   color: ${warm.sand} !important;
   font-size: 2rem;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.75rem;
   line-height: 1;
   transition: color 0.3s ease;
   z-index: 1;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (min-width: 640px) {
+    top: 1rem;
+    right: 1.5rem;
+  }
 
   &:hover {
     color: ${warm.cream} !important;
@@ -1442,14 +1520,19 @@ const LightboxMetaBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
-  padding: 0.75rem 1.5rem;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
   flex-wrap: wrap;
 
-  @media (max-width: 640px) {
+  @media (min-width: 480px) {
     gap: 1rem;
     padding: 0.6rem 1rem;
+  }
+
+  @media (min-width: 640px) {
+    gap: 2rem;
+    padding: 0.75rem 1.5rem;
   }
 `;
 
