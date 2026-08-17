@@ -30,3 +30,6 @@ Thumbs.db
 # misc
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated photo derivatives — rebuilt by `npm run photos`
+/public/img/photography/

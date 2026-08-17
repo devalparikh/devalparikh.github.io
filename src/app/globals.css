@@ -1,0 +1,507 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Design tokens
+
+   `parchment` (light) is the default so the site renders correctly before any
+   script runs; `inkember` (dark) overrides the same names. Every colour in the
+   codebase resolves through these tokens — no raw hex outside this block.
+   ========================================================================== */
+
+@theme {
+  /* Parchment — warm light editorial */
+  --color-base-100: #faf8f5;
+  --color-base-200: #f0ece6;
+  --color-base-300: #e5dfd7;
+  --color-base-content: #1a1815;
+  --color-primary: #9b6b3e;
+  --color-neutral: #d4cfc7;
+  --color-neutral-content: #6b6560;
+
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* One easing curve for the whole site keeps motion feeling of a piece. */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  /* Hairlines and hover washes are always the text colour at low alpha, so
+     they stay legible in both themes without a second set of tokens. */
+  --rule: color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  --rule-soft: color-mix(in oklab, var(--color-base-content) 8%, transparent);
+  --wash: color-mix(in oklab, var(--color-base-content) 7%, transparent);
+  --noise-opacity: 0.035;
+}
+
+[data-theme="inkember"] {
+  --color-base-100: #08080a;
+  --color-base-200: #111114;
+  --color-base-300: #161619;
+  --color-base-content: #e8e4df;
+  --color-primary: #c8956c;
+  --color-neutral: #1e1e22;
+  --color-neutral-content: #9a9590;
+
+  --rule: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+  --rule-soft: color-mix(in oklab, var(--color-base-content) 7%, transparent);
+  --wash: color-mix(in oklab, var(--color-base-content) 8%, transparent);
+  --noise-opacity: 0.025;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* A faint grain keeps large flat areas from looking like plastic. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-primary) 26%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--color-base-content) 14%, transparent);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--color-base-content) 24%, transparent);
+}
+
+/* ==========================================================================
+   Typography primitives
+   ========================================================================== */
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 480;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.kicker {
+  color: color-mix(in oklab, var(--color-neutral-content) 82%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.lede {
+  color: var(--color-neutral-content);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+/* ==========================================================================
+   Reveal — the staggered entrance
+
+   Elements rendered with `data-reveal="in"` animate on first paint; the
+   scroll variant ships as `pending` and is promoted by an IntersectionObserver.
+   Ordering comes from `--reveal-delay`, set per element.
+   ========================================================================== */
+
+@keyframes revealIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal {
+  opacity: 0;
+}
+
+.reveal[data-reveal="in"] {
+  animation: revealIn 720ms var(--ease-out-quint) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* ==========================================================================
+   Nav — sticky bar that gains its chrome once it leaves the hero
+   ========================================================================== */
+
+.nav-shell {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.nav-bar {
+  border-bottom: 1px solid transparent;
+  background-color: transparent;
+  transition:
+    background-color 320ms var(--ease-out-quint),
+    border-color 320ms var(--ease-out-quint),
+    backdrop-filter 320ms var(--ease-out-quint),
+    padding 320ms var(--ease-out-quint);
+}
+
+.nav-shell[data-stuck="true"] .nav-bar {
+  border-bottom-color: var(--rule);
+  background-color: color-mix(in oklab, var(--color-base-100) 82%, transparent);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+}
+
+/* The pill that glides to whichever item the pointer is over, falling back to
+   the active item when the pointer leaves. Shared by the nav bar and the
+   collection filter tabs. */
+.pill-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: 9px;
+  background-color: var(--wash);
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    transform 300ms var(--ease-out-quint),
+    width 300ms var(--ease-out-quint),
+    opacity 180ms ease;
+}
+
+.pill-indicator[data-visible="true"] {
+  opacity: 1;
+}
+
+.pill-link {
+  position: relative;
+  z-index: 1;
+  border-radius: 9px;
+  color: var(--color-neutral-content);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 180ms ease;
+}
+
+.pill-link:hover,
+.pill-link[aria-current="page"],
+.pill-link[aria-selected="true"] {
+  color: var(--color-base-content);
+}
+
+/* ==========================================================================
+   Row list — the shared table used by every collection
+
+   The hover wash appears instantly and fades out softly; the moving parts
+   (caret, underline, arrow) ease in both directions. That mix is what makes
+   the row feel responsive without feeling twitchy.
+   ========================================================================== */
+
+.row-list {
+  border-top: 1px solid var(--rule);
+}
+
+.row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: start;
+  width: 100%;
+  margin: 0;
+  padding: 0.72rem 0.6rem 0.76rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--color-base-content);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.row::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: var(--wash);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease-out;
+}
+
+.row:hover::before,
+.row:focus-visible::before,
+.row[aria-current="true"]::before {
+  opacity: 0.75;
+  transition-duration: 0ms;
+}
+
+.row-caret {
+  color: var(--color-primary);
+  font-size: 1rem;
+  line-height: 1.3;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 200ms var(--ease-out-quint),
+    transform 200ms var(--ease-out-quint);
+}
+
+.row:hover .row-caret,
+.row:focus-visible .row-caret,
+.row[aria-current="true"] .row-caret {
+  opacity: 1;
+  transform: none;
+}
+
+.row-title {
+  font-size: 0.875rem;
+  font-weight: 560;
+  letter-spacing: -0.012em;
+  line-height: 1.4;
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in oklab, var(--color-base-content) 22%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition:
+    color 220ms ease,
+    text-decoration-color 250ms var(--ease-out-quint);
+}
+
+.row:hover .row-title,
+.row:focus-visible .row-title,
+.row[aria-current="true"] .row-title {
+  color: var(--color-primary);
+  text-decoration-color: currentColor;
+}
+
+.row-arrow {
+  display: inline-block;
+  margin-left: 0.3rem;
+  color: var(--color-neutral-content);
+  font-size: 0.7rem;
+  transform: translate(-2px, -1px);
+  transition:
+    color 180ms ease,
+    transform 200ms var(--ease-out-quint);
+}
+
+.row:hover .row-arrow,
+.row:focus-visible .row-arrow,
+.row[aria-current="true"] .row-arrow {
+  color: var(--color-primary);
+  transform: translate(0, -2px);
+}
+
+.row-subtitle {
+  display: block;
+  margin-top: 0.14rem;
+  color: color-mix(in oklab, var(--color-neutral-content) 88%, transparent);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.row-meta {
+  margin-top: 0.16rem;
+  color: color-mix(in oklab, var(--color-neutral-content) 70%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.row-badge {
+  display: inline-block;
+  margin-left: 0.45rem;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--color-neutral-content);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 12px minmax(0, 1fr);
+  }
+
+  .row-meta {
+    grid-column: 2;
+    margin-top: 0.24rem;
+  }
+}
+
+/* ==========================================================================
+   Detail panel
+   ========================================================================== */
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.panel {
+  animation: panelIn 320ms var(--ease-out-quint) both;
+}
+
+.panel-tag {
+  display: inline-block;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--color-neutral-content);
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+/* The detail view is a right-hand drawer at every width — full screen on
+   phones, a panel over the page on wider screens. */
+@keyframes drawerBackdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes drawerIn {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: color-mix(in oklab, var(--color-base-100) 62%, transparent);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  animation: drawerBackdropIn 240ms ease-out both;
+}
+
+.drawer {
+  position: fixed;
+  inset-block: 0;
+  right: 0;
+  z-index: 61;
+  width: min(30rem, 100%);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-left: 1px solid var(--rule);
+  background-color: var(--color-base-100);
+  animation: drawerIn 340ms var(--ease-out-quint) both;
+}
+
+/* ==========================================================================
+   Polaroid portrait
+   ========================================================================== */
+
+.polaroid {
+  padding: 0.5rem 0.5rem 1.55rem;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--color-base-content) 4%, #fdfcfa);
+  box-shadow:
+    0 1px 2px color-mix(in oklab, var(--color-base-content) 12%, transparent),
+    0 12px 28px -14px color-mix(in oklab, var(--color-base-content) 34%, transparent);
+  transform: rotate(-1.6deg);
+  transition: transform 420ms var(--ease-out-quint);
+}
+
+[data-theme="inkember"] .polaroid {
+  background: #e9e5df;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.4),
+    0 16px 34px -16px rgb(0 0 0 / 0.7);
+}
+
+.polaroid:hover {
+  transform: rotate(0deg) translateY(-2px);
+}
+
+.polaroid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #d9d4cd;
+}
+
+.polaroid figcaption {
+  margin-top: 0.55rem;
+  color: #4a453f;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Motion preferences
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+  }
+}
