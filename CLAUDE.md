@@ -176,6 +176,11 @@ very dark mid-tones of the night-side Earth so its body reads.
 `.hero-plate` sets a block of copy on the page background so the dots break
 around it instead of running underneath.
 
+The portrait has two interchangeable treatments in `components/home/Portrait.tsx`
+- `CirclePortrait` (in use) and `PolaroidPortrait`, which keeps the `.polaroid`
+styles alive. They share one prop shape, so swapping is a one-word import
+change; `PolaroidPortrait` is deliberately unreferenced, not dead code.
+
 ## Icons and portrait
 
 The home page portrait (`public/img/portrait.webp`), the favicon, `app/icon.png`,

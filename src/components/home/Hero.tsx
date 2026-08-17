@@ -1,6 +1,7 @@
 import { GlobeHalftone } from "./GlobeHalftone";
 import { Reveal } from "@/components/primitives/Reveal";
 import { site } from "@/content/site";
+import { CirclePortrait } from "./Portrait";
 import { SocialRow } from "./SocialRow";
 
 export function Hero() {
@@ -15,11 +16,12 @@ export function Hero() {
       <div className="hero-content">
         <div className="flex flex-col items-center gap-8 text-center sm:flex-row sm:justify-center sm:gap-10 sm:text-left">
           <Reveal index={0} className="shrink-0">
-            <figure className="polaroid w-[124px] sm:w-[136px]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={site.portrait.src} alt={site.portrait.alt} width={272} height={272} />
-              <figcaption>{site.portrait.caption}</figcaption>
-            </figure>
+            {/* Swap for PolaroidPortrait to get the framed treatment back. */}
+            <CirclePortrait
+              src={site.portrait.src}
+              alt={site.portrait.alt}
+              caption={site.portrait.caption}
+            />
           </Reveal>
 
           <div className="hero-plate max-w-md">
