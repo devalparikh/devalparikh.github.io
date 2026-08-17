@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import { ExternalIcon } from "@/components/primitives/ExternalIcon";
 import { Portal } from "@/components/primitives/Portal";
 import type { Entry } from "@/content/types";
+import { EntryMark } from "./EntryMark";
+import { orderTags } from "@/lib/tags";
 import { isExternal } from "./entry-helpers";
 
 interface EntryDrawerProps {
@@ -78,6 +80,9 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
           </button>
 
           <header className="mt-7">
+            {entry.mark && (
+              <EntryMark mark={entry.mark} label={entry.title} className="mb-3 size-8 rounded-md" />
+            )}
             {kicker && <p className="kicker">{kicker}</p>}
             <h2
               id="drawer-heading"
@@ -115,7 +120,7 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
 
           {entry.sections?.map((section) => (
             <section key={section.heading} className="mt-8">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-neutral-content">
+              <h3 className="panel-section-heading">
                 {section.heading}
               </h3>
               {section.body && (
@@ -141,11 +146,11 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
 
           {entry.tags?.length ? (
             <section className="mt-8">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-neutral-content">
+              <h3 className="panel-section-heading">
                 Stack
               </h3>
               <ul className="mt-3 flex flex-wrap gap-1.5">
-                {entry.tags.map((tag) => (
+                {orderTags(entry.tags).map((tag) => (
                   <li key={tag} className="panel-tag">
                     {tag}
                   </li>

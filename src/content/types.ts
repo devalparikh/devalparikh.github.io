@@ -15,6 +15,17 @@ export interface EntryLink {
   href: string;
 }
 
+/**
+ * The small square shown at the start of a row. Prefer `src` — a square logo
+ * asset. Wide wordmarks are unreadable at this size, so those companies fall
+ * back to initials on their brand colour.
+ */
+export interface EntryMark {
+  src?: string;
+  monogram?: string;
+  color?: string;
+}
+
 export interface Entry {
   /** Stable slug — also the deep-link fragment for the detail panel. */
   id: string;
@@ -23,6 +34,8 @@ export interface Entry {
   subtitle?: string;
   /** Small pill next to the title — e.g. where an article was published. */
   badge?: string;
+  /** Company or product logo shown at the start of the row. */
+  mark?: EntryMark;
   /** Right-aligned monospace column: a date range or a year. */
   meta?: string;
   /** Single-line note rendered under the row. */

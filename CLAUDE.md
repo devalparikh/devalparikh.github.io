@@ -47,7 +47,13 @@ so they share one `Entry` shape:
 - `title` / `subtitle` / `badge` / `meta` — the row itself
 - `summary` — the note under the row title
 - `categories` — must match a `Filter.id` on the collection
-- `tags`, `sections`, `highlights`, `links`, `image` — drawer content
+- `mark` — the small square logo at the start of the row. Prefer `src` with a
+  **square** asset in `public/img/logos/`; wide wordmarks are illegible at 22px,
+  so those fall back to `{ monogram, color }` (Capital One does this today —
+  drop in a square `capital-one.svg` and switch it over if one turns up)
+- `tags`, `sections`, `highlights`, `links`, `image` — drawer content. Stack
+  chips are reordered at render time by `lib/tags.ts`, so declare them in
+  whatever order reads best
 - `href` — where the row goes when it has no drawer content
 
 An entry opens the drawer when it has `sections`, `highlights` or `tags`;
@@ -75,6 +81,17 @@ typography → reveal → nav → row list → drawer → polaroid → motion pr
 - **Tailwind vs CSS** — use Tailwind utilities for layout and one-off styling.
   Reach for a class in `globals.css` only for multi-part interactive pieces
   where pseudo-elements and state selectors would be unreadable as utilities.
+
+### Stack chip order
+
+`lib/tags.ts` sorts every stack into five tiers — concept, cloud, language,
+framework, service — so each entry reads the same way: what the work is, where
+it runs, what it is written in, what it is built with, what it plugs into.
+Within a tier the declared order is preserved.
+
+The first four tiers are explicit sets; anything unlisted falls through to
+`service`, which is the open-ended tier. When a new tag lands in the wrong
+place, add it to the right set rather than reordering the entry.
 
 ### Entrances
 
@@ -116,6 +133,17 @@ WebP into `public/img/photography/`, reads each shot's EXIF, and writes
 
 Project screenshots in `public/img/` are converted to WebP by hand; they change
 rarely enough not to warrant a pipeline.
+
+## Icons and portrait
+
+The home page portrait (`public/img/portrait.webp`), the favicon, `app/icon.png`,
+`app/apple-icon.png` and everything in `public/icons/` are all crops of the same
+photo, `oldportfolio/img/profile.jpg`. Regenerate them together if the photo
+changes — `public/icons/` alone holds 27 sizes, and a half-updated set leaves the
+old mark showing on some platforms.
+
+The `<link rel="icon">` tags come from Next's `app/icon.png` and
+`app/apple-icon.png` file conventions, so `metadata.icons` is deliberately unset.
 
 ## Commands
 

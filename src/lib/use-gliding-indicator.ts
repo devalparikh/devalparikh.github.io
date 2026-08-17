@@ -5,9 +5,10 @@ import { useCallback, useLayoutEffect, useRef } from "react";
 /**
  * Drives the pill that glides between items in a horizontal control.
  *
- * The pill is positioned against the track element, which is also the scroll
- * container's content box, so the maths stays correct while the track is
- * scrolled horizontally on narrow screens.
+ * Position is measured as a rect delta against the track rather than with
+ * `offsetLeft`, because some items (the overflow menu's trigger) sit inside
+ * their own positioned wrapper and so report offsets against that instead.
+ * Rect deltas are also unaffected by the track being scrolled.
  */
 export function useGlidingIndicator(targetId: string | undefined) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -24,7 +25,8 @@ export function useGlidingIndicator(targetId: string | undefined) {
 
   const position = useCallback(() => {
     const indicator = indicatorRef.current;
-    if (!indicator) return;
+    const track = trackRef.current;
+    if (!indicator || !track) return;
 
     const target = targetId ? itemRefs.current.get(targetId) : undefined;
     if (!target) {
@@ -32,8 +34,11 @@ export function useGlidingIndicator(targetId: string | undefined) {
       return;
     }
 
-    indicator.style.width = `${target.offsetWidth}px`;
-    indicator.style.transform = `translate3d(${target.offsetLeft}px, 0, 0)`;
+    const trackRect = track.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+
+    indicator.style.width = `${targetRect.width}px`;
+    indicator.style.transform = `translate3d(${targetRect.left - trackRect.left}px, 0, 0)`;
     indicator.dataset.visible = "true";
   }, [targetId]);
 
@@ -45,25 +50,12 @@ export function useGlidingIndicator(targetId: string | undefined) {
 
     const observer = new ResizeObserver(position);
     observer.observe(track);
+
+    // Web fonts land after first paint and shift every item.
+    document.fonts?.ready.then(position).catch(() => undefined);
+
     return () => observer.disconnect();
   }, [position]);
 
-  /**
-   * Centres an item in its own scroller. `scrollIntoView` is deliberately
-   * avoided here: it also scrolls ancestors vertically, which would jump the
-   * page past the hero when the bar starts below the fold.
-   */
-  const scrollItemIntoView = useCallback((id: string) => {
-    const item = itemRefs.current.get(id);
-    const scroller = trackRef.current?.parentElement;
-    if (!item || !scroller) return;
-    if (scroller.scrollWidth <= scroller.clientWidth) return;
-
-    scroller.scrollTo({
-      left: Math.max(0, item.offsetLeft - (scroller.clientWidth - item.offsetWidth) / 2),
-      behavior: "auto",
-    });
-  }, []);
-
-  return { trackRef, indicatorRef, registerItem, scrollItemIntoView };
+  return { trackRef, indicatorRef, registerItem };
 }

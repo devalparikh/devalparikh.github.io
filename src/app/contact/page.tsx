@@ -3,6 +3,7 @@ import { PageFrame } from "@/components/chrome/PageFrame";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { Reveal } from "@/components/primitives/Reveal";
 import { socialIcons } from "@/components/primitives/icons";
+import { SmartLink } from "@/components/primitives/SmartLink";
 import { socials } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -25,12 +26,7 @@ export default function ContactPage() {
 
             return (
               <li key={social.id}>
-                <a
-                  href={social.href}
-                  target={social.external ? "_blank" : undefined}
-                  rel={social.external ? "noopener noreferrer" : undefined}
-                  className="row"
-                >
+                <SmartLink href={social.href} className="row">
                   <span className="row-caret" aria-hidden="true">
                     ›
                   </span>
@@ -44,7 +40,7 @@ export default function ContactPage() {
                     )}
                   </span>
                   <span className="row-meta">{social.value}</span>
-                </a>
+                </SmartLink>
               </li>
             );
           })}

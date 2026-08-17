@@ -3,9 +3,10 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { Reveal } from "@/components/primitives/Reveal";
+import { RowContent } from "@/components/collection/RowContent";
+import { hasDetail, isExternal } from "@/components/collection/entry-helpers";
 import type { Collection } from "@/content/types";
 import { playInterfaceSound } from "@/lib/interface-sound";
-import { hasDetail, isExternal } from "@/components/collection/entry-helpers";
 
 interface PreviewListProps {
   collection: Collection;
@@ -42,24 +43,6 @@ export function PreviewList({ collection, href, limit = 3, index = 0 }: PreviewL
           if (!target) return null;
 
           const external = !deepLink && isExternal(target);
-          const body = (
-            <>
-              <span className="row-caret" aria-hidden="true">
-                ›
-              </span>
-              <span className="min-w-0">
-                <span className="row-title">{entry.title}</span>
-                {entry.badge && <span className="row-badge">{entry.badge}</span>}
-                <span className="row-arrow" aria-hidden="true">
-                  {external ? "↗" : "›"}
-                </span>
-                {(entry.subtitle ?? entry.summary) && (
-                  <span className="row-subtitle">{entry.subtitle ?? entry.summary}</span>
-                )}
-              </span>
-              <span className="row-meta">{entry.meta}</span>
-            </>
-          );
 
           return external ? (
             <a
@@ -70,7 +53,7 @@ export function PreviewList({ collection, href, limit = 3, index = 0 }: PreviewL
               onClick={() => playInterfaceSound("tap")}
               className="row"
             >
-              {body}
+              <RowContent entry={entry} affordance="external" />
             </a>
           ) : (
             <Link
@@ -79,7 +62,7 @@ export function PreviewList({ collection, href, limit = 3, index = 0 }: PreviewL
               onClick={() => playInterfaceSound("tap")}
               className="row"
             >
-              {body}
+              <RowContent entry={entry} affordance="detail" />
             </Link>
           );
         })}

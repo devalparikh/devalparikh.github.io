@@ -2,19 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
+import clsx from "clsx";
 import { isNavItemActive, navItems } from "@/content/nav";
 import { site } from "@/content/site";
 import { playInterfaceSound } from "@/lib/interface-sound";
 import { useGlidingIndicator } from "@/lib/use-gliding-indicator";
+import { useOverflowNav } from "@/lib/use-overflow-nav";
+import { NavMenu, NAV_MENU_ID } from "./NavMenu";
 import { SoundToggle } from "./SoundToggle";
 import { ThemeToggle } from "./ThemeToggle";
+
+const LINK_CLASS = "pill-link px-3 py-2";
 
 /**
  * A single horizontal bar at every breakpoint. It sits wherever the page puts
  * it — directly under the hero on the home page, at the top elsewhere — sticks
  * as the page scrolls, and fades its chrome in once content passes beneath it.
+ *
+ * Items that do not fit collapse into a "More" menu rather than scrolling off
+ * the edge, so nothing is ever hidden without an affordance.
  */
 export function NavBar() {
   const pathname = usePathname();
@@ -22,9 +29,16 @@ export function NavBar() {
   const [stuck, setStuck] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
 
+  const { containerRef, measureRef, visibleCount } = useOverflowNav(navItems.length);
+  const visibleItems = navItems.slice(0, visibleCount);
+  const overflowItems = navItems.slice(visibleCount);
+
   const activeHref = navItems.find((item) => isNavItemActive(pathname, item.href))?.href;
-  const { trackRef, indicatorRef, registerItem, scrollItemIntoView } =
-    useGlidingIndicator(hovered ?? activeHref);
+  const activeInOverflow = overflowItems.some((item) => item.href === activeHref);
+  // When the current page has been collapsed away, the pill rests on the menu.
+  const indicatorTarget = hovered ?? (activeInOverflow ? NAV_MENU_ID : activeHref);
+
+  const { trackRef, indicatorRef, registerItem } = useGlidingIndicator(indicatorTarget);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -38,11 +52,6 @@ export function NavBar() {
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, []);
-
-  // Keep the current page visible when the bar overflows on small screens.
-  useEffect(() => {
-    if (activeHref) scrollItemIntoView(activeHref);
-  }, [activeHref, scrollItemIntoView]);
 
   return (
     <>
@@ -68,14 +77,15 @@ export function NavBar() {
             </Link>
 
             <nav
+              ref={containerRef}
               aria-label="Primary"
-              className="-mx-1 min-w-0 flex-1 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="relative min-w-0 flex-1"
               onMouseLeave={() => setHovered(null)}
             >
-              <div ref={trackRef} className="relative flex min-w-max items-center gap-0.5">
+              <div ref={trackRef} className="relative flex items-center gap-0.5">
                 <span ref={indicatorRef} aria-hidden="true" className="pill-indicator" />
 
-                {navItems.map((item) => (
+                {visibleItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -85,11 +95,30 @@ export function NavBar() {
                     onFocus={() => setHovered(item.href)}
                     onBlur={() => setHovered(null)}
                     onClick={() => playInterfaceSound("tap")}
-                    className="pill-link px-3 py-2"
+                    className={LINK_CLASS}
                   >
                     {item.label}
                   </Link>
                 ))}
+
+                {overflowItems.length > 0 && (
+                  <NavMenu
+                    items={overflowItems}
+                    activeHref={activeHref}
+                    triggerRef={registerItem(NAV_MENU_ID)}
+                    onHover={setHovered}
+                  />
+                )}
+              </div>
+
+              {/* Off-screen copy of the full bar, used only for measurement. */}
+              <div ref={measureRef} aria-hidden="true" className="nav-measure">
+                {navItems.map((item) => (
+                  <span key={item.href} className={LINK_CLASS}>
+                    {item.label}
+                  </span>
+                ))}
+                <span className="pill-link py-2 pl-3 pr-2.5">More&nbsp;&nbsp;</span>
               </div>
             </nav>
 

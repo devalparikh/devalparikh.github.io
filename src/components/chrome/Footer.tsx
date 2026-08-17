@@ -1,5 +1,6 @@
 import { site, socials } from "@/content/site";
 import { ExternalIcon } from "@/components/primitives/ExternalIcon";
+import { SmartLink } from "@/components/primitives/SmartLink";
 
 export function Footer() {
   return (
@@ -12,15 +13,13 @@ export function Footer() {
         <ul className="flex flex-wrap items-center gap-4">
           {socials.map((social) => (
             <li key={social.id}>
-              <a
+              <SmartLink
                 href={social.href}
-                target={social.external ? "_blank" : undefined}
-                rel={social.external ? "noopener noreferrer" : undefined}
                 className="inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary"
               >
                 {social.label}
                 {social.external && <ExternalIcon />}
-              </a>
+              </SmartLink>
             </li>
           ))}
         </ul>

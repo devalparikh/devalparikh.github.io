@@ -2,13 +2,13 @@ export const site = {
   name: "Deval Parikh",
   shortName: "Deval",
   url: "https://devalparikh.me",
-  role: "Senior Software Engineer at Microsoft Azure",
+  role: "Staff Software Engineer @ Microsoft Azure",
   tagline:
-    "Software engineer with interests in large scale distributed systems and artificial intelligence.",
+    "Hi, I'm Deval 👋. I work on planet-scale distributed systems and AI/ML at scale..",
   blurb:
-    "Currently building systems to scale secure supercomputing workloads at Microsoft Azure.",
+    "Building systems to scale secure supercomputing workloads at Microsoft Azure.",
   portrait: {
-    src: "https://avatars.githubusercontent.com/u/13604973?v=4",
+    src: "/img/portrait.webp",
     alt: "Deval Parikh",
     caption: "Deval Parikh",
   },
@@ -50,8 +50,8 @@ export const socials: SocialLink[] = [
   {
     id: "resume",
     label: "Resume",
-    value: "DevalParikhResume.pdf",
-    href: site.resume,
-    external: true,
+    value: "devalparikh.me/resume",
+    href: "/resume/",
+    external: false,
   },
 ];

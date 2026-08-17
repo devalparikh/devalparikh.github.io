@@ -2,6 +2,7 @@
 
 import { socials } from "@/content/site";
 import { socialIcons } from "@/components/primitives/icons";
+import { SmartLink } from "@/components/primitives/SmartLink";
 import { playInterfaceSound } from "@/lib/interface-sound";
 
 export function SocialRow() {
@@ -12,10 +13,8 @@ export function SocialRow() {
 
         return (
           <li key={social.id}>
-            <a
+            <SmartLink
               href={social.href}
-              target={social.external ? "_blank" : undefined}
-              rel={social.external ? "noopener noreferrer" : undefined}
               onClick={() => playInterfaceSound("tap")}
               className="group inline-flex items-center gap-1.5 rounded text-[0.8rem] text-neutral-content transition-colors duration-200 hover:text-primary"
             >
@@ -23,7 +22,7 @@ export function SocialRow() {
                 <Icon className="size-[15px] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5" />
               )}
               {social.label}
-            </a>
+            </SmartLink>
           </li>
         );
       })}

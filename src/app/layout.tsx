@@ -34,7 +34,6 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image" },
   manifest: "/manifest.json",
-  icons: { icon: "/favicon.ico", apple: "/icons/apple-icon-180x180.png" },
 };
 
 export const viewport: Viewport = {

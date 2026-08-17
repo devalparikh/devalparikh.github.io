@@ -21,7 +21,7 @@ export function Hero() {
           </Reveal>
 
           <Reveal index={2}>
-            <p className="kicker mt-2.5">{site.role}</p>
+            <p className="kicker kicker-lead mt-3">{site.role}</p>
           </Reveal>
 
           <Reveal index={3}>

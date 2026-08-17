@@ -2,37 +2,13 @@
 
 import type { Entry } from "@/content/types";
 import { playInterfaceSound } from "@/lib/interface-sound";
+import { RowContent } from "./RowContent";
 import { hasDetail, isExternal } from "./entry-helpers";
 
 interface EntryRowProps {
   entry: Entry;
   selected: boolean;
   onOpen: (entry: Entry, trigger: HTMLElement) => void;
-}
-
-function RowBody({ entry, affordance }: { entry: Entry; affordance: string | null }) {
-  const note = entry.subtitle ?? entry.summary;
-
-  return (
-    <>
-      <span className="row-caret" aria-hidden="true">
-        ›
-      </span>
-
-      <span className="min-w-0">
-        <span className="row-title">{entry.title}</span>
-        {entry.badge && <span className="row-badge">{entry.badge}</span>}
-        {affordance && (
-          <span className="row-arrow" aria-hidden="true">
-            {affordance}
-          </span>
-        )}
-        {note && <span className="row-subtitle">{note}</span>}
-      </span>
-
-      <span className="row-meta">{entry.meta}</span>
-    </>
-  );
 }
 
 export function EntryRow({ entry, selected, onOpen }: EntryRowProps) {
@@ -48,7 +24,7 @@ export function EntryRow({ entry, selected, onOpen }: EntryRowProps) {
           onOpen(entry, event.currentTarget);
         }}
       >
-        <RowBody entry={entry} affordance="›" />
+        <RowContent entry={entry} affordance="detail" />
       </button>
     );
   }
@@ -64,7 +40,7 @@ export function EntryRow({ entry, selected, onOpen }: EntryRowProps) {
         rel={external ? "noopener noreferrer" : undefined}
         onClick={() => playInterfaceSound("tap")}
       >
-        <RowBody entry={entry} affordance={external ? "↗" : "→"} />
+        <RowContent entry={entry} affordance={external ? "external" : "internal"} />
         {external && <span className="sr-only"> Opens in a new tab</span>}
       </a>
     );
@@ -72,7 +48,7 @@ export function EntryRow({ entry, selected, onOpen }: EntryRowProps) {
 
   return (
     <div className="row cursor-default">
-      <RowBody entry={entry} affordance={null} />
+      <RowContent entry={entry} affordance={null} />
     </div>
   );
 }
