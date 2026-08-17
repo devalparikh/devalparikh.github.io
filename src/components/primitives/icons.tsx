@@ -60,3 +60,30 @@ export const socialIcons: Record<string, ComponentType<IconProps>> = {
   email: MailIcon,
   resume: DocumentIcon,
 };
+
+export function LinkIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <path d="M10.5 13.5a4 4 0 0 0 5.7 0l2.6-2.6a4 4 0 0 0-5.7-5.7l-1.3 1.3" />
+      <path d="M13.5 10.5a4 4 0 0 0-5.7 0l-2.6 2.6a4 4 0 0 0 5.7 5.7l1.3-1.3" />
+    </svg>
+  );
+}
+
+export function TrophyIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...strokeProps} {...props}>
+      <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z" />
+      <path d="M7 6H4.5v1A3.5 3.5 0 0 0 8 10.5M17 6h2.5v1a3.5 3.5 0 0 1-3.5 3.5" />
+      <path d="M12 14v3m-3 3h6l-.5-3h-5L9 20Z" />
+    </svg>
+  );
+}
+
+/** Row action icons, keyed by `EntryLink.kind`. */
+export const linkKindIcons: Record<string, ComponentType<IconProps>> = {
+  repo: GitHubIcon,
+  site: LinkIcon,
+  article: DocumentIcon,
+  award: TrophyIcon,
+};

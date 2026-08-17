@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="mx-auto mt-24 max-w-3xl px-5 pb-16 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--rule)] pt-6">
         <p className="text-xs text-neutral-content">
-          © {new Date().getFullYear()} {site.name}
+          {new Date().getFullYear()} {site.name}
         </p>
 
         <ul className="flex flex-wrap items-center gap-4">

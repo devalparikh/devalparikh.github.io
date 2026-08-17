@@ -187,11 +187,19 @@ body::after {
     padding 320ms var(--ease-out-quint);
 }
 
+/* Opaque by default so content never shows through the stuck bar; the frosted
+   treatment is layered on only where backdrop-filter actually works. */
 .nav-shell[data-stuck="true"] .nav-bar {
   border-bottom-color: var(--rule);
-  background-color: color-mix(in oklab, var(--color-base-100) 82%, transparent);
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  background-color: var(--color-base-100);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav-shell[data-stuck="true"] .nav-bar {
+    background-color: color-mix(in oklab, var(--color-base-100) 94%, transparent);
+    backdrop-filter: blur(18px) saturate(1.35);
+    -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  }
 }
 
 /* The pill that glides to whichever item the pointer is over, falling back to
@@ -311,7 +319,7 @@ body::after {
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: 12px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.7rem;
   align-items: start;
   width: 100%;
@@ -319,9 +327,75 @@ body::after {
   padding: 0.72rem 0.6rem 0.76rem;
   border-bottom: 1px solid var(--rule);
   color: var(--color-base-content);
+}
+
+.row-trigger {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: start;
+  min-width: 0;
+  color: inherit;
   text-align: left;
   text-decoration: none;
   cursor: pointer;
+}
+
+.row-trigger-static {
+  cursor: default;
+}
+
+/* Stretches the click target across the row without wrapping the action
+   links, which would be invalid markup and would swallow their clicks. */
+.row-trigger::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.row-trigger-static::after {
+  content: none;
+}
+
+/* The trailing column sits above the click overlay so its links still work. */
+.row-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.row-links {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.row-link {
+  display: grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  margin: -0.2rem 0;
+  border-radius: 5px;
+  color: color-mix(in oklab, var(--color-neutral-content) 78%, transparent);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    transform 200ms var(--ease-out-quint);
+}
+
+.row-link svg {
+  width: 14px;
+  height: 14px;
+}
+
+.row-link:hover {
+  background-color: var(--wash);
+  color: var(--color-primary);
+  transform: translateY(-1px);
 }
 
 .row::before {
@@ -336,8 +410,8 @@ body::after {
 }
 
 .row:hover::before,
-.row:focus-visible::before,
-.row[aria-current="true"]::before {
+.row:has(.row-trigger:focus-visible)::before,
+.row[data-selected]::before {
   opacity: 0.75;
   transition-duration: 0ms;
 }
@@ -363,8 +437,8 @@ body::after {
 }
 
 .row:hover .row-caret,
-.row:focus-visible .row-caret,
-.row[aria-current="true"] .row-caret {
+.row:has(.row-trigger:focus-visible) .row-caret,
+.row[data-selected] .row-caret {
   opacity: 1;
   transform: none;
 }
@@ -384,8 +458,8 @@ body::after {
 }
 
 .row:hover .row-title,
-.row:focus-visible .row-title,
-.row[aria-current="true"] .row-title {
+.row:has(.row-trigger:focus-visible) .row-title,
+.row[data-selected] .row-title {
   color: var(--color-primary);
   text-decoration-color: currentColor;
 }
@@ -402,8 +476,8 @@ body::after {
 }
 
 .row:hover .row-arrow,
-.row:focus-visible .row-arrow,
-.row[aria-current="true"] .row-arrow {
+.row:has(.row-trigger:focus-visible) .row-arrow,
+.row[data-selected] .row-arrow {
   color: var(--color-primary);
   transform: translate(0, -2px);
 }
@@ -416,7 +490,17 @@ body::after {
   line-height: 1.5;
 }
 
+/* The second line under a row title, quieter than the role above it. */
+.row-note {
+  display: block;
+  margin-top: 0.16rem;
+  color: color-mix(in oklab, var(--color-neutral-content) 70%, transparent);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
 .row-meta {
+  min-height: 1rem;
   margin-top: 0.16rem;
   color: color-mix(in oklab, var(--color-neutral-content) 70%, transparent);
   font-family: var(--font-mono);
@@ -445,7 +529,16 @@ body::after {
     grid-template-columns: 12px minmax(0, 1fr);
   }
 
-  .row-meta {
+  /* The second line under a row title, quieter than the role above it. */
+.row-note {
+  display: block;
+  margin-top: 0.16rem;
+  color: color-mix(in oklab, var(--color-neutral-content) 70%, transparent);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.row-meta {
     grid-column: 2;
     margin-top: 0.24rem;
   }

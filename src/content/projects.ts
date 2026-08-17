@@ -44,10 +44,11 @@ export const projects: Collection = {
         "Three.js",
       ],
       links: [
-        { label: "rolodex.dev", href: "https://www.rolodex.dev/" },
+        { label: "rolodex.dev", href: "https://www.rolodex.dev/", kind: "site" },
         {
           label: "architecture write-up",
           href: "https://rolodex.dev/blog/custom-graphrag-architecture",
+          kind: "article",
         },
       ],
     },
@@ -77,7 +78,7 @@ export const projects: Collection = {
         "Tailwind CSS",
         "Radix UI",
       ],
-      links: [{ label: "traverse.chat", href: "https://www.traverse.chat/" }],
+      links: [{ label: "traverse.chat", href: "https://www.traverse.chat/", kind: "site" }],
     },
     {
       id: "speed-of-dev",
@@ -104,14 +105,13 @@ export const projects: Collection = {
         "Supabase",
         "Stripe",
       ],
-      links: [{ label: "speedof.dev", href: "https://www.speedof.dev/" }],
+      links: [{ label: "speedof.dev", href: "https://www.speedof.dev/", kind: "site" }],
     },
     {
       id: "zescribe",
       title: "Zescribe",
       summary: "AI agents for real estate realtors.",
       categories: ["fullstack", "ml"],
-      href: "https://zescribe.ai/",
     },
     {
       id: "geogram",
@@ -128,7 +128,7 @@ export const projects: Collection = {
         },
       ],
       tags: ["React", "JavaScript", "Java", "Spring", "MongoDB"],
-      links: [{ label: "geogramapp.com", href: "https://www.geogramapp.com/" }],
+      links: [{ label: "geogramapp.com", href: "https://www.geogramapp.com/", kind: "site" }],
     },
     {
       id: "flipfeed",
@@ -145,7 +145,7 @@ export const projects: Collection = {
       ],
       tags: ["React", "JavaScript", "Node.js", "MongoDB", "AWS"],
       links: [
-        { label: "GitHub", href: "https://github.com/devalparikh/housinghelper" },
+        { label: "GitHub", href: "https://github.com/devalparikh/housinghelper", kind: "repo" },
       ],
     },
     {
@@ -164,7 +164,7 @@ export const projects: Collection = {
       ],
       tags: ["React", "JavaScript", "Node.js", "MongoDB", "AWS"],
       links: [
-        { label: "GitHub", href: "https://github.com/devalparikh/housinghelper" },
+        { label: "GitHub", href: "https://github.com/devalparikh/housinghelper", kind: "repo" },
       ],
     },
     {
@@ -191,10 +191,11 @@ export const projects: Collection = {
         "Web Sockets",
       ],
       links: [
-        { label: "GitHub", href: "https://github.com/devalparikh/NLPChatApp" },
+        { label: "GitHub", href: "https://github.com/devalparikh/NLPChatApp", kind: "repo" },
         {
           label: "Write-up",
           href: "https://towardsdatascience.com/building-a-real-time-chat-application-with-nlp-super-powers-ce800e19cb2b",
+          kind: "article",
         },
       ],
     },
@@ -212,7 +213,7 @@ export const projects: Collection = {
           body: "Created software for ATMs that allow users to have a conversation with an ATM, replacing the need for buttons (assisting visually impaired).",
         },
         {
-          heading: "Awards",
+          heading: "Awards 🏆",
           bullets: [
             "1st Place Best Financial Software Hack, Capital One",
             "1st Place Bitcamp Compass Challenge",
@@ -227,7 +228,7 @@ export const projects: Collection = {
         "Google ML API",
         "Capital One Bank API",
       ],
-      links: [{ label: "Devpost", href: "https://devpost.com/software/eyebank" }],
+      links: [{ label: "Devpost", href: "https://devpost.com/software/eyebank", kind: "award" }],
     },
     {
       id: "weapon-detection",
@@ -242,7 +243,7 @@ export const projects: Collection = {
           body: "Built a software service to detect weapons in real-time camera footage using image classification with YOLO Convolution Neural Network architecture and created dashboards using AWS, Google Maps API, HTML, CSS, JavaScript.",
         },
         {
-          heading: "Awards",
+          heading: "Awards 🏆",
           bullets: [
             "1st Place Best Software Hack by Microsoft",
             "2nd Place Amazon Web Services Hack",
@@ -259,7 +260,7 @@ export const projects: Collection = {
         "Google ML API",
       ],
       links: [
-        { label: "Devpost", href: "https://devpost.com/software/no-more-shootings-20" },
+        { label: "Devpost", href: "https://devpost.com/software/no-more-shootings-20", kind: "award" },
       ],
     },
   ],

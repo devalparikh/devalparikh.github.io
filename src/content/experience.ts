@@ -13,7 +13,7 @@ export const experience: Collection = {
       mark: { src: "/img/logos/microsoft.svg" },
       meta: "Jul 2024 - Present",
       summary:
-        "Core infrastructure for sovereign clouds and secure supercomputing workloads.",
+        "Lead the development of core infra to deploy Azure Sovereign Clouds.",
       categories: ["fulltime"],
       highlights: [
         "Leading the design, development, and launch of a greenfield, global cloud service that serves as core infrastructure for sovereign clouds and secure supercomputing workloads.",
@@ -34,7 +34,8 @@ export const experience: Collection = {
       subtitle: "Senior Software Engineer",
       mark: { src: "/img/logos/capital-one.webp" },
       meta: "Feb 2022 - Jul 2024",
-      summary: "Identity systems for over 100 million customers.",
+      summary:
+        "Shipped 0->1 a new MFA mechanism to combat social engineering and deployed it to 100 million Capital One customers.",
       categories: ["fulltime"],
       highlights: [
         "Led a team of engineers through the design, development, and launch of novel identity applications, APIs, and distributed systems on a global scale.",

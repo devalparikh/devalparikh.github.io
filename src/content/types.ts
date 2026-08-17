@@ -10,9 +10,13 @@ export interface EntrySection {
   bullets?: string[];
 }
 
+export type EntryLinkKind = "repo" | "site" | "article" | "award";
+
 export interface EntryLink {
   label: string;
   href: string;
+  /** Picks the icon shown on the row. Untyped links appear in the drawer only. */
+  kind?: EntryLinkKind;
 }
 
 /**

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { Reveal } from "@/components/primitives/Reveal";
-import { RowContent } from "@/components/collection/RowContent";
+import { RowActions, RowLead } from "@/components/collection/RowContent";
 import { hasDetail, isExternal } from "@/components/collection/entry-helpers";
 import type { Collection } from "@/content/types";
 import { playInterfaceSound } from "@/lib/interface-sound";
@@ -44,26 +44,30 @@ export function PreviewList({ collection, href, limit = 3, index = 0 }: PreviewL
 
           const external = !deepLink && isExternal(target);
 
-          return external ? (
-            <a
-              key={entry.id}
-              href={target}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => playInterfaceSound("tap")}
-              className="row"
-            >
-              <RowContent entry={entry} affordance="external" />
-            </a>
-          ) : (
-            <Link
-              key={entry.id}
-              href={target as Route}
-              onClick={() => playInterfaceSound("tap")}
-              className="row"
-            >
-              <RowContent entry={entry} affordance="detail" />
-            </Link>
+          return (
+            <div key={entry.id} className="row">
+              {external ? (
+                <a
+                  href={target}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => playInterfaceSound("tap")}
+                  className="row-trigger"
+                >
+                  <RowLead entry={entry} affordance="external" />
+                </a>
+              ) : (
+                <Link
+                  href={target as Route}
+                  onClick={() => playInterfaceSound("tap")}
+                  className="row-trigger"
+                >
+                  <RowLead entry={entry} affordance="detail" />
+                </Link>
+              )}
+
+              <RowActions entry={entry} />
+            </div>
           );
         })}
       </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { ExternalIcon } from "@/components/primitives/ExternalIcon";
+import { linkKindIcons } from "@/components/primitives/icons";
 import { Portal } from "@/components/primitives/Portal";
 import type { Entry } from "@/content/types";
 import { EntryMark } from "./EntryMark";
@@ -172,18 +173,27 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
 
           {entry.links?.length ? (
             <nav className="mt-9 flex flex-wrap gap-x-5 gap-y-2 border-t border-[var(--rule)] pt-5">
-              {entry.links.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target={isExternal(link.href) ? "_blank" : undefined}
-                  rel={isExternal(link.href) ? "noopener noreferrer" : undefined}
-                  className="inline-flex items-center gap-1.5 text-sm text-base-content underline decoration-[color-mix(in_oklab,currentColor_28%,transparent)] underline-offset-4 transition-colors duration-150 hover:text-primary hover:decoration-current"
-                >
-                  {link.label}
-                  {isExternal(link.href) && <ExternalIcon />}
-                </a>
-              ))}
+              {entry.links.map((link) => {
+                const Icon = link.kind ? linkKindIcons[link.kind] : undefined;
+
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target={isExternal(link.href) ? "_blank" : undefined}
+                    rel={isExternal(link.href) ? "noopener noreferrer" : undefined}
+                    className="group inline-flex items-center gap-1.5 text-sm text-base-content transition-colors duration-150 hover:text-primary"
+                  >
+                    {Icon && <Icon className="size-[15px] text-neutral-content transition-colors duration-150 group-hover:text-primary" />}
+                    <span className="underline decoration-[color-mix(in_oklab,currentColor_28%,transparent)] underline-offset-4 transition-[text-decoration-color] duration-150 group-hover:decoration-current">
+                      {link.label}
+                    </span>
+                    {/* The kind icon already marks the destination; the arrow is
+                        only needed when there is no icon. */}
+                    {!Icon && isExternal(link.href) && <ExternalIcon />}
+                  </a>
+                );
+              })}
             </nav>
           ) : null}
         </div>

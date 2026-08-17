@@ -10,6 +10,15 @@ export const metadata: Metadata = {
   description: `${site.name}'s resume.`,
 };
 
+/**
+ * PDF open parameters. `navpanes`/`pagemode` close the side panel in Acrobat
+ * and Edge; Chrome ignores both, so `toolbar=0` is what actually hides its
+ * thumbnail rail. The "Open the PDF" link above covers the controls that
+ * removes. `view=Fit` scales the page to the frame instead of opening at 100%.
+ */
+const VIEWER_PARAMS =
+  "#toolbar=0&navpanes=0&scrollbar=0&statusbar=0&pagemode=none&view=Fit";
+
 export default function ResumePage() {
   return (
     <PageFrame>
@@ -29,10 +38,10 @@ export default function ResumePage() {
 
       <Reveal index={3} className="mt-8">
         <object
-          data={site.resume}
+          data={`${site.resume}${VIEWER_PARAMS}`}
           type="application/pdf"
           aria-label={`${site.name} resume`}
-          className="h-[min(78vh,900px)] w-full rounded-lg border border-[var(--rule)] bg-base-200"
+          className="mx-auto block h-[min(85vh,1000px)] w-auto max-w-full rounded-lg border border-[var(--rule)] bg-base-200 [aspect-ratio:8.5/11]"
         >
           <p className="p-6 text-sm text-neutral-content">
             Your browser cannot display PDFs inline -{" "}
