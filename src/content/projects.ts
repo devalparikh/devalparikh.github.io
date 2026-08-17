@@ -25,7 +25,7 @@ export const projects: Collection = {
         },
         {
           heading: "Architecture",
-          body: "A custom GraphRAG architecture optimized for structured sources (like GitHub repos). Built connectors using typed entity schemas. The retrieval index is roughly six times faster than the general-purpose implementation.",
+          body: "A custom GraphRAG architecture optimized for structured sources (like GitHub repos). Built connectors architecture using typed entity schemas. The retrieval index is roughly six times faster than the general-purpose implementation.",
         },
       ],
       tags: [
@@ -61,7 +61,7 @@ export const projects: Collection = {
       sections: [
         {
           heading: "About",
-          body: "A chat interface built on a mind map instead of a transcript. Conversations branch into a graph you can navigate, so exploring a tangent never buries the thread it came from.",
+          body: "A chat interface built on a mind map instead of the traditional linear chat ux. Conversations branch into a graph you can navigate, so exploring a tangent does not bury the thread it came from.",
         },
       ],
       tags: [

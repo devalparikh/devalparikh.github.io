@@ -481,13 +481,11 @@ body::after {
   line-height: 1.35;
 }
 
-/* The role under a company name in the detail drawer. */
+/* The role under a company name in the detail drawer. Styled as a kicker,
+   just larger - it is the line the eye should land on after the company. */
 .panel-role {
-  margin-top: 0.45rem;
-  color: color-mix(in oklab, var(--color-base-content) 82%, transparent);
+  margin-top: 0.5rem;
   font-size: 1.05rem;
-  font-weight: 450;
-  letter-spacing: -0.015em;
   line-height: 1.35;
 }
 

@@ -97,7 +97,7 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
             >
               {entry.title}
             </h2>
-            {entry.subtitle && <p className="panel-role">{entry.subtitle}</p>}
+            {entry.subtitle && <p className="kicker panel-role">{entry.subtitle}</p>}
           </header>
 
           {media && (
