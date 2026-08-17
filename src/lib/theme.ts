@@ -3,7 +3,7 @@
  *
  * The site ships two DaisyUI themes and follows the operating system until the
  * visitor makes an explicit choice. Once they do, the choice is stored and the
- * system preference is ignored — clearing storage returns to following it.
+ * system preference is ignored - clearing storage returns to following it.
  */
 
 export const THEMES = ["parchment", "inkember"] as const;

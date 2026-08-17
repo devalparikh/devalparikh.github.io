@@ -26,7 +26,7 @@ export default function ContactPage() {
 
             return (
               <li key={social.id}>
-                <SmartLink href={social.href} className="row">
+                <SmartLink href={social.href} newTab={social.newTab} className="row">
                   <span className="row-caret" aria-hidden="true">
                     ›
                   </span>

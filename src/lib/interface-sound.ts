@@ -39,7 +39,7 @@ export function isInterfaceSoundEnabled() {
 }
 
 /**
- * The graph is built on first use — inside a user gesture — so browsers do not
+ * The graph is built on first use - inside a user gesture - so browsers do not
  * start it in a suspended state.
  */
 function getAudioGraph() {
@@ -111,6 +111,6 @@ export function playInterfaceSound(kind: InterfaceSound) {
 
     renderCue(kind, graph.context, graph.masterGain);
   } catch {
-    // Sound is decorative — never let it break an interaction.
+    // Sound is decorative - never let it break an interaction.
   }
 }

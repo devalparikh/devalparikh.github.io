@@ -7,7 +7,7 @@ export function Hero() {
     <section className="mx-auto max-w-3xl px-5 pb-12 pt-20 sm:px-6 sm:pb-14 sm:pt-28">
       <div className="flex flex-col items-center gap-8 text-center sm:flex-row sm:justify-center sm:gap-10 sm:text-left">
         <Reveal index={0} className="shrink-0">
-          {/* Placeholder frame — swap `site.portrait.src` for the framed shot. */}
+          {/* Placeholder frame - swap `site.portrait.src` for the framed shot. */}
           <figure className="polaroid w-[124px] sm:w-[136px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={site.portrait.src} alt={site.portrait.alt} width={272} height={272} />

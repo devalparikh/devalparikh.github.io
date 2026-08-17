@@ -7,7 +7,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
  * an overflow menu ("priority+" navigation).
  *
  * Item widths are read from a hidden copy of the full list that is never
- * re-laid-out by the split, which keeps measurement stable — measuring the
+ * re-laid-out by the split, which keeps measurement stable - measuring the
  * visible row instead would feed its own result back in and oscillate.
  */
 export function useOverflowNav(itemCount: number) {

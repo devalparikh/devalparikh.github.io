@@ -5,11 +5,11 @@
 
    `parchment` (light) is the default so the site renders correctly before any
    script runs; `inkember` (dark) overrides the same names. Every colour in the
-   codebase resolves through these tokens — no raw hex outside this block.
+   codebase resolves through these tokens - no raw hex outside this block.
    ========================================================================== */
 
 @theme {
-  /* Parchment — warm light editorial */
+  /* Parchment - warm light editorial */
   --color-base-100: #faf8f5;
   --color-base-200: #f0ece6;
   --color-base-300: #e5dfd7;
@@ -140,7 +140,7 @@ body::after {
 }
 
 /* ==========================================================================
-   Reveal — the staggered entrance
+   Reveal - the staggered entrance
 
    Elements rendered with `data-reveal="in"` animate on first paint; the
    scroll variant ships as `pending` and is promoted by an IntersectionObserver.
@@ -168,7 +168,7 @@ body::after {
 }
 
 /* ==========================================================================
-   Nav — sticky bar that gains its chrome once it leaves the hero
+   Nav - sticky bar that gains its chrome once it leaves the hero
    ========================================================================== */
 
 .nav-shell {
@@ -296,7 +296,7 @@ body::after {
 }
 
 /* ==========================================================================
-   Row list — the shared table used by every collection
+   Row list - the shared table used by every collection
 
    The hover wash appears instantly and fades out softly; the moving parts
    (caret, underline, arrow) ease in both directions. That mix is what makes
@@ -348,11 +348,7 @@ body::after {
   display: flex;
   min-width: 0;
   gap: 0.6rem;
-  align-items: flex-start;
-}
-
-.row-mark {
-  translate: 0 1px;
+  align-items: center;
 }
 
 .row-caret {
@@ -485,6 +481,16 @@ body::after {
   line-height: 1.35;
 }
 
+/* The role under a company name in the detail drawer. */
+.panel-role {
+  margin-top: 0.45rem;
+  color: color-mix(in oklab, var(--color-base-content) 82%, transparent);
+  font-size: 1.05rem;
+  font-weight: 450;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
 .panel-section-heading {
   color: var(--color-neutral-content);
   font-family: var(--font-mono);
@@ -494,7 +500,7 @@ body::after {
   text-transform: lowercase;
 }
 
-/* The detail view is a right-hand drawer at every width — full screen on
+/* The detail view is a right-hand drawer at every width - full screen on
    phones, a panel over the page on wider screens. */
 @keyframes drawerBackdropIn {
   from { opacity: 0; }

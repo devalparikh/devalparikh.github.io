@@ -8,7 +8,7 @@ import { Lightbox } from "./Lightbox";
 import { PhotoFrame } from "./PhotoFrame";
 
 /**
- * Masonry columns rather than a fixed grid — the frames are a mix of portrait
+ * Masonry columns rather than a fixed grid - the frames are a mix of portrait
  * and landscape and cropping them all to one ratio would waste the shots.
  */
 export function Gallery({ photos }: { photos: Photo[] }) {

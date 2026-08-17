@@ -11,11 +11,11 @@ const TIER_ORDER = ["concept", "cloud", "language", "framework", "service"] as c
 export type TagTier = (typeof TIER_ORDER)[number];
 
 /**
- * Anything unlisted falls through to `service`, which is the open-ended tier —
+ * Anything unlisted falls through to `service`, which is the open-ended tier -
  * product names are endless, whereas the four tiers below are enumerable.
  */
 const TIERS: Record<Exclude<TagTier, "service">, ReadonlySet<string>> = {
-  // Architecture and technique — the substance of the work.
+  // Architecture and technique - the substance of the work.
   concept: new Set([
     "ai/ml",
     "authentication",
@@ -112,16 +112,24 @@ export function tagTier(tag: string): TagTier {
   return "service";
 }
 
+export interface TagGroup {
+  tier: TagTier;
+  tags: string[];
+}
+
 /**
- * A stable partition rather than a sort, so the order an entry declares still
- * decides how tags read within a tier.
+ * Splits a stack into its tiers, in tier order, skipping tiers the entry has
+ * nothing in. A stable partition rather than a sort, so the order an entry
+ * declares still decides how tags read within a tier.
  */
-export function orderTags(tags: string[]): string[] {
+export function groupTags(tags: string[]): TagGroup[] {
   const buckets = new Map<TagTier, string[]>(TIER_ORDER.map((tier) => [tier, []]));
 
   for (const tag of tags) {
     buckets.get(tagTier(tag))!.push(tag);
   }
 
-  return TIER_ORDER.flatMap((tier) => buckets.get(tier)!);
+  return TIER_ORDER.map((tier) => ({ tier, tags: buckets.get(tier)! })).filter(
+    (group) => group.tags.length > 0,
+  );
 }

@@ -7,6 +7,8 @@ interface SmartLinkProps {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
+  /** Opens an in-site route in a new tab. Off-site links always do. */
+  newTab?: boolean;
 }
 
 /**
@@ -14,10 +16,16 @@ interface SmartLinkProps {
  * routes, a plain anchor for `mailto:` and the like, and a new tab for
  * anything off-site.
  */
-export function SmartLink({ href, children, className, onClick }: SmartLinkProps) {
+export function SmartLink({ href, children, className, onClick, newTab }: SmartLinkProps) {
   if (href.startsWith("/")) {
     return (
-      <Link href={href as Route} className={className} onClick={onClick}>
+      <Link
+        href={href as Route}
+        className={className}
+        onClick={onClick}
+        target={newTab ? "_blank" : undefined}
+        rel={newTab ? "noopener noreferrer" : undefined}
+      >
         {children}
       </Link>
     );

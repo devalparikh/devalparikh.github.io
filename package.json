@@ -8,11 +8,12 @@
   "homepage": "https://devalparikh.me/",
   "scripts": {
     "dev": "npm run photos && next dev",
-    "build": "npm run photos && next build",
+    "build": "npm run photos && npm run previews && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "photos": "node scripts/build-photos.mjs"
+    "photos": "node scripts/build-photos.mjs",
+    "previews": "node scripts/fetch-previews.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

@@ -20,7 +20,7 @@ export function PhotoFrame({ photo, priority, className, onClick }: PhotoFramePr
 
   /**
    * A cached image can finish decoding before React attaches `onLoad`, which
-   * would leave it stuck at zero opacity — so check `complete` on attach too.
+   * would leave it stuck at zero opacity - so check `complete` on attach too.
    */
   const captureImage = useCallback((node: HTMLImageElement | null) => {
     if (node?.complete) setLoaded(true);

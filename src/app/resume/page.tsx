@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function ResumePage() {
   return (
     <PageFrame>
-      <PageHeader title="Resume" description="The one-page version." />
+      <PageHeader title="Resume" />
 
       <Reveal index={2} className="mt-7">
         <a
@@ -35,7 +35,7 @@ export default function ResumePage() {
           className="h-[min(78vh,900px)] w-full rounded-lg border border-[var(--rule)] bg-base-200"
         >
           <p className="p-6 text-sm text-neutral-content">
-            Your browser cannot display PDFs inline —{" "}
+            Your browser cannot display PDFs inline -{" "}
             <a href={site.resume} className="underline underline-offset-4">
               download the resume
             </a>{" "}

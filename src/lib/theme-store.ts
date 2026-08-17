@@ -13,8 +13,8 @@ import {
 const THEME_CHANGE_EVENT = "deval:theme-change";
 
 /**
- * The theme lives outside React — in localStorage, on the `<html>` element and
- * in the OS preference — so components read it through `useSyncExternalStore`
+ * The theme lives outside React - in localStorage, on the `<html>` element and
+ * in the OS preference - so components read it through `useSyncExternalStore`
  * rather than mirroring it into state.
  */
 export function subscribeToTheme(onChange: () => void) {

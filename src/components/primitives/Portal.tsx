@@ -7,7 +7,7 @@ const noopSubscribe = () => () => {};
 
 /**
  * Renders overlays at the document root so they escape the page's stacking
- * contexts — the sticky nav bar would otherwise paint over them.
+ * contexts - the sticky nav bar would otherwise paint over them.
  *
  * The store returns `false` on the server and `true` on the client, which
  * defers the portal until `document` exists without reaching for an effect.

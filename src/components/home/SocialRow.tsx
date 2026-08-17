@@ -15,6 +15,7 @@ export function SocialRow() {
           <li key={social.id}>
             <SmartLink
               href={social.href}
+              newTab={social.newTab}
               onClick={() => playInterfaceSound("tap")}
               className="group inline-flex items-center gap-1.5 rounded text-[0.8rem] text-neutral-content transition-colors duration-200 hover:text-primary"
             >

@@ -15,6 +15,7 @@ export function Footer() {
             <li key={social.id}>
               <SmartLink
                 href={social.href}
+                newTab={social.newTab}
                 className="inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary"
               >
                 {social.label}

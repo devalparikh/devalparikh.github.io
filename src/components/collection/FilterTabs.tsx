@@ -13,7 +13,7 @@ interface FilterTabsProps {
 }
 
 /**
- * Filtering is pure client state — nothing navigates, so switching tabs is
+ * Filtering is pure client state - nothing navigates, so switching tabs is
  * instant.
  */
 export function FilterTabs({ filters, active, onSelect, label }: FilterTabsProps) {

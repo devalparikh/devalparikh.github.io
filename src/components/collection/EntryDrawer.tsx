@@ -5,7 +5,9 @@ import { ExternalIcon } from "@/components/primitives/ExternalIcon";
 import { Portal } from "@/components/primitives/Portal";
 import type { Entry } from "@/content/types";
 import { EntryMark } from "./EntryMark";
-import { orderTags } from "@/lib/tags";
+import { EntryMedia } from "./EntryMedia";
+import { getPreview } from "@/lib/previews";
+import { groupTags } from "@/lib/tags";
 import { isExternal } from "./entry-helpers";
 
 interface EntryDrawerProps {
@@ -57,7 +59,10 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
     };
   }, [onClose]);
 
-  const kicker = [entry.subtitle, entry.meta].filter(Boolean).join(" · ");
+  // An entry's own screenshot wins; otherwise fall back to the linked site's
+  // share image, captured at build time.
+  const preview = entry.image ? null : getPreview(entry.id);
+  const media = entry.image ?? preview?.src;
 
   return (
     <Portal>
@@ -83,7 +88,7 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
             {entry.mark && (
               <EntryMark mark={entry.mark} label={entry.title} className="mb-3 size-8 rounded-md" />
             )}
-            {kicker && <p className="kicker">{kicker}</p>}
+            {entry.meta && <p className="kicker">{entry.meta}</p>}
             <h2
               id="drawer-heading"
               ref={headingRef}
@@ -92,16 +97,18 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
             >
               {entry.title}
             </h2>
+            {entry.subtitle && <p className="panel-role">{entry.subtitle}</p>}
           </header>
 
-          {entry.image && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={entry.image}
-              alt=""
-              loading="lazy"
-              className="mt-6 w-full rounded-lg border border-[var(--rule)]"
-            />
+          {media && (
+            <div className="mt-6">
+              <EntryMedia
+                src={media}
+                alt={`${entry.title} preview`}
+                width={preview?.width}
+                height={preview?.height}
+              />
+            </div>
           )}
 
           {entry.highlights?.length ? (
@@ -149,13 +156,17 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
               <h3 className="panel-section-heading">
                 Stack
               </h3>
-              <ul className="mt-3 flex flex-wrap gap-1.5">
-                {orderTags(entry.tags).map((tag) => (
-                  <li key={tag} className="panel-tag">
-                    {tag}
-                  </li>
+              <div className="mt-3 space-y-1.5">
+                {groupTags(entry.tags).map((group) => (
+                  <ul key={group.tier} className="flex flex-wrap gap-1.5">
+                    {group.tags.map((tag) => (
+                      <li key={tag} className="panel-tag">
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
                 ))}
-              </ul>
+              </div>
             </section>
           ) : null}
 

@@ -17,7 +17,7 @@ const LINK_CLASS = "pill-link px-3 py-2";
 
 /**
  * A single horizontal bar at every breakpoint. It sits wherever the page puts
- * it — directly under the hero on the home page, at the top elsewhere — sticks
+ * it - directly under the hero on the home page, at the top elsewhere - sticks
  * as the page scrolls, and fades its chrome in once content passes beneath it.
  *
  * Items that do not fit collapse into a "More" menu rather than scrolling off

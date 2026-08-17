@@ -2,7 +2,7 @@
 /**
  * Photo build step.
  *
- * Full-resolution originals live in `photos/` and are never deployed — they
+ * Full-resolution originals live in `photos/` and are never deployed - they
  * total well over a hundred megabytes. This script derives web-sized WebP files
  * into `public/img/photography/`, pulls the EXIF each shot was taken with, and
  * writes a manifest the photography page imports.
@@ -134,7 +134,7 @@ async function main() {
   try {
     files = await readdir(SOURCE_DIR);
   } catch {
-    console.warn(`[photos] no source directory at ${path.relative(ROOT, SOURCE_DIR)} — skipping.`);
+    console.warn(`[photos] no source directory at ${path.relative(ROOT, SOURCE_DIR)} - skipping.`);
   }
 
   const sources = files

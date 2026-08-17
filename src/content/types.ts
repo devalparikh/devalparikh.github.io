@@ -1,5 +1,5 @@
 /**
- * One shape backs every collection on the site — experience, projects and
+ * One shape backs every collection on the site - experience, projects and
  * writing all render through the same row list and detail panel, so they share
  * a single entry type rather than three near-identical ones.
  */
@@ -16,7 +16,7 @@ export interface EntryLink {
 }
 
 /**
- * The small square shown at the start of a row. Prefer `src` — a square logo
+ * The small square shown at the start of a row. Prefer `src` - a square logo
  * asset. Wide wordmarks are unreadable at this size, so those companies fall
  * back to initials on their brand colour.
  */
@@ -27,12 +27,12 @@ export interface EntryMark {
 }
 
 export interface Entry {
-  /** Stable slug — also the deep-link fragment for the detail panel. */
+  /** Stable slug - also the deep-link fragment for the detail panel. */
   id: string;
   title: string;
   /** Role, publication, or one-line descriptor shown under the title. */
   subtitle?: string;
-  /** Small pill next to the title — e.g. where an article was published. */
+  /** Small pill next to the title - e.g. where an article was published. */
   badge?: string;
   /** Company or product logo shown at the start of the row. */
   mark?: EntryMark;
@@ -40,7 +40,7 @@ export interface Entry {
   meta?: string;
   /** Single-line note rendered under the row. */
   summary?: string;
-  /** Filter keys — must match a `Filter.id` on the owning collection. */
+  /** Filter keys - must match a `Filter.id` on the owning collection. */
   categories: string[];
   /** Display-only chips in the detail panel. */
   tags?: string[];

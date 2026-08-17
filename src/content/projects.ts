@@ -54,7 +54,7 @@ export const projects: Collection = {
     {
       id: "traverse",
       title: "Traverse",
-      meta: "2025 — 2026",
+      meta: "2025 - 2026",
       summary: "Mind map based AI chat.",
       categories: ["fullstack", "ml"],
       href: "https://www.traverse.chat/",
@@ -202,7 +202,7 @@ export const projects: Collection = {
       id: "eyebank",
       title: "EyeBank",
       meta: "2019",
-      summary: "Visually Impaired ATM — Bitcamp 2019, University of Maryland.",
+      summary: "Visually Impaired ATM. Bitcamp 2019, University of Maryland.",
       categories: ["ml"],
       href: "https://devpost.com/software/eyebank",
       image: "/img/eyebank.webp",
@@ -214,7 +214,7 @@ export const projects: Collection = {
         {
           heading: "Awards",
           bullets: [
-            "1st Place Best Financial Software Hack — Capital One",
+            "1st Place Best Financial Software Hack, Capital One",
             "1st Place Bitcamp Compass Challenge",
           ],
         },

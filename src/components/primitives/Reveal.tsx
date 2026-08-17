@@ -7,7 +7,7 @@ const STEP_MS = 70;
 
 interface RevealProps {
   children: ReactNode;
-  /** Position in the stagger — each step delays the entrance by 70ms. */
+  /** Position in the stagger - each step delays the entrance by 70ms. */
   index?: number;
   /** Wait for the element to scroll into view instead of animating on load. */
   onScroll?: boolean;
@@ -17,7 +17,7 @@ interface RevealProps {
 
 /**
  * The site-wide entrance animation. Content above the fold animates on first
- * paint straight from the server-rendered attribute — no JS required — while
+ * paint straight from the server-rendered attribute - no JS required - while
  * `onScroll` sections wait for an IntersectionObserver.
  */
 export function Reveal({
