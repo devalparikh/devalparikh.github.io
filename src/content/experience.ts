@@ -1,0 +1,113 @@
+import { ALL_FILTER, type Collection } from "./types";
+
+export const experience: Collection = {
+  id: "experience",
+  title: "Experience",
+  description: "Where I've worked and what I built there.",
+  filters: [ALL_FILTER, { id: "fulltime", label: "Full-time" }, { id: "internship", label: "Internships" }],
+  entries: [
+    {
+      id: "microsoft-azure",
+      title: "Microsoft, Azure",
+      subtitle: "Staff Software Engineer",
+      mark: { src: "/img/logos/microsoft.svg" },
+      meta: "Jul 2024 - Present",
+      summary:
+        "Lead the development of core infra to deploy Azure Sovereign Clouds.",
+      categories: ["fulltime"],
+      highlights: [
+        "Leading the design, development, and launch of a greenfield, global cloud service that serves as core infrastructure for sovereign clouds and secure supercomputing workloads.",
+        "Architecting distributed systems and new disjoint network protocols for orchestrating data transfer and training/inference of multimodal ML systems.",
+      ],
+      tags: [
+        "Distributed Systems",
+        "Microservices",
+        "Azure",
+        "AI/ML",
+        "Cryptography",
+        "Authentication",
+      ],
+    },
+    {
+      id: "capital-one-senior",
+      title: "Capital One",
+      subtitle: "Senior Software Engineer",
+      mark: { src: "/img/logos/capital-one.webp" },
+      meta: "Feb 2022 - Jul 2024",
+      summary:
+        "Shipped 0->1 a new MFA mechanism to combat social engineering and deployed it to 100 million Capital One customers.",
+      categories: ["fulltime"],
+      highlights: [
+        "Led a team of engineers through the design, development, and launch of novel identity applications, APIs, and distributed systems on a global scale.",
+        "Designed and developed large scale, fault-tolerant, and low-latency identity applications that eliminate social engineering vulnerabilities for over 100 million customers.",
+      ],
+      tags: [
+        "Java",
+        "AWS",
+        "Distributed Microservices",
+        "Multi-Threading",
+        "Distributed Database Design",
+      ],
+    },
+    {
+      id: "capital-one-swe",
+      title: "Capital One",
+      subtitle: "Software Engineer",
+      mark: { src: "/img/logos/capital-one.webp" },
+      meta: "Feb 2021 - Feb 2022",
+      summary: "The customer-facing credit card application platform.",
+      categories: ["fulltime"],
+      highlights: [
+        "Developed features for the customer-facing credit card application platform.",
+      ],
+      tags: ["React", "Redux", "JavaScript", "Node.js", "AWS"],
+    },
+    {
+      id: "capital-one-intern",
+      title: "Capital One",
+      subtitle: "Software Engineering Intern",
+      mark: { src: "/img/logos/capital-one.webp" },
+      meta: "2020",
+      summary: "Automated onboarding for the multi-factor authorization pipeline.",
+      categories: ["internship"],
+      highlights: [
+        "Full stack and distributed systems development on the Consumer Identity Team.",
+        "Developed and designed an end to end, multi-tier, full stack application that automates onboarding clients to the multi-factor authorization security pipeline used by capitalone.com web and mobile, improving the process duration by 1,500%.",
+      ],
+      tags: [
+        "Python",
+        "REST APIs",
+        "TypeScript",
+        "JavaScript",
+        "Angular",
+        "Groovy",
+        "Jenkins",
+        "Amazon Web Services",
+        "Git",
+      ],
+    },
+    {
+      id: "rgi-intern",
+      title: "Reinventing Geospatial, Inc (RGi)",
+      subtitle: "Software Engineering Intern",
+      mark: { src: "/img/logos/rgi.webp" },
+      meta: "2019",
+      summary: "Map data caching on the Geospatial Performance Enhancing Proxy team.",
+      categories: ["internship"],
+      highlights: [
+        "Full stack development on the Geospatial Performance Enhancing Proxy team.",
+        "Improved and developed API services for map data caching and front end features for map components, logs, and dashboards.",
+      ],
+      tags: [
+        "JavaScript",
+        "React",
+        "Redux",
+        "Python",
+        "Django",
+        "REST APIs",
+        "SQL",
+        "Git",
+      ],
+    },
+  ],
+};

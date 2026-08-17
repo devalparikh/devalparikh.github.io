@@ -1,0 +1,267 @@
+import { ALL_FILTER, type Collection } from "./types";
+
+export const projects: Collection = {
+  id: "projects",
+  title: "Projects",
+  description: "Things I've designed, built, and shipped.",
+  filters: [
+    ALL_FILTER,
+    { id: "fullstack", label: "Full Stack" },
+    { id: "ml", label: "AI / ML" },
+  ],
+  entries: [
+    {
+      id: "rolodex",
+      title: "Rolodex",
+      badge: "building",
+      meta: "2026",
+      summary: "AI system to build optimal teams.",
+      categories: ["fullstack", "ml"],
+      href: "https://www.rolodex.dev/",
+      sections: [
+        {
+          heading: "About",
+          body: "Rolodex helps organizations quickly identify and assemble the right team members by analyzing people's actual work contributions to create digital twins and match people based on real expertise rather than job titles.",
+        },
+        {
+          heading: "Architecture",
+          body: "A custom GraphRAG architecture optimized for structured sources (like GitHub repos). Built connectors architecture using typed entity schemas. The retrieval index is roughly six times faster than the general-purpose implementation.",
+        },
+      ],
+      tags: [
+        "Python",
+        "TypeScript",
+        "Next.js",
+        "React",
+        "RAG",
+        "GraphRAG",
+        "Embeddings",
+        "OpenAI API",
+        "FAISS",
+        "NetworkX",
+        "Supabase",
+        "Postgres",
+        "Three.js",
+      ],
+      links: [
+        { label: "rolodex.dev", href: "https://www.rolodex.dev/", kind: "site" },
+        {
+          label: "architecture write-up",
+          href: "https://rolodex.dev/blog/custom-graphrag-architecture",
+          kind: "article",
+        },
+      ],
+    },
+    {
+      id: "traverse",
+      title: "Traverse",
+      meta: "2025 - 2026",
+      summary: "Mind map based AI chat.",
+      categories: ["fullstack", "ml"],
+      href: "https://www.traverse.chat/",
+      sections: [
+        {
+          heading: "About",
+          body: "A chat interface built on a mind map instead of the traditional linear chat ux. Conversations branch into a graph you can navigate, so exploring a tangent does not bury the thread it came from.",
+        },
+      ],
+      tags: [
+        "TypeScript",
+        "Next.js",
+        "React Flow",
+        "RAG",
+        "GraphRAG",
+        "Embeddings",
+        "OpenRouter API",
+        "Supabase",
+        "Postgres",
+        "Tailwind CSS",
+        "Radix UI",
+      ],
+      links: [{ label: "traverse.chat", href: "https://www.traverse.chat/", kind: "site" }],
+    },
+    {
+      id: "speed-of-dev",
+      title: "Speed of Dev",
+      meta: "2025",
+      summary: "Cursor for system architecture and managed infra.",
+      categories: ["fullstack", "ml"],
+      href: "https://www.speedof.dev/",
+      sections: [
+        {
+          heading: "About",
+          body: "A copilot for staff engineers: design a system on a diagramming canvas, then have the managed infrastructure behind it provisioned and tracked from the same place.",
+        },
+      ],
+      tags: [
+        "TypeScript",
+        "Next.js",
+        "C#",
+        ".NET",
+        "Azure Resource Manager",
+        "Excalidraw",
+        "Mermaid",
+        "OpenAI API",
+        "Supabase",
+        "Stripe",
+      ],
+      links: [{ label: "speedof.dev", href: "https://www.speedof.dev/", kind: "site" }],
+    },
+    {
+      id: "zescribe",
+      title: "Zescribe",
+      summary: "AI agents for real estate realtors.",
+      categories: ["fullstack", "ml"],
+    },
+    {
+      id: "geogram",
+      title: "Geogram",
+      meta: "2022",
+      summary: "A social network platform for travel.",
+      categories: ["fullstack"],
+      href: "https://www.geogramapp.com/",
+      image: "/img/geogram.webp",
+      sections: [
+        {
+          heading: "About",
+          body: "Geogram is a web application where users can share and view travel ideas and itenararies.",
+        },
+      ],
+      tags: ["React", "JavaScript", "Java", "Spring", "MongoDB"],
+      links: [{ label: "geogramapp.com", href: "https://www.geogramapp.com/", kind: "site" }],
+    },
+    {
+      id: "flipfeed",
+      title: "FlipFeed",
+      summary: "A platform where users can share property flips and renovations.",
+      categories: ["fullstack"],
+      href: "https://github.com/devalparikh/housinghelper",
+      image: "/img/flipfeed.webp",
+      sections: [
+        {
+          heading: "About",
+          body: "A platform where users can share property flips and renovations. Developed a scalable full stack web application. This project was designed as a multi-teired architecture to optimize reliability at higher scale. System architecture includes Redis, NGINX Reverse Proxy, Caching, and Microservices.",
+        },
+      ],
+      tags: ["React", "JavaScript", "Node.js", "MongoDB", "AWS"],
+      links: [
+        { label: "GitHub", href: "https://github.com/devalparikh/housinghelper", kind: "repo" },
+      ],
+    },
+    {
+      id: "housinghelper",
+      title: "HousingHelper",
+      meta: "2020",
+      summary: "A platform where users can find a roommate.",
+      categories: ["fullstack"],
+      href: "https://github.com/devalparikh/housinghelper",
+      image: "/img/housinghelper.webp",
+      sections: [
+        {
+          heading: "About",
+          body: "A platform where users can find an alternative to corporate housing for internships and full-time positions out of town. This project was designed devloped using a multi-teired architecture to optimize reliability at higher scale.",
+        },
+      ],
+      tags: ["React", "JavaScript", "Node.js", "MongoDB", "AWS"],
+      links: [
+        { label: "GitHub", href: "https://github.com/devalparikh/housinghelper", kind: "repo" },
+      ],
+    },
+    {
+      id: "nlp-chat-app",
+      title: "NLPChatApp",
+      meta: "2020",
+      summary: "Entity and tone detection in a real time chat app.",
+      categories: ["ml", "fullstack"],
+      href: "https://github.com/devalparikh/NLPChatApp",
+      sections: [
+        {
+          heading: "About",
+          body: "Entity detection / tone detection real time chat app using NLP and web sockets.",
+        },
+      ],
+      tags: [
+        "Python",
+        "Machine Learning",
+        "NLP",
+        "TensorFlow JS Deep Learning API",
+        "IBM Cloud",
+        "React",
+        "Node.js",
+        "Web Sockets",
+      ],
+      links: [
+        { label: "GitHub", href: "https://github.com/devalparikh/NLPChatApp", kind: "repo" },
+        {
+          label: "Write-up",
+          href: "https://towardsdatascience.com/building-a-real-time-chat-application-with-nlp-super-powers-ce800e19cb2b",
+          kind: "article",
+        },
+      ],
+    },
+    {
+      id: "eyebank",
+      title: "EyeBank",
+      meta: "2019",
+      summary: "Visually Impaired ATM. Bitcamp 2019, University of Maryland.",
+      categories: ["ml"],
+      href: "https://devpost.com/software/eyebank",
+      image: "/img/eyebank.webp",
+      sections: [
+        {
+          heading: "About",
+          body: "Created software for ATMs that allow users to have a conversation with an ATM, replacing the need for buttons (assisting visually impaired).",
+        },
+        {
+          heading: "Awards 🏆",
+          bullets: [
+            "1st Place Best Financial Software Hack, Capital One",
+            "1st Place Bitcamp Compass Challenge",
+          ],
+        },
+      ],
+      tags: [
+        "Python",
+        "Machine Learning",
+        "Neural Networks",
+        "Darkflow CNN",
+        "Google ML API",
+        "Capital One Bank API",
+      ],
+      links: [{ label: "Devpost", href: "https://devpost.com/software/eyebank", kind: "award" }],
+    },
+    {
+      id: "weapon-detection",
+      title: "Weapon Detection",
+      meta: "2019",
+      summary: "Real-time weapon detection in camera footage.",
+      categories: ["ml"],
+      href: "https://devpost.com/software/no-more-shootings-20",
+      sections: [
+        {
+          heading: "About",
+          body: "Built a software service to detect weapons in real-time camera footage using image classification with YOLO Convolution Neural Network architecture and created dashboards using AWS, Google Maps API, HTML, CSS, JavaScript.",
+        },
+        {
+          heading: "Awards 🏆",
+          bullets: [
+            "1st Place Best Software Hack by Microsoft",
+            "2nd Place Amazon Web Services Hack",
+            "3rd Place Overall Georgetown University Hackathon",
+          ],
+        },
+      ],
+      tags: [
+        "Python",
+        "Machine Learning",
+        "Neural Networks",
+        "Darkflow CNN",
+        "AWS",
+        "Google ML API",
+      ],
+      links: [
+        { label: "Devpost", href: "https://devpost.com/software/no-more-shootings-20", kind: "award" },
+      ],
+    },
+  ],
+};

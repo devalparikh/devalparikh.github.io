@@ -1,4 +1,4 @@
-name: Deploy to Github Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -7,8 +7,13 @@ on:
 
   workflow_dispatch:
 
+# Allow one deploy at a time; queued runs supersede each other.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
-  deployment:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,14 +22,22 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
+          node-version: "22"
           cache: "npm"
 
-      - name: Build
+      - name: Install
+        run: npm ci
+
+      - name: Lint and typecheck
         run: |
-          npm i --legacy-peer-deps
-          npm run build
-          npm run export
+          npm run lint
+          npm run typecheck
+
+      # `npm run build` derives web-sized images from photos/ and then exports
+      # the static site to ./out.
+      - name: Build
+        run: npm run build
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:

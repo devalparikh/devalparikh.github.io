@@ -1,0 +1,37 @@
+{
+  "rolodex": {
+    "src": "/img/previews/rolodex.webp",
+    "width": 1200,
+    "height": 624,
+    "source": "https://rolodex.dev/share-image.png",
+    "fetchedAt": "2026-08-17T20:16:17.663Z"
+  },
+  "traverse": {
+    "src": "/img/previews/traverse.webp",
+    "width": 1200,
+    "height": 630,
+    "source": "https://traverse.chat/opengraph-image?4ef5a428e9e55cca",
+    "fetchedAt": "2026-08-17T20:16:19.306Z"
+  },
+  "speed-of-dev": {
+    "src": "/img/previews/speed-of-dev.webp",
+    "width": 1200,
+    "height": 630,
+    "source": "https://www.speedof.dev/share-image.png",
+    "fetchedAt": "2026-08-17T20:16:20.141Z"
+  },
+  "nlp-chat-app": {
+    "src": "/img/previews/nlp-chat-app.webp",
+    "width": 1200,
+    "height": 600,
+    "source": "https://opengraph.githubassets.com/8dd6b7903bd6aaf3f680663b71c1d0d3653b56f0fc7b0bbdde7b88dce87dfb00/devalparikh/NLPChatApp",
+    "fetchedAt": "2026-08-17T20:16:22.181Z"
+  },
+  "weapon-detection": {
+    "src": "/img/previews/weapon-detection.webp",
+    "width": 333,
+    "height": 222,
+    "source": "https://d112y698adiu2z.cloudfront.net/photos/production/software_thumbnail_photos/000/753/986/datas/medium.PNG",
+    "fetchedAt": "2026-08-17T20:16:22.977Z"
+  }
+}
