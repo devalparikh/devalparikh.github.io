@@ -145,6 +145,37 @@ Share images are captured at build time by `npm run previews`, stored under
 Both are committed, so builds do not depend on those sites being up and a
 fetch failure is logged rather than fatal. Pass `--refresh` to re-fetch.
 
+## Hero globe
+
+The home page hero renders a rotating Earth as a halftone dot field
+(`components/home/GlobeHalftone.tsx`).
+
+The source is `public/img/earth-sprite.webp`: 240 greyscale frames of one
+rotation in a 16x15 grid, 160px each, ~366KB. It is a sprite sheet rather than
+a video because the effect only ever reads luminance per dot, so a video would
+cost megabytes plus decoding, autoplay handling and codec fallbacks for no gain.
+It was derived on macOS from a 1920x1080 stock clip with AVFoundation
+(`AVAssetImageGenerator`) and sharp, cropped to the globe and reduced; the
+original clip is not in the repo. Regenerating it means updating `SPRITE` in
+`lib/halftone.ts` to match.
+
+Each frame is drawn once into a sampling canvas sized one pixel per dot, then
+the dots are filled as a single `Path2D` - about 12k squares in ~4.5ms. The loop
+runs at 20fps and stops whenever the hero scrolls out of view or the tab is
+hidden. Dots take the theme's text colour, so the field flips with the theme.
+
+Rotation speed is `SPRITE.frames / FRAMES_PER_SECOND` seconds per rotation.
+Slow it down by adding frames to the sheet rather than by lowering the frame
+rate: below about 20fps the angular step between frames starts to read as
+stutter.
+
+Tuning lives in `DEFAULT_OPTIONS` in `lib/halftone.ts`: `cell` is the dot pitch,
+`floor` is the luminance below which a cell stays empty, and `gamma` lifts the
+very dark mid-tones of the night-side Earth so its body reads.
+
+`.hero-plate` sets a block of copy on the page background so the dots break
+around it instead of running underneath.
+
 ## Icons and portrait
 
 The home page portrait (`public/img/portrait.webp`), the favicon, `app/icon.png`,

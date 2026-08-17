@@ -633,6 +633,65 @@ body::after {
 }
 
 /* ==========================================================================
+   Hero globe
+
+   A halftone render of a rotating Earth. The section clips it, so the circle
+   is sized and offset to show only its upper cap: the horizon sits at the
+   section's midpoint and the globe runs off the bottom edge.
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: 100%;
+  max-width: 48rem;
+  margin-inline: auto;
+  /* The generous bottom padding is what the globe rises into. */
+  padding: 5rem 1.25rem 10rem;
+}
+
+@media (min-width: 640px) {
+  .hero {
+    padding: 7rem 1.5rem 13rem;
+  }
+}
+
+.hero-globe {
+  position: absolute;
+  z-index: 0;
+  top: 45%;
+  left: 50%;
+  /* Slightly wider than the column so the limbs run just past both edges. */
+  width: min(106%, 46rem);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+.hero-globe-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: color-mix(in oklab, var(--color-base-content) 88%, transparent);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Knocks a hole in the dot field behind a block of copy, the way the reference
+   sets its wordmark on a plate. */
+.hero-plate {
+  position: relative;
+  border-radius: 14px;
+  background-color: var(--color-base-100);
+  /* Spreads the plate past the text without adding layout padding. */
+  box-shadow: 0 0 0 0.85rem var(--color-base-100);
+}
+
+/* ==========================================================================
    Polaroid portrait
    ========================================================================== */
 
