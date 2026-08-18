@@ -243,11 +243,22 @@ body::after {
 }
 
 /* Hidden copy of the full nav; only its widths are ever read. */
-.nav-measure {
+/* The measurement copy holds every nav item at full width, which is wider than
+   the bar on purpose. An absolutely positioned box still counts toward its
+   ancestor's scrollable overflow, so parking it in a zero-size clip is what
+   keeps the page from gaining a phantom horizontal scroll on narrow screens. */
+.nav-measure-clip {
   position: absolute;
   top: 0;
   left: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.nav-measure {
   display: flex;
+  width: max-content;
   gap: 0.125rem;
   visibility: hidden;
   pointer-events: none;
@@ -524,23 +535,36 @@ body::after {
   white-space: nowrap;
 }
 
+/* Narrow screens have no room for a trailing column beside the title - it
+   would starve the text down to one word per line - so the date and the link
+   icons drop onto their own line underneath, indented past the caret to sit
+   under the row's content rather than its edge. */
 @media (max-width: 640px) {
   .row {
-    grid-template-columns: 12px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.3rem;
   }
 
-  /* The second line under a row title, quieter than the role above it. */
-.row-note {
-  display: block;
-  margin-top: 0.16rem;
-  color: color-mix(in oklab, var(--color-neutral-content) 70%, transparent);
-  font-size: 0.72rem;
-  line-height: 1.5;
-}
+  .row-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    margin-left: calc(12px + 0.7rem);
+  }
 
-.row-meta {
-    grid-column: 2;
-    margin-top: 0.24rem;
+  .row-meta {
+    margin-top: 0;
+  }
+
+  /* The reserved empty slot only earns its keep while the dates share a right
+     edge; stacked and left-aligned it is just a blank line. */
+  .row-meta:empty {
+    display: none;
+  }
+
+  .row-actions:not(:has(.row-links)):has(.row-meta:empty) {
+    display: none;
   }
 }
 

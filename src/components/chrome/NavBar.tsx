@@ -112,13 +112,15 @@ export function NavBar() {
               </div>
 
               {/* Off-screen copy of the full bar, used only for measurement. */}
-              <div ref={measureRef} aria-hidden="true" className="nav-measure">
-                {navItems.map((item) => (
-                  <span key={item.href} className={LINK_CLASS}>
-                    {item.label}
-                  </span>
-                ))}
-                <span className="pill-link py-2 pl-3 pr-2.5">More&nbsp;&nbsp;</span>
+              <div aria-hidden="true" className="nav-measure-clip">
+                <div ref={measureRef} className="nav-measure">
+                  {navItems.map((item) => (
+                    <span key={item.href} className={LINK_CLASS}>
+                      {item.label}
+                    </span>
+                  ))}
+                  <span className="pill-link py-2 pl-3 pr-2.5">More&nbsp;&nbsp;</span>
+                </div>
               </div>
             </nav>
 

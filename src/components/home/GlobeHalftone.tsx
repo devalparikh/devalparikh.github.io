@@ -10,14 +10,24 @@ import {
 } from "@/lib/halftone";
 
 /**
+ * How far outside the viewport the loop keeps running.
+ *
+ * IntersectionObserver delivery is throttled during fast scrolling, so gating
+ * on the exact viewport edge lets the globe come back into view while the loop
+ * still believes it is parked - a stale or dropped canvas for a few frames.
+ * Resuming early absorbs that latency.
+ */
+const RESUME_MARGIN = "25%";
+
+/**
  * Renders the rotating globe as a halftone dot field.
  *
  * The source is a sprite sheet of greyscale frames rather than a video: at this
- * dot pitch only luminance is ever read, so 120 frames cost ~180KB and need no
+ * dot pitch only luminance is ever read, so 240 frames cost ~366KB and need no
  * video decoding, autoplay permission, or codec fallbacks.
  *
  * Each frame is drawn once into a small sampling canvas - one pixel per dot -
- * and the dots are then filled as a single path, which keeps ~10k of them
+ * and the dots are then filled as a single path, which keeps ~12k of them
  * inside a frame budget.
  */
 export function GlobeHalftone({
@@ -43,9 +53,17 @@ export function GlobeHalftone({
 
     let frameHandle = 0;
     let ready = false;
-    let visible = true;
+    // The two reasons to park the loop are tracked apart: either one alone
+    // pauses it, and neither may overwrite what the other observed.
+    let onScreen = true;
+    let tabVisible = !document.hidden;
     let columns = 0;
     let rows = 0;
+    // Canvas size in CSS pixels, kept from the last resize. Reading it back
+    // from the layout every frame would force a synchronous reflow inside the
+    // scroll handler, which is exactly when it hurts most.
+    let width = 0;
+    let height = 0;
     let ink = "currentColor";
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -55,24 +73,41 @@ export function GlobeHalftone({
       ink = getComputedStyle(canvas).getPropertyValue("color").trim() || "#000";
     };
 
+    /**
+     * Reallocates both canvases for the element's current size.
+     *
+     * Assigning `width` clears a canvas, so this blanks the globe until the
+     * next draw. ResizeObserver fires for sub-pixel churn too - a mobile URL
+     * bar collapsing mid-scroll is enough - so the size is compared in device
+     * pixels first and unchanged sizes return false rather than blanking.
+     */
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) return;
+      if (rect.width === 0 || rect.height === 0) return false;
 
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
+      const nextWidth = Math.round(rect.width * dpr);
+      const nextHeight = Math.round(rect.height * dpr);
+      if (nextWidth === canvas.width && nextHeight === canvas.height) return false;
+
+      canvas.width = nextWidth;
+      canvas.height = nextHeight;
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      columns = Math.ceil(rect.width / options.cell);
-      rows = Math.ceil(rect.height / options.cell);
+      // Derived from the backing store rather than the rect, so a clear covers
+      // it exactly and leaves no band of the previous frame behind.
+      width = nextWidth / dpr;
+      height = nextHeight / dpr;
+
+      columns = Math.ceil(width / options.cell);
+      rows = Math.ceil(height / options.cell);
       sampler.width = columns;
       sampler.height = rows;
       readInk();
+      return true;
     };
 
     const draw = (frame: number) => {
-      const rect = canvas.getBoundingClientRect();
       if (!ready || columns === 0) return;
 
       const index = frame % SPRITE.frames;
@@ -107,7 +142,7 @@ export function GlobeHalftone({
         }
       }
 
-      context.clearRect(0, 0, rect.width, rect.height);
+      context.clearRect(0, 0, width, height);
       context.fillStyle = ink;
       context.fill(path);
     };
@@ -117,7 +152,7 @@ export function GlobeHalftone({
 
     const tick = (now: number) => {
       frameHandle = requestAnimationFrame(tick);
-      if (!visible) return;
+      if (!onScreen || !tabVisible) return;
 
       if (now - last < 1000 / FRAMES_PER_SECOND) return;
       last = now;
@@ -142,19 +177,26 @@ export function GlobeHalftone({
     sprite.src = SPRITE.src;
 
     const resizeObserver = new ResizeObserver(() => {
-      resize();
-      draw(frame);
+      if (resize()) draw(frame);
     });
     resizeObserver.observe(canvas);
 
-    // Stop the loop whenever the globe is off-screen or the tab is hidden.
-    const intersection = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-    });
+    // Park the loop whenever the globe is off-screen or the tab is hidden.
+    const intersection = new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting;
+        // Repaint on the spot rather than waiting up to a frame interval: the
+        // canvas may have been parked for minutes, and a compositor that
+        // dropped its backing store while off-screen hands back a blank one.
+        if (onScreen) draw(frame);
+      },
+      { rootMargin: RESUME_MARGIN },
+    );
     intersection.observe(canvas);
 
     const onVisibility = () => {
-      visible = !document.hidden;
+      tabVisible = !document.hidden;
+      if (tabVisible && onScreen) draw(frame);
     };
     document.addEventListener("visibilitychange", onVisibility);
 
