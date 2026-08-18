@@ -4,7 +4,7 @@ export const site = {
   url: "https://devalparikh.me",
   role: "Staff Software Engineer @ Microsoft Azure",
   tagline:
-    "Hi, I'm Deval 👋. I work on planet-scale distributed systems and AI/ML at scale.",
+    "Hi, I'm Deval 👋. I work on planet-scale distributed systems and AI/ML.",
   blurb:
     "Building systems to scale secure supercomputing workloads at Microsoft Azure.",
   portrait: {
