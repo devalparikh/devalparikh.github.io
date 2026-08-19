@@ -46,12 +46,6 @@ export default function ContactPage() {
           })}
         </ul>
       </Reveal>
-
-      <Reveal index={3} className="mt-10">
-        <p className="text-sm text-neutral-content">
-          Fastest route is email. I read everything.
-        </p>
-      </Reveal>
     </PageFrame>
   );
 }

@@ -13,7 +13,7 @@ export const experience: Collection = {
       mark: { src: "/img/logos/microsoft.svg" },
       meta: "Jul 2024 - Present",
       summary:
-        "Lead the development of core infra to deploy Azure Sovereign Clouds.",
+        "Leading the development of core infra to deploy Azure Sovereign Clouds.",
       categories: ["fulltime"],
       highlights: [
         "Leading the design, development, and launch of a greenfield, global cloud service that serves as core infrastructure for sovereign clouds and secure supercomputing workloads.",
