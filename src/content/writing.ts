@@ -12,8 +12,36 @@ export const writing: Collection = {
     ALL_FILTER,
     { id: "ai", label: "AI / ML" },
     { id: "fullstack", label: "Full Stack" },
+    { id: "systems", label: "Systems" },
   ],
   entries: [
+    {
+      id: "durable-execution",
+      title: "Durable execution vs atomic execution",
+      badge: "deval.blog",
+      summary:
+        "A blog post comparing durable and atomic execution strategies.",
+      categories: ["systems"],
+      href: "https://deval.blog/blog/tech/durable-execution-vs-atomic-execution",
+    },
+    {
+      id: "speculative-decoding",
+      title: "Speculative decoding",
+      badge: "deval.blog",
+      summary:
+        "A knowledge post on speculative decoding, a technique to speed up LLM inference by using a smaller model to generate candidate tokens and a larger model to verify them.",
+      categories: ["ai"],
+      href: "https://deval.blog/blog/tech/speculative-decoding",
+    },
+    {
+      id: "vision-action-transformers",
+      title: "Vision-Action Transformers vs. VLA vs. World-Action Models",
+      badge: "deval.blog",
+      summary:
+        "A blog post comparing different approaches to vision-action learning.",
+      categories: ["ai"],
+      href: "https://deval.blog/blog/tech/vision-action-transformers-vla-wam",
+    },
     {
       id: "graphrag-architecture",
       title: "Building a 6x Faster GraphRAG: Typed Graphs, FAISS, and Two-Phase Retrieval",
