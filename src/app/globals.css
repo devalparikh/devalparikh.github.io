@@ -1,5 +1,45 @@
 @import "tailwindcss";
 
+/* Notes share the collection's rules and theme tokens. */
+.notes-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.45rem 1rem;
+  padding: 1rem 0.6rem;
+  border-bottom: 1px solid var(--rule);
+}
+.notes-row:hover { background: var(--wash); }
+.notes-title { font-size: 0.95rem; overflow-wrap: anywhere; }
+.notes-title:hover { color: var(--color-primary); text-decoration: underline; text-underline-offset: 4px; }
+.notes-date { padding-top: 0.2rem; font-family: var(--font-mono); font-size: 0.65rem; color: var(--color-neutral-content); white-space: nowrap; }
+.notes-topics { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; font-size: 0.7rem; color: var(--color-neutral-content); }
+.notes-topics button { cursor: pointer; }
+.notes-topics button:hover { color: var(--color-primary); }
+.note-prose { line-height: 1.8; overflow-wrap: anywhere; }
+.note-prose > * + * { margin-top: 1.25rem; }
+.note-prose :is(h1, h2, h3, h4) { font-family: var(--font-display); font-weight: 500; line-height: 1.25; scroll-margin-top: 6rem; margin-top: 2rem; }
+.note-prose h1, .note-prose h2 { font-size: 1.65rem; }
+.note-prose h3 { font-size: 1.3rem; }
+.note-prose a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 3px; }
+.note-prose ul { list-style: disc; padding-left: 1.4rem; }
+.note-prose ol { list-style: decimal; padding-left: 1.4rem; }
+.note-prose li + li { margin-top: 0.3rem; }
+.note-prose li > :is(ul, ol) { margin-top: 0.3rem; }
+.note-prose blockquote { border-left: 2px solid var(--color-primary); padding: 0.6rem 1rem; background: var(--wash); }
+.note-prose pre { overflow-x: auto; border: 1px solid var(--rule); border-radius: 0.6rem; padding: 1rem; background: var(--color-base-200); font-size: 0.8rem; }
+.note-prose code { font-family: var(--font-mono); font-size: 0.85em; }
+.note-prose :not(pre) > code { background: var(--wash); border-radius: 3px; padding: 0.1rem 0.25rem; }
+.note-prose table { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 0.85rem; }
+.note-prose :is(th, td) { border: 1px solid var(--rule); padding: 0.5rem 0.75rem; text-align: left; min-width: 7rem; }
+.note-prose th { background: var(--wash); }
+.note-prose img { max-width: 100%; height: auto; border-radius: 0.5rem; }
+.note-prose hr { border-color: var(--rule); margin-block: 2rem; }
+.note-prose .contains-task-list { list-style: none; }
+@media (max-width: 480px) {
+  .notes-row { grid-template-columns: minmax(0, 1fr); }
+  .notes-date { grid-row: 3; }
+}
+
 /* ==========================================================================
    Design tokens
 
