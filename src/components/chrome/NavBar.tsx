@@ -88,7 +88,10 @@ export function NavBar() {
                 {visibleItems.map((item) => (
                   <Link
                     key={item.href}
-                    href={item.href}
+                    href={(item.destination ?? item.href) as typeof item.href}
+                    target={item.newTab ? "_blank" : undefined}
+                    rel={item.newTab ? "noopener noreferrer" : undefined}
+                    prefetch={item.newTab ? false : undefined}
                     ref={registerItem(item.href)}
                     aria-current={activeHref === item.href ? "page" : undefined}
                     onMouseEnter={() => setHovered(item.href)}

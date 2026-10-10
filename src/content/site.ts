@@ -53,8 +53,8 @@ export const socials: SocialLink[] = [
   {
     id: "resume",
     label: "Resume",
-    value: "devalparikh.me/resume",
-    href: "/resume/",
+    value: "Resume PDF",
+    href: site.resume,
     external: false,
     newTab: true,
   },

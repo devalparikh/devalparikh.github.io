@@ -7,6 +7,13 @@ on:
 
   workflow_dispatch:
 
+  # Retry the sync daily if a Wiki push's dispatch failed.
+  schedule:
+    - cron: "23 8 * * *"
+
+permissions:
+  contents: write
+
 # Allow one deploy at a time; queued runs supersede each other.
 concurrency:
   group: pages
@@ -30,12 +37,15 @@ jobs:
 
       - name: Lint and typecheck
         run: |
+          npm run test:notes
           npm run lint
           npm run typecheck
 
       # `npm run build` derives web-sized images from photos/ and then exports
       # the static site to ./out.
       - name: Build
+        env:
+          WIKI_READ_TOKEN: ${{ secrets.WIKI_READ_TOKEN }}
         run: npm run build
 
       - name: Deploy

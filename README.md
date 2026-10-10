@@ -32,3 +32,9 @@ Pushing to `main` runs lint, typecheck and build, then deploys `./out`.
   derives the web-sized versions into `public/img/photography/`.
 
 See [CLAUDE.md](CLAUDE.md) for the full conventions.
+
+## Notes
+
+`/notes/` publishes the Obsidian notes in `devalparikh/Wiki/knowledge/`.
+See [Notes sync](docs/notes-sync.md) for publishing rules, local previews, and the
+two Actions secrets needed to rebuild the site when notes are pushed to Wiki.

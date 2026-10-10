@@ -33,3 +33,6 @@ next-env.d.ts
 
 # Generated photo derivatives - rebuilt by `npm run photos`
 /public/img/photography/
+
+# Local vaults, previews, and task scratch files
+/work/

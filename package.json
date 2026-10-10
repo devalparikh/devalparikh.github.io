@@ -7,19 +7,30 @@
   "author": "Deval Parikh <devalpp@gmail.com> (https://devalparikh.me)",
   "homepage": "https://devalparikh.me/",
   "scripts": {
-    "dev": "npm run photos && next dev",
-    "build": "npm run photos && npm run previews && next build",
+    "dev": "npm run notes:sync && npm run photos && next dev",
+    "build": "npm run notes:sync && npm run photos && npm run previews && next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "photos": "node scripts/build-photos.mjs",
-    "previews": "node scripts/fetch-previews.mjs"
+    "previews": "node scripts/fetch-previews.mjs",
+    "notes:sync": "node scripts/sync-notes.mjs",
+    "test:notes": "node --test scripts/notes.test.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
     "next": "16.3.1",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "rehype-sanitize": "^6.0.0",
+    "rehype-stringify": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
