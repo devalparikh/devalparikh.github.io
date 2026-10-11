@@ -1,8 +1,9 @@
 {
-  "generatedAt": "2026-09-08T00:29:23.052Z",
+  "generatedAt": "2026-10-11T00:13:15.821Z",
   "hero": {
     "id": "hero",
     "src": "/img/photography/hero.webp",
+    "thumb": "/img/photography/hero-thumb.webp",
     "alt": "hero",
     "width": 1467,
     "height": 2200,
@@ -17,7 +18,7 @@
       "aperture": "f/8",
       "shutter": "1/200s",
       "iso": "ISO 250",
-      "takenAt": "2026-03-09T18:26:41.000Z"
+      "takenAt": "2026-03-09T14:26:41.000Z"
     },
     "orientation": "portrait"
   },
@@ -25,6 +26,7 @@
     {
       "id": "dsf0420",
       "src": "/img/photography/dsf0420.webp",
+      "thumb": "/img/photography/dsf0420-thumb.webp",
       "alt": "DSF0420",
       "width": 1467,
       "height": 2200,
@@ -39,13 +41,14 @@
         "aperture": "f/2",
         "shutter": "1/60s",
         "iso": "ISO 5000",
-        "takenAt": "2025-12-27T22:04:28.000Z"
+        "takenAt": "2025-12-27T17:04:28.000Z"
       },
       "orientation": "portrait"
     },
     {
       "id": "dsc05097",
       "src": "/img/photography/dsc05097.webp",
+      "thumb": "/img/photography/dsc05097-thumb.webp",
       "alt": "DSC05097",
       "width": 1467,
       "height": 2200,
@@ -61,13 +64,14 @@
         "aperture": "f/2.2",
         "shutter": "1/3200s",
         "iso": "ISO 125",
-        "takenAt": "2023-06-24T11:24:51.000Z"
+        "takenAt": "2023-06-24T07:24:51.000Z"
       },
       "orientation": "portrait"
     },
     {
       "id": "dsc05101",
       "src": "/img/photography/dsc05101.webp",
+      "thumb": "/img/photography/dsc05101-thumb.webp",
       "alt": "DSC05101",
       "width": 1467,
       "height": 2200,
@@ -83,13 +87,14 @@
         "aperture": "f/2.2",
         "shutter": "1/5000s",
         "iso": "ISO 125",
-        "takenAt": "2023-06-24T11:25:03.000Z"
+        "takenAt": "2023-06-24T07:25:03.000Z"
       },
       "orientation": "portrait"
     },
     {
       "id": "dsc05280",
       "src": "/img/photography/dsc05280.webp",
+      "thumb": "/img/photography/dsc05280-thumb.webp",
       "alt": "DSC05280",
       "width": 1466,
       "height": 2200,
@@ -105,13 +110,14 @@
         "aperture": "f/2.8",
         "shutter": "1/4000s",
         "iso": "ISO 125",
-        "takenAt": "2023-06-25T13:29:33.000Z"
+        "takenAt": "2023-06-25T09:29:33.000Z"
       },
       "orientation": "portrait"
     },
     {
       "id": "dsc05285",
       "src": "/img/photography/dsc05285.webp",
+      "thumb": "/img/photography/dsc05285-thumb.webp",
       "alt": "DSC05285",
       "width": 1467,
       "height": 2200,
@@ -127,13 +133,14 @@
         "aperture": "f/2.5",
         "shutter": "1/4000s",
         "iso": "ISO 125",
-        "takenAt": "2023-06-25T14:00:09.000Z"
+        "takenAt": "2023-06-25T10:00:09.000Z"
       },
       "orientation": "portrait"
     },
     {
       "id": "dsc05418",
       "src": "/img/photography/dsc05418.webp",
+      "thumb": "/img/photography/dsc05418-thumb.webp",
       "alt": "DSC05418",
       "width": 1466,
       "height": 2200,
@@ -149,13 +156,14 @@
         "aperture": "f/2.8",
         "shutter": "1/2500s",
         "iso": "ISO 125",
-        "takenAt": "2023-06-25T16:21:35.000Z"
+        "takenAt": "2023-06-25T12:21:35.000Z"
       },
       "orientation": "portrait"
     },
     {
       "id": "dsc05525",
       "src": "/img/photography/dsc05525.webp",
+      "thumb": "/img/photography/dsc05525-thumb.webp",
       "alt": "DSC05525",
       "width": 1467,
       "height": 2200,
@@ -171,13 +179,14 @@
         "aperture": "f/3.5",
         "shutter": "1/3200s",
         "iso": "ISO 125",
-        "takenAt": "2023-06-27T12:49:56.000Z"
+        "takenAt": "2023-06-27T08:49:56.000Z"
       },
       "orientation": "portrait"
     },
     {
       "id": "dsc05531",
       "src": "/img/photography/dsc05531.webp",
+      "thumb": "/img/photography/dsc05531-thumb.webp",
       "alt": "DSC05531",
       "width": 1467,
       "height": 2200,
@@ -193,13 +202,14 @@
         "aperture": "f/3.5",
         "shutter": "1/2500s",
         "iso": "ISO 125",
-        "takenAt": "2023-06-27T12:53:34.000Z"
+        "takenAt": "2023-06-27T08:53:34.000Z"
       },
       "orientation": "portrait"
     },
     {
       "id": "dscf0484",
       "src": "/img/photography/dscf0484.webp",
+      "thumb": "/img/photography/dscf0484-thumb.webp",
       "alt": "DSCF0484",
       "width": 1467,
       "height": 2200,
@@ -214,13 +224,14 @@
         "aperture": "f/5.6",
         "shutter": "1/240s",
         "iso": "ISO 125",
-        "takenAt": "2026-03-09T18:21:23.000Z"
+        "takenAt": "2026-03-09T14:21:23.000Z"
       },
       "orientation": "portrait"
     },
     {
       "id": "hero-2",
       "src": "/img/photography/hero-2.webp",
+      "thumb": "/img/photography/hero-2-thumb.webp",
       "alt": "hero 2",
       "width": 1467,
       "height": 2200,
@@ -235,13 +246,14 @@
         "aperture": "f/8",
         "shutter": "1/160s",
         "iso": "ISO 250",
-        "takenAt": "2026-03-09T18:41:30.000Z"
+        "takenAt": "2026-03-09T14:41:30.000Z"
       },
       "orientation": "portrait"
     },
     {
       "id": "img-5252",
       "src": "/img/photography/img-5252.webp",
+      "thumb": "/img/photography/img-5252-thumb.webp",
       "alt": "IMG 5252",
       "width": 1650,
       "height": 2200,
@@ -257,7 +269,7 @@
         "aperture": "f/1.6",
         "shutter": "1/1477s",
         "iso": "ISO 50",
-        "takenAt": "2024-07-23T21:51:25.000Z"
+        "takenAt": "2024-07-23T17:51:25.000Z"
       },
       "orientation": "portrait"
     }

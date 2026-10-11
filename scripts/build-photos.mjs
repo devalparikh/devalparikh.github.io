@@ -26,6 +26,10 @@ const SOURCE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", ".
 const MAX_EDGE = 2200;
 const QUALITY = 78;
 const PLACEHOLDER_WIDTH = 16;
+// Long edge of the small derivative used where a photo shows at thumbnail
+// size - the home page's Preview window sidebar - so it never pulls the full
+// 2200px file just to draw a 60px tile.
+const THUMB_EDGE = 360;
 
 const EXIF_FIELDS = [
   "Make",
@@ -106,6 +110,13 @@ async function buildPhoto(fileName) {
   const output = await resized.clone().webp({ quality: QUALITY }).toBuffer({ resolveWithObject: true });
   await writeFile(path.join(OUTPUT_DIR, `${slug}.webp`), output.data);
 
+  const thumb = await resized
+    .clone()
+    .resize({ width: THUMB_EDGE, height: THUMB_EDGE, fit: "inside" })
+    .webp({ quality: 72 })
+    .toBuffer();
+  await writeFile(path.join(OUTPUT_DIR, `${slug}-thumb.webp`), thumb);
+
   const placeholder = await resized
     .clone()
     .resize({ width: PLACEHOLDER_WIDTH })
@@ -115,6 +126,7 @@ async function buildPhoto(fileName) {
   return {
     id: slug,
     src: `/img/photography/${slug}.webp`,
+    thumb: `/img/photography/${slug}-thumb.webp`,
     alt: titleize(fileName),
     width: output.info.width,
     height: output.info.height,

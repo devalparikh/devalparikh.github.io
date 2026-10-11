@@ -60,7 +60,16 @@
 
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  /* The hero's masthead face. Real Helvetica wherever the OS ships it; Inter
+     Tight is the closest open neo-grotesk for everywhere else. */
+  --font-grotesk: "Helvetica Neue", Helvetica, var(--font-inter-tight), Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* macOS window controls, for the Preview window on the home page. They are
+     the same in both themes, as they are on the real thing. */
+  --color-light-close: #ff5f57;
+  --color-light-minimize: #febc2e;
+  --color-light-zoom: #28c840;
 
   /* One easing curve for the whole site keeps motion feeling of a piece. */
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
@@ -162,14 +171,6 @@ body::after {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
   text-transform: lowercase;
-}
-
-/* The hero's role line carries more weight than a caption, so it steps up a
-   size and takes a stronger colour than the other kickers. */
-.kicker-lead {
-  color: color-mix(in oklab, var(--color-neutral-content) 96%, transparent);
-  font-size: 0.86rem;
-  letter-spacing: 0.005em;
 }
 
 .lede {
@@ -697,62 +698,437 @@ body::after {
 }
 
 /* ==========================================================================
-   Hero globe
+   Hero
 
-   A halftone render of a rotating Earth. The section clips it, so the circle
-   is sized and offset to show only its upper cap: the horizon sits at the
-   section's midpoint and the globe runs off the bottom edge.
+   A masthead row, the name set large in a grotesk, a hairline and a foot.
+   The hero fills the first screen less the nav bar, so the bar is the last
+   thing above the fold. `--hero-progress` (0 -> 1 as the first viewport
+   scrolls away) is published by `HeroStage` and drives everything below
+   that responds to scroll.
    ========================================================================== */
 
+/* Full width only so the clip sits at the viewport edge: the name's lines
+   drift sideways on scroll and may run past the column, but must never widen
+   the page. */
 .hero {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
   width: 100%;
+  overflow-x: clip;
+}
+
+.hero-inner {
+  display: flex;
+  flex-direction: column;
   max-width: 48rem;
+  min-height: calc(100svh - 3.5rem);
   margin-inline: auto;
-  /* The generous bottom padding is what the globe rises into. */
-  padding: 5rem 1.25rem 10rem;
+  padding: 1.1rem 1.25rem 2rem;
 }
 
 @media (min-width: 640px) {
-  .hero {
-    padding: 7rem 1.5rem 13rem;
+  .hero-inner {
+    padding: 1.5rem 1.5rem 2.5rem;
   }
 }
 
-.hero-globe {
-  position: absolute;
-  z-index: 0;
-  top: 45%;
-  left: 50%;
-  /* Slightly wider than the column so the limbs run just past both edges. */
-  width: min(106%, 46rem);
-  aspect-ratio: 1;
-  translate: -50% 0;
-  pointer-events: none;
+.hero-masthead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.9rem;
 }
 
-.hero-globe-canvas {
+.hero-name {
+  position: relative;
+  /* Pushes the name and everything after it to the foot of the screen. */
+  margin-top: auto;
+  padding-top: 2rem;
+  font-family: var(--font-grotesk);
+  font-size: clamp(3.4rem, 22vw, 8.75rem);
+  font-weight: 500;
+  letter-spacing: -0.058em;
+  line-height: 0.86;
+}
+
+.hero-name-fill,
+.hero-name-halo {
+  display: block;
+}
+
+.hero-name-halo {
+  position: absolute;
+  inset: 2rem 0 0;
+  color: var(--color-base-100);
+  -webkit-text-stroke: 0.17em var(--color-base-100);
+}
+
+.hero-line {
+  display: flex;
+  align-items: center;
+  translate: calc(var(--hero-progress, 0) * -9vw) 0;
+}
+
+/* The second line is set in from the first, a staggered magazine cover
+   setting, and drifts the other way as the hero scrolls off. */
+.hero-line[data-line="1"] {
+  padding-left: 0.62em;
+  translate: calc(var(--hero-progress, 0) * 9vw) 0;
+}
+
+/* The mask each letter rises out of. Padded out and pulled back in by the
+   same amount, so it changes no layout but leaves room for the halo stroke,
+   which would otherwise be clipped at the line's edges. */
+.hero-line-mask {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.16em;
+  margin: -0.16em;
+}
+
+@keyframes letterRise {
+  from {
+    transform: translateY(135%) rotate(7deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.hero-letter {
+  display: inline-block;
+  transform-origin: 0 100%;
+  animation: letterRise 1150ms var(--ease-out-quint) both;
+  animation-delay: calc(var(--letter-delay, 0ms) + 120ms);
+}
+
+@keyframes portraitIn {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-25deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-portrait-slot {
+  flex: none;
+  width: 0.74em;
+  height: 0.74em;
+  margin-left: 0.16em;
+  border-radius: 9999px;
+  animation: portraitIn 1000ms var(--ease-out-quint) 420ms both;
+}
+
+.hero-name-halo .hero-portrait-slot {
+  background-color: var(--color-base-100);
+  box-shadow: 0 0 0 0.085em var(--color-base-100);
+}
+
+.hero-portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+@keyframes ruleDraw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.hero-rule {
+  height: 1px;
+  margin-top: 1.5rem;
+  background-color: var(--rule);
+  transform-origin: 0 50%;
+  animation: ruleDraw 1100ms var(--ease-out-quint) var(--rule-delay, 0ms) both;
+}
+
+.hero-foot {
+  display: grid;
+  gap: 0.9rem;
+  align-items: end;
+  margin-top: 1rem;
+}
+
+@media (min-width: 640px) {
+  .hero-foot {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2rem;
+  }
+}
+
+.hero-lede {
+  max-width: 26rem;
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   Globe backdrop
+
+   A halftone render of a rotating Earth, fixed behind the whole home page.
+   At the top it sits large behind the name; as the hero scrolls away it
+   shrinks back to the middle of the screen and fades to a watermark, then
+   rides along behind the content for the rest of the page.
+
+   Everything here is a transform or opacity driven by `--hero-progress`, so
+   the canvas itself is never resized by scrolling. Its size is pinned to the
+   viewport width, not height, so a mobile URL bar collapsing mid-scroll does
+   not reallocate it either.
+   ========================================================================== */
+
+.globe-backdrop {
+  --p: var(--hero-progress, 0);
+  --size: min(112vw, 44rem);
+  --start-y: 3.4rem;
+  --end-y: calc(50svh - var(--size) / 2);
+
+  position: fixed;
+  z-index: -1;
+  top: 0;
+  left: 50%;
+  width: var(--size);
+  aspect-ratio: 1;
+  pointer-events: none;
+  /* Fades faster than it moves: by the time the tagline and nav bar scroll
+     up across the globe it is already down to a watermark. */
+  opacity: max(0.15, 1 - 2.1 * var(--p));
+  transform:
+    translate(-50%, calc(var(--start-y) + (var(--end-y) - var(--start-y)) * var(--p)))
+    scale(calc(1 - 0.14 * var(--p)));
+  will-change: transform, opacity;
+}
+
+.globe-backdrop-canvas {
   display: block;
   width: 100%;
   height: 100%;
   color: color-mix(in oklab, var(--color-base-content) 88%, transparent);
 }
 
-.hero-content {
-  position: relative;
-  z-index: 1;
+/* ==========================================================================
+   Preview window - the home page's photography peek
+
+   Dressed as macOS Preview: traffic lights and a unified title bar, a
+   thumbnail sidebar, and the photo on a plain stage. The window chrome uses
+   the system UI face, as the real one does; colours stay on the site tokens
+   so it follows the theme rather than the OS.
+   ========================================================================== */
+
+.preview-window {
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background-color: var(--color-base-100);
+  box-shadow:
+    0 1px 2px color-mix(in oklab, var(--color-base-content) 8%, transparent),
+    0 28px 60px -28px color-mix(in oklab, var(--color-base-content) 42%, transparent);
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
-/* Knocks a hole in the dot field behind a block of copy, the way the reference
-   sets its wordmark on a plate. */
-.hero-plate {
-  position: relative;
-  border-radius: 14px;
-  background-color: var(--color-base-100);
-  /* Spreads the plate past the text without adding layout padding. */
-  box-shadow: 0 0 0 0.85rem var(--color-base-100);
+.preview-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 3.1rem;
+  padding: 0 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  background-color: var(--color-base-200);
+  color: var(--color-neutral-content);
+}
+
+.preview-lights {
+  display: flex;
+  flex: none;
+  gap: 0.45rem;
+}
+
+.preview-lights i {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  box-shadow: inset 0 0 0 0.5px color-mix(in oklab, black 18%, transparent);
+}
+
+.preview-lights [data-light="close"] { background-color: var(--color-light-close); }
+.preview-lights [data-light="minimize"] { background-color: var(--color-light-minimize); }
+.preview-lights [data-light="zoom"] { background-color: var(--color-light-zoom); }
+
+.preview-title {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.preview-filename {
+  overflow: hidden;
+  color: var(--color-base-content);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-subtitle {
+  overflow: hidden;
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-tools {
+  display: flex;
+  flex: none;
+  gap: 0.9rem;
+}
+
+.preview-tool {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: none;
+}
+
+.preview-body {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+/* A filmstrip under the photo on phones... */
+.preview-sidebar {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0.55rem 0.6rem;
+  border-top: 1px solid var(--rule);
+  background-color: var(--color-base-200);
+  scrollbar-width: none;
+}
+
+.preview-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.preview-thumb {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.preview-thumb img {
+  display: block;
+  width: auto;
+  height: 3.6rem;
+  border-radius: 2px;
+  background-color: var(--color-base-300);
+  box-shadow: 0 1px 3px color-mix(in oklab, var(--color-base-content) 22%, transparent);
+  transition: box-shadow 200ms var(--ease-out-quint);
+}
+
+.preview-thumb-index {
+  color: var(--color-neutral-content);
+  font-size: 0.6rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.preview-thumb:hover {
+  background-color: var(--wash);
+}
+
+.preview-thumb[aria-selected="true"] {
+  background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
+}
+
+.preview-thumb[aria-selected="true"] img {
+  box-shadow:
+    0 0 0 2px var(--color-base-200),
+    0 0 0 3.5px var(--color-primary);
+}
+
+.preview-thumb[aria-selected="true"] .preview-thumb-index {
+  color: var(--color-base-content);
+  font-weight: 600;
+}
+
+.preview-stage {
+  display: flex;
+  height: min(30rem, 62svh);
+  align-items: center;
+  justify-content: center;
+  padding: 1.1rem;
+  cursor: zoom-in;
+}
+
+.preview-photo {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 2px;
+  background-position: center;
+  background-size: cover;
+  box-shadow: 0 10px 30px -14px color-mix(in oklab, var(--color-base-content) 45%, transparent);
+  transition: transform 500ms var(--ease-out-quint);
+}
+
+.preview-stage:hover .preview-photo {
+  transform: scale(1.012);
+}
+
+.preview-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 500ms ease-out;
+}
+
+/* ...and a sidebar down the left from a tablet up. */
+@media (min-width: 640px) {
+  .preview-body {
+    flex-direction: row;
+  }
+
+  .preview-sidebar {
+    flex-direction: column;
+    width: 7rem;
+    max-height: 30rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0.7rem 0.6rem;
+    border-top: 0;
+    border-right: 1px solid var(--rule);
+  }
+
+  .preview-thumb {
+    padding: 0.45rem;
+  }
+
+  .preview-thumb img {
+    height: auto;
+    width: 4.2rem;
+  }
+
+  .preview-stage {
+    flex: 1;
+    height: 30rem;
+    padding: 1.6rem;
+  }
 }
 
 /* ==========================================================================
@@ -815,5 +1191,10 @@ body::after {
 
   .reveal {
     opacity: 1;
+  }
+
+  .hero-line,
+  .hero-line[data-line="1"] {
+    translate: none;
   }
 }

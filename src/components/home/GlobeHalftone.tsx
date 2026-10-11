@@ -5,6 +5,7 @@ import {
   DEFAULT_OPTIONS,
   dotSize,
   FRAMES_PER_SECOND,
+  SPIN,
   SPRITE,
   type HalftoneOptions,
 } from "@/lib/halftone";
@@ -29,6 +30,9 @@ const RESUME_MARGIN = "25%";
  * Each frame is drawn once into a small sampling canvas - one pixel per dot -
  * and the dots are then filled as a single path, which keeps ~12k of them
  * inside a frame budget.
+ *
+ * The spin follows the page: scrolling down turns the globe one way, scrolling
+ * up turns it back, and a fast scroll briefly speeds it up. See `SPIN`.
  */
 export function GlobeHalftone({
   className,
@@ -110,7 +114,7 @@ export function GlobeHalftone({
     const draw = (frame: number) => {
       if (!ready || columns === 0) return;
 
-      const index = frame % SPRITE.frames;
+      const index = ((frame % SPRITE.frames) + SPRITE.frames) % SPRITE.frames;
       const sx = (index % SPRITE.columns) * SPRITE.frame;
       const sy = Math.floor(index / SPRITE.columns) * SPRITE.frame;
 
@@ -147,18 +151,44 @@ export function GlobeHalftone({
       context.fill(path);
     };
 
-    let frame = 0;
-    let last = 0;
+    // The spin is integrated continuously as a fractional frame position, so
+    // speed can ease up and down smoothly; only whole frames are ever drawn.
+    let position = 0;
+    let velocity = FRAMES_PER_SECOND;
+    let direction = 1;
+    let boost = 0;
+    let lastScroll = window.scrollY;
+    let previous = 0;
+    let lastDraw = 0;
+    let drawn = 0;
 
     const tick = (now: number) => {
       frameHandle = requestAnimationFrame(tick);
+      // Capped so a tab that was throttled does not lurch forward on return.
+      const dt = previous ? Math.min(now - previous, 100) / 1000 : 0;
+      previous = now;
       if (!onScreen || !tabVisible) return;
 
-      if (now - last < 1000 / FRAMES_PER_SECOND) return;
-      last = now;
+      // Reading scrollY is cheap - it needs no layout - so the loop samples it
+      // directly instead of keeping a scroll listener in step with it.
+      const scroll = window.scrollY;
+      const delta = scroll - lastScroll;
+      lastScroll = scroll;
+      if (delta !== 0) {
+        direction = Math.sign(delta);
+        boost = Math.min(SPIN.maxBoost, boost + Math.abs(delta) * SPIN.gain);
+      }
+      boost *= Math.exp(-SPIN.decay * dt);
 
+      const target = direction * FRAMES_PER_SECOND * (1 + boost);
+      velocity += (target - velocity) * (1 - Math.exp(-SPIN.response * dt));
+      position += velocity * dt;
+
+      const frame = Math.floor(position);
+      if (frame === drawn || now - lastDraw < 1000 / SPIN.maxDrawRate) return;
+      drawn = frame;
+      lastDraw = now;
       draw(frame);
-      frame += 1;
     };
 
     const start = () => {
@@ -177,7 +207,7 @@ export function GlobeHalftone({
     sprite.src = SPRITE.src;
 
     const resizeObserver = new ResizeObserver(() => {
-      if (resize()) draw(frame);
+      if (resize()) draw(drawn);
     });
     resizeObserver.observe(canvas);
 
@@ -188,7 +218,7 @@ export function GlobeHalftone({
         // Repaint on the spot rather than waiting up to a frame interval: the
         // canvas may have been parked for minutes, and a compositor that
         // dropped its backing store while off-screen hands back a blank one.
-        if (onScreen) draw(frame);
+        if (onScreen) draw(drawn);
       },
       { rootMargin: RESUME_MARGIN },
     );
@@ -196,13 +226,13 @@ export function GlobeHalftone({
 
     const onVisibility = () => {
       tabVisible = !document.hidden;
-      if (tabVisible && onScreen) draw(frame);
+      if (tabVisible && onScreen) draw(drawn);
     };
     document.addEventListener("visibilitychange", onVisibility);
 
     const themeObserver = new MutationObserver(() => {
       readInk();
-      draw(frame);
+      draw(drawn);
     });
     themeObserver.observe(document.documentElement, {
       attributes: true,

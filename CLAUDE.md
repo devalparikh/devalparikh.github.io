@@ -66,7 +66,8 @@ To add a filter tab, add a `Filter` to the collection and tag entries with its
 ## Design system
 
 All of it is in `src/app/globals.css`, in this order: tokens → base →
-typography → reveal → nav → row list → drawer → polaroid → motion preferences.
+typography → reveal → nav → row list → drawer → hero → globe backdrop →
+Preview window → polaroid → motion preferences.
 
 - **Colours** - `parchment` (light) is the default, `inkember` (dark) overrides
   the same token names under `[data-theme="inkember"]`. Never write a raw hex
@@ -77,7 +78,9 @@ typography → reveal → nav → row list → drawer → polaroid → motion pr
   instantly and fades out over 150ms; the moving parts (caret, underline,
   arrow) ease in both directions. That asymmetry is deliberate.
 - **Type** - Fraunces for display (`.display`, `font-display`), DM Sans for
-  body, system mono for `.kicker` and `.row-meta`.
+  body, system mono for `.kicker` and `.row-meta`. The hero name alone is set
+  in `--font-grotesk`: real Helvetica where the OS has it, Inter Tight (loaded
+  without preload, so Apple devices never fetch it) everywhere else.
 - **Tailwind vs CSS** - use Tailwind utilities for layout and one-off styling.
   Reach for a class in `globals.css` only for multi-part interactive pieces
   where pseudo-elements and state selectors would be unreadable as utilities.
@@ -124,7 +127,8 @@ otherwise the sticky nav bar paints over them.
 `photos/` holds full-resolution originals - over 100MB, and deliberately
 outside `public/` so they are never deployed. `npm run photos` derives web-sized
 WebP into `public/img/photography/`, reads each shot's EXIF, and writes
-`src/content/photos.generated.json`.
+`src/content/photos.generated.json`. Each photo also gets a ~360px
+`-thumb.webp` for thumbnail-sized slots.
 
 - Both `npm run dev` and `npm run build` run it first.
 - The derived images are gitignored; the manifest is committed.
@@ -145,10 +149,38 @@ Share images are captured at build time by `npm run previews`, stored under
 Both are committed, so builds do not depend on those sites being up and a
 fetch failure is logged rather than fatal. Pass `--refresh` to re-fetch.
 
+## Hero
+
+The home hero fills the first screen less the nav bar: a masthead of
+bracketed kickers (`site.mastheadLabels`), the name large in the grotesk, a
+hairline, then the tagline and socials.
+
+- **Entrance** - each letter rises out of its line's mask, 45ms apart, then the
+  hairline draws in. Pure CSS from server-rendered markup, so no JS is needed.
+- **Halo** - the name is rendered twice. The lower copy is a thick stroke in
+  the page colour that knocks the dot field back from the letterforms; as a
+  separate layer it never paints over a neighbouring letter.
+- **Portrait** - an inline round plate in the first line. `Portrait.tsx`
+  keeps `CirclePortrait` and `PolaroidPortrait` (which keeps the `.polaroid`
+  styles alive); both are deliberately unreferenced, not dead code.
+- **Scroll** - `HeroStage` publishes `--hero-progress` (0 at the top, 1 once a
+  viewport has scrolled) on a `display: contents` wrapper, so only the hero and
+  globe restyle. CSS uses it to drift the two lines apart and to settle the
+  globe.
+
 ## Hero globe
 
-The home page hero renders a rotating Earth as a halftone dot field
-(`components/home/GlobeHalftone.tsx`).
+The home page renders a rotating Earth as a halftone dot field
+(`components/home/GlobeHalftone.tsx`), fixed behind the whole page at
+`z-index: -1`. It starts large behind the name and, as the hero scrolls away,
+shrinks to the middle of the screen and fades to a watermark (`.globe-backdrop`),
+then rides behind the content. Its size is pinned to the viewport width so a
+mobile URL bar collapsing never reallocates the canvas.
+
+The spin follows the scroll: scrolling down turns it one way, up the other, a
+fast scroll speeds it up, and it keeps turning in the last direction. The speed
+eases through zero on a reversal rather than snapping. Tuning is `SPIN` in
+`lib/halftone.ts`.
 
 The source is `public/img/earth-sprite.webp`: 240 greyscale frames of one
 rotation in a 16x15 grid, 160px each, ~366KB. It is a sprite sheet rather than
@@ -160,26 +192,27 @@ original clip is not in the repo. Regenerating it means updating `SPRITE` in
 `lib/halftone.ts` to match.
 
 Each frame is drawn once into a sampling canvas sized one pixel per dot, then
-the dots are filled as a single `Path2D` - about 12k squares in ~4.5ms. The loop
-runs at 20fps and stops whenever the hero scrolls out of view or the tab is
-hidden. Dots take the theme's text colour, so the field flips with the theme.
+the dots are filled as a single `Path2D` - about 12k squares in ~4.5ms. Draws
+are capped at `SPIN.maxDrawRate` and stop while the tab is hidden. Dots take the
+theme's text colour, so the field flips with the theme.
 
-Rotation speed is `SPRITE.frames / FRAMES_PER_SECOND` seconds per rotation.
+Resting rotation is `SPRITE.frames / FRAMES_PER_SECOND` seconds per turn.
 Slow it down by adding frames to the sheet rather than by lowering the frame
 rate: below about 20fps the angular step between frames starts to read as
 stutter.
 
-Tuning lives in `DEFAULT_OPTIONS` in `lib/halftone.ts`: `cell` is the dot pitch,
-`floor` is the luminance below which a cell stays empty, and `gamma` lifts the
-very dark mid-tones of the night-side Earth so its body reads.
+Dot tuning lives in `DEFAULT_OPTIONS` in `lib/halftone.ts`: `cell` is the dot
+pitch, `floor` is the luminance below which a cell stays empty, and `gamma`
+lifts the very dark mid-tones of the night-side Earth so its body reads.
 
-`.hero-plate` sets a block of copy on the page background so the dots break
-around it instead of running underneath.
+## Photography peek
 
-The portrait has two interchangeable treatments in `components/home/Portrait.tsx`
-- `CirclePortrait` (in use) and `PolaroidPortrait`, which keeps the `.polaroid`
-styles alive. They share one prop shape, so swapping is a one-word import
-change; `PolaroidPortrait` is deliberately unreferenced, not dead code.
+The bottom of the home page frames a few photographs as a macOS Preview window
+(`components/home/PhotoPeek.tsx`): a thumbnail sidebar picks the photo (arrow
+keys work), the title bar reads its file name and EXIF, and the photo opens
+`/photography`. Below 640px the sidebar becomes a filmstrip under the photo.
+Thumbnails use the `-thumb.webp` derivatives; hovering one prefetches the full
+file. The traffic-light colours are tokens in the `@theme` block.
 
 ## Icons and portrait
 

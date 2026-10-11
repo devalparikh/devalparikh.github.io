@@ -13,6 +13,8 @@ export interface PhotoExif {
 export interface Photo {
   id: string;
   src: string;
+  /** A ~360px derivative for thumbnail-sized slots. */
+  thumb: string;
   alt: string;
   width: number;
   height: number;

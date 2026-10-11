@@ -7,7 +7,7 @@ import { playInterfaceSound } from "@/lib/interface-sound";
 
 export function SocialRow() {
   return (
-    <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:justify-start">
+    <ul className="flex flex-wrap items-center gap-x-4 gap-y-2">
       {socials.map((social) => {
         const Icon = socialIcons[social.id];
 

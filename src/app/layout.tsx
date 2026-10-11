@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Sans, Fraunces } from "next/font/google";
+import { DM_Sans, Fraunces, Inter_Tight } from "next/font/google";
 import { site } from "@/content/site";
 import { themeBootstrapScript } from "@/lib/theme";
 import "./globals.css";
@@ -14,6 +14,18 @@ const fraunces = Fraunces({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-fraunces",
+});
+
+/**
+ * Stand-in for Helvetica where the system has none (Android, Linux). Apple
+ * devices resolve the real face first in `--font-grotesk`, so this file is
+ * never requested there - hence no preload.
+ */
+const interTight = Inter_Tight({
+  subsets: ["latin"],
+  display: "swap",
+  preload: false,
+  variable: "--font-inter-tight",
 });
 
 export const metadata: Metadata = {
@@ -51,7 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Resolves the theme before first paint so there is no flash. */}
         <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
       </head>
-      <body className={`${dmSans.variable} ${fraunces.variable}`}>
+      <body className={`${dmSans.variable} ${fraunces.variable} ${interTight.variable}`}>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-base-200 focus:px-4 focus:py-2 focus:text-sm"

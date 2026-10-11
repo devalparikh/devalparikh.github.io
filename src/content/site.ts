@@ -7,6 +7,8 @@ export const site = {
     "Hi, I'm Deval 👋. I work on planet-scale distributed systems and AI/ML.",
   blurb:
     "Building systems to scale secure supercomputing workloads at Microsoft Azure.",
+  /** Bracketed labels across the top of the hero, set like a masthead. */
+  mastheadLabels: ["Staff Software Engineer", "Microsoft Azure"],
   portrait: {
     src: "/img/portrait.webp",
     alt: "Deval Parikh",
