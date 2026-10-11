@@ -158,7 +158,10 @@ body::after {
 .explorer-folder[open] > summary .folder-caret { transform: rotate(90deg); }
 .note-layout { gap: 1.1rem; }
 .note-breadcrumb { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; font-size: .67rem; color: var(--color-neutral-content); }
-.note-breadcrumb span span { margin-right: .4rem; opacity: .5; }
+.note-path-part { display: inline-flex; align-items: baseline; gap: .4rem; min-width: 0; }
+.note-path-separator { opacity: .5; }
+.note-motion-word { display: inline-block; max-width: 100%; }
+.note-motion-letter { display: inline-block; }
 .note-breadcrumb a:hover { color: var(--color-primary); }
 .note-header h1 { font-size: 1.95rem; font-weight: 650; line-height: 1.2; letter-spacing: -.035em; overflow-wrap: anywhere; }
 .note-properties { display: flex; flex-wrap: wrap; gap: .35rem 1rem; color: var(--color-neutral-content); font-size: .68rem; }
@@ -233,6 +236,7 @@ body::after {
   .explorer-content { max-height: calc(100dvh - var(--notes-sticky-top) - 3.5rem); }
   .notes-disclosure > summary { padding-top: .2rem; }
   .note-header { grid-column: 2; grid-row: 1; }
+  .note-layout { grid-template-rows: auto 1fr; }
   .note-body { grid-column: 2; grid-row: 2; }
   .note-rail { display: flex; flex-direction: column; gap: 1.5rem; grid-column: 3; grid-row: 1 / span 2; position: sticky; align-self: start; top: var(--notes-sticky-top); max-height: calc(100dvh - var(--notes-sticky-top) - 1rem); overflow-y: auto; scrollbar-width: thin; scrollbar-gutter: stable; overscroll-behavior-y: contain; }
   .note-toc nav { max-height: none; overflow: visible; }

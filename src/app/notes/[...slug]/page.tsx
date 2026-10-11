@@ -1,7 +1,8 @@
 import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PageFrame } from "@/components/chrome/PageFrame";
+import { NoteHeading } from "@/components/notes/NoteHeading";
+import { NoteBody } from "@/components/notes/NoteBody";
 import { NotesExplorer } from "@/components/notes/NotesExplorer";
 import { NoteToc } from "@/components/notes/NoteToc";
 import { NoteGraph } from "@/components/notes/NoteGraph";
@@ -28,32 +29,26 @@ export default async function NotePage({ params }: Props) {
   if (!note) notFound();
   const backlinks = notes.filter((item) => item.outgoing.includes(note.id));
 
-  return <PageFrame wide>
-    <div className="notes-layout note-layout">
-      <NotesExplorer notes={noteLinks} current={note.id} />
-      <header className="note-header">
-        <nav className="note-breadcrumb" aria-label="Breadcrumb">
-          <Link href="/notes">{notesContent.title}</Link>
-          {note.folders.map((folder, index) => <span key={index}><span aria-hidden="true">/</span> {folder}</span>)}
-        </nav>
-        <h1>{note.title}</h1>
-        <div className="note-properties">
-          {note.updated && <span>Updated <time dateTime={note.updated}>{formatNoteDate(note.updated)}</time></span>}
-          {note.tags.map((tag) => <span key={tag}>#{tag}</span>)}
-        </div>
-      </header>
-      <div className="note-rail">
-        <aside className="note-outline"><NoteToc headings={note.toc} /></aside>
-        <aside className="note-connections"><NoteGraph notes={noteLinks} current={note.id} compact /></aside>
-        {!!backlinks.length && <aside className="note-backlinks" aria-label={notesContent.backlinks}>
-          <h2>{notesContent.backlinks}<span>{backlinks.length}</span></h2>
-          <ul>{backlinks.map((item) => <li key={item.id}><Link href={`/notes/${item.id}/` as Route}>{item.title}<span aria-hidden="true">↗︎</span></Link></li>)}</ul>
-        </aside>}
+  return <div className="notes-layout note-layout">
+    <NotesExplorer notes={noteLinks} current={note.id} />
+    <header className="note-header">
+      <NoteHeading id={note.id} title={note.title} folders={note.folders} />
+      <div className="note-properties">
+        {note.updated && <span>Updated <time dateTime={note.updated}>{formatNoteDate(note.updated)}</time></span>}
+        {note.tags.map((tag) => <span key={tag}>#{tag}</span>)}
       </div>
-      <div className="notes-main note-body">
-        {/* HTML and heading IDs come from the same sanitized build-time tree. */}
-        <article className="note-prose" dangerouslySetInnerHTML={{ __html: note.html }} />
-      </div>
+    </header>
+    <div className="note-rail">
+      <aside className="note-outline"><NoteToc headings={note.toc} /></aside>
+      <aside className="note-connections"><NoteGraph notes={noteLinks} current={note.id} compact /></aside>
+      {!!backlinks.length && <aside className="note-backlinks" aria-label={notesContent.backlinks}>
+        <h2>{notesContent.backlinks}<span>{backlinks.length}</span></h2>
+        <ul>{backlinks.map((item) => <li key={item.id}><Link href={`/notes/${item.id}/` as Route}>{item.title}<span aria-hidden="true">↗︎</span></Link></li>)}</ul>
+      </aside>}
     </div>
-  </PageFrame>;
+    <div className="notes-main note-body">
+      {/* HTML and heading IDs come from the same sanitized build-time tree. */}
+      <NoteBody html={note.html} />
+    </div>
+  </div>;
 }

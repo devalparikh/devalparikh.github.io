@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import type { Route } from "next";
 import type { NoteLink } from "@/lib/notes";
 import { layoutGraph, zoomGraph, graphLabels, INITIAL_GRAPH_VIEW, type GraphView } from "@/lib/note-graph";
 import { notesContent } from "@/content/notes";
@@ -70,7 +72,7 @@ export function NoteGraph({ notes, current, compact = false, view: savedView, on
       <g className="graph-scene" data-gesture={gesture} transform={`translate(${width / 2 + view.x} ${height / 2 + view.y}) scale(${view.scale}) translate(${-width / 2} ${-height / 2})`}>
         {edges.map(({ source, target }) => <line key={`${source.id}:${target.id}`} x1={source.x} y1={source.y} x2={target.x} y2={target.y}
           className="graph-edge" data-active={hovered === source.id || hovered === target.id} />)}
-        {nodes.map((node) => <a key={node.id} href={`/notes/${node.id}/`} aria-label={node.title}
+        {nodes.map((node) => <Link key={node.id} href={`/notes/${node.id}/` as Route} aria-label={node.title}
           aria-current={current === node.id ? "page" : undefined}
           className="graph-node" data-muted={!!hovered && !related.has(node.id)} data-active={hovered === node.id || current === node.id}
           onMouseEnter={() => setHovered(node.id)} onMouseLeave={() => setHovered(null)}
@@ -82,7 +84,7 @@ export function NoteGraph({ notes, current, compact = false, view: savedView, on
             style={{ fontSize: `${(compact ? 14 : 11) / view.scale}px` }} data-visible={labels.has(node.id)}>
             {node.title.length > 26 ? `${node.title.slice(0, 25)}…` : node.title}
           </text>
-        </a>)}
+        </Link>)}
       </g>
     </svg>
     <p className="graph-caption" aria-live="polite">{focused?.title ?? (compact && edges.length === 0 ? notesContent.noConnections : `${nodes.length} notes · ${edges.length} links`)}</p>
