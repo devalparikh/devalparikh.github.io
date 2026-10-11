@@ -83,6 +83,7 @@ const TIERS: Record<Exclude<TagTier, "service">, ReadonlySet<string>> = {
     "faiss",
     "fastapi",
     "flask",
+    "langgraph",
     "mermaid",
     "networkx",
     "next.js",

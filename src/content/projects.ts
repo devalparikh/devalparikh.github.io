@@ -11,6 +11,65 @@ export const projects: Collection = {
   ],
   entries: [
     {
+      id: "autoeval",
+      title: "AutoEval",
+      meta: "2026",
+      summary: "Trace, version, and evaluate AI agents.",
+      categories: ["fullstack", "ml"],
+      href: "https://github.com/devalparikh/auto-eval",
+      image: "/img/autoeval.webp",
+      sections: [
+        {
+          heading: "About",
+          body: "A local workspace for building and evaluating LangGraph agents. Inspect executions node by node, turn reviewed traces into versioned datasets, and compare models on accuracy, cost, and latency. Each evaluation records the exact graph, prompt, and dataset versions used so results can be reproduced.",
+        },
+      ],
+      tags: [
+        "Python",
+        "TypeScript",
+        "FastAPI",
+        "Next.js",
+        "React",
+        "LangGraph",
+        "React Flow",
+        "SQLite",
+        "OpenRouter API",
+      ],
+      links: [
+        { label: "GitHub", href: "https://github.com/devalparikh/auto-eval", kind: "repo" },
+      ],
+    },
+    {
+      id: "pearup",
+      title: "PearUp",
+      meta: "2026",
+      summary: "Private AI spaces for couples to communicate better.",
+      categories: ["fullstack", "ml"],
+      href: "https://www.pearup.app/",
+      image: "/img/pearup.webp",
+      sections: [
+        {
+          heading: "About",
+          body: "An AI companion that gives each partner a private place to work through their thoughts. Choose whether to keep a message private, send a gentle nudge, or share openly. Weekly insights help couples reflect on how they communicate.",
+        },
+      ],
+      tags: [
+        "Python",
+        "JavaScript",
+        "Next.js",
+        "React",
+        "FastAPI",
+        "Supabase",
+        "Postgres",
+        "OpenAI API",
+        "Anthropic API",
+        "Tailwind CSS",
+      ],
+      links: [
+        { label: "pearup.app", href: "https://www.pearup.app/", kind: "site" },
+      ],
+    },
+    {
       id: "rolodex",
       title: "Rolodex",
       badge: "building",
