@@ -72,3 +72,21 @@ npm run lint
 npm run typecheck
 npm run build
 ```
+
+## Notes navigation and search
+
+The importer also generates the folder hierarchy, heading IDs/table of contents,
+and the link graph from the same published notes. Incoming and outgoing links
+appear in each note's local graph; the index has a complete graph with pan/zoom.
+The explorer and table of contents start open on desktop and fold above the note
+on smaller screens. The current heading follows scrolling.
+
+Cmd/Ctrl K, or the search icon in the navigation, opens site search on every page.
+It searches page titles, projects, experience, writing, and published note text.
+Exact titles rank first. Arrow keys select a result, Enter opens it, and Escape
+closes search and returns focus. Project results link directly to their drawers.
+
+`notes:sync` writes `public/notes-search.json` after filtering the vault. This
+untracked file is rebuilt for both development and production; browsers request
+it only when search opens. It contains public text only, not note HTML or vault
+credentials. No additional GitHub secrets or external search service are needed.

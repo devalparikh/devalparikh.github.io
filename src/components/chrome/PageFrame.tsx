@@ -10,14 +10,15 @@ interface PageFrameProps {
    * omits it and the bar sits at the top from the start.
    */
   hero?: ReactNode;
+  wide?: boolean;
 }
 
-export function PageFrame({ children, hero }: PageFrameProps) {
+export function PageFrame({ children, hero, wide }: PageFrameProps) {
   return (
     <>
       {hero}
       <NavBar />
-      <main id="main" className="mx-auto max-w-3xl px-5 pt-10 sm:px-6 sm:pt-14">
+      <main id="main" className={wide ? "notes-frame" : "mx-auto max-w-3xl px-5 pt-10 sm:px-6 sm:pt-14"}>
         {children}
       </main>
       <Footer />

@@ -3,6 +3,7 @@ import { DM_Sans, Fraunces } from "next/font/google";
 import { site } from "@/content/site";
 import { themeBootstrapScript } from "@/lib/theme";
 import "./globals.css";
+import { SiteSearch } from "@/components/search/SiteSearch";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -58,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        {children}
+        <SiteSearch>{children}</SiteSearch>
       </body>
     </html>
   );

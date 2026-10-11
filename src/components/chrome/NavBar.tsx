@@ -12,6 +12,7 @@ import { useOverflowNav } from "@/lib/use-overflow-nav";
 import { NavMenu, NAV_MENU_ID } from "./NavMenu";
 import { SoundToggle } from "./SoundToggle";
 import { ThemeToggle } from "./ThemeToggle";
+import { SearchTrigger } from "@/components/search/SiteSearch";
 
 const LINK_CLASS = "pill-link px-3 py-2";
 
@@ -128,6 +129,7 @@ export function NavBar() {
             </nav>
 
             <div className="flex shrink-0 items-center gap-0.5 border-l border-[var(--rule)] pl-2">
+              <SearchTrigger />
               <SoundToggle />
               <ThemeToggle />
             </div>
