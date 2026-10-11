@@ -63,7 +63,7 @@ export const projects: Collection = {
           heading: "Architecture",
           bullets: [
             "Architected and built privacy-tiered companion chat with separate partner contexts and controlled sharing.",
-            "Architected and built agent memory with semantic retrieval and conversation summaries. Designed recursive graph traversal to expand related context.",
+            "Architected and built an agent memory system with semantic retrieval and conversation summaries. Designed recursive graph traversal to expand related context.",
           ],
         },
       ],
@@ -106,7 +106,7 @@ export const projects: Collection = {
         {
           heading: "Architecture",
           bullets: [
-            "Architected and built agent memory based on recursive retrieval across workout history, exercise records, and past conversations.",
+            "Architected and built an agent memory system based on recursive retrieval across workout history, exercise records, and past conversations.",
             "Built a modular, reusable Supabase retrieval package that supports recursive agent queries through authenticated, scoped read tools with query limits.",
             "Built a reusable confirmation framework and in-chat approval UI for agent-proposed Supabase writes and updates.",
           ],
