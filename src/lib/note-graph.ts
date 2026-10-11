@@ -52,3 +52,38 @@ export function layoutGraph(notes: NoteLink[], current?: string, width = 600, he
   }
   return { nodes, edges };
 }
+
+export interface GraphView { x: number; y: number; scale: number }
+export const INITIAL_GRAPH_VIEW: GraphView = { x: 0, y: 0, scale: 1 };
+
+/** Keep the point under the pointer stationary as the graph zooms. */
+export function zoomGraph(view: GraphView, factor: number, anchor: { x: number; y: number }): GraphView {
+  const scale = Math.max(0.5, Math.min(4, view.scale * factor));
+  const ratio = scale / view.scale;
+  return { scale, x: anchor.x - (anchor.x - view.x) * ratio, y: anchor.y - (anchor.y - view.y) * ratio };
+}
+
+export function graphLabels(
+  nodes: ReturnType<typeof layoutGraph>["nodes"], view: GraphView,
+  width: number, height: number, compact: boolean, current?: string, hovered?: string | null,
+) {
+  const visible = new Set<string>();
+  const boxes: { x: number; y: number; width: number; height: number }[] = [];
+  const size = compact ? 14 : 11;
+  const limit = compact ? 4 : Math.max(6, Math.min(30, Math.round(10 * view.scale)));
+  const prioritized = [...nodes].sort((a, b) =>
+    Number(b.id === hovered || b.id === current) - Number(a.id === hovered || a.id === current) ||
+    b.degree - a.degree || a.title.localeCompare(b.title));
+  for (const node of prioritized) {
+    const forced = node.id === hovered || node.id === current;
+    const x = width / 2 + view.x + (node.x - width / 2) * view.scale;
+    const y = height / 2 + view.y + (node.y - height / 2) * view.scale + (3.5 + Math.min(node.degree, 8) * 0.65) * view.scale + 14;
+    const labelWidth = Math.min(node.title.length, 26) * size * 0.55;
+    const box = { x: x - labelWidth / 2 - 3, y: y - size, width: labelWidth + 6, height: size + 6 };
+    if (!forced && (visible.size >= limit || box.x < 3 || box.x + box.width > width - 3 || box.y < 3 || box.y + box.height > height - 3)) continue;
+    if (!forced && boxes.some((other) => box.x < other.x + other.width && box.x + box.width > other.x && box.y < other.y + other.height && box.y + box.height > other.y)) continue;
+    visible.add(node.id);
+    boxes.push(box);
+  }
+  return visible;
+}

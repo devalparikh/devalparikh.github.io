@@ -79,7 +79,20 @@ The importer also generates the folder hierarchy, heading IDs/table of contents,
 and the link graph from the same published notes. Incoming and outgoing links
 appear in each note's local graph; the index has a complete graph with pan/zoom.
 The explorer and table of contents start open on desktop and fold above the note
-on smaller screens. The current heading follows scrolling.
+on smaller screens. The current heading follows scrolling. Desktop sidebars stay
+below the navigation while the article scrolls; scrolling within a long sidebar
+stays inside it. Backlinks sit in the right sidebar, and below the note on mobile.
+
+The list/graph control uses the navigation's gliding indicator. Graphs support
+wheel/trackpad zoom around the pointer, drag to pan, and zoom/reset buttons.
+Selected high-connection titles remain visible when zoomed out; labels avoid
+one another and stay readable as the graph scales.
+
+Within the same browser tab, Notes remembers the view, query, topic filter,
+list/graph page positions, and graph camera. Returning through Notes, All notes,
+or browser Back restores that state. The explorer remembers expanded folders
+and its own scroll position, while keeping a newly opened note visible. This
+uses session storage.
 
 Cmd/Ctrl K, or the search icon in the navigation, opens site search on every page.
 It searches page titles, projects, experience, writing, and published note text.

@@ -9,7 +9,7 @@ export const notesContent = {
   connections: "Connections",
   graph: "Graph view",
   graphDescription: "Notes connected by links. Each node opens a note.",
-  graphHelp: "Drag to pan · use + / − to zoom · select a note to open it",
+  graphHelp: "Drag to pan · scroll to zoom · select a note to open it",
   noConnections: "No linked notes yet.",
   zoomIn: "Zoom in",
   zoomOut: "Zoom out",

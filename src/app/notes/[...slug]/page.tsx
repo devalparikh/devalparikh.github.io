@@ -45,14 +45,14 @@ export default async function NotePage({ params }: Props) {
       <div className="note-rail">
         <aside className="note-outline"><NoteToc headings={note.toc} /></aside>
         <aside className="note-connections"><NoteGraph notes={noteLinks} current={note.id} compact /></aside>
+        {!!backlinks.length && <aside className="note-backlinks" aria-label={notesContent.backlinks}>
+          <h2>{notesContent.backlinks}<span>{backlinks.length}</span></h2>
+          <ul>{backlinks.map((item) => <li key={item.id}><Link href={`/notes/${item.id}/` as Route}>{item.title}<span aria-hidden="true">↗︎</span></Link></li>)}</ul>
+        </aside>}
       </div>
       <div className="notes-main note-body">
         {/* HTML and heading IDs come from the same sanitized build-time tree. */}
         <article className="note-prose" dangerouslySetInnerHTML={{ __html: note.html }} />
-        {!!backlinks.length && <aside className="note-backlinks" aria-label={notesContent.backlinks}>
-          <h2>{notesContent.backlinks}<span>{backlinks.length}</span></h2>
-          <ul>{backlinks.map((item) => <li key={item.id}><Link href={`/notes/${item.id}/` as Route}>{item.title}<span aria-hidden="true">↗</span></Link></li>)}</ul>
-        </aside>}
       </div>
     </div>
   </PageFrame>;
