@@ -1,0 +1,275 @@
+1:"$Sreact.fragment"
+2:I[39756,["/_next/static/chunks/3fntmmi971322.js"],"default"]
+3:I[37457,["/_next/static/chunks/3fntmmi971322.js"],"default"]
+5:I[97367,["/_next/static/chunks/3fntmmi971322.js"],"OutletBoundary"]
+6:"$Sreact.suspense"
+9:I[97367,["/_next/static/chunks/3fntmmi971322.js"],"ViewportBoundary"]
+b:I[97367,["/_next/static/chunks/3fntmmi971322.js"],"MetadataBoundary"]
+d:I[68027,["/_next/static/chunks/3fntmmi971322.js"],"default",1]
+:HL["/_next/static/chunks/1_mgvd11r2juc.css","style"]
+:HL["/_next/static/media/03bda585a99c6450-s.p.32sris142tqlb.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/5c285b27cdda1fe8-s.p.2_mbdogr7ni8i.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+8:X
+0:{"P":null,"c":["","notes","code","c-sharp","c-sharp",""],"q":"","i":false,"f":[[["",{"children":["notes",{"children":[["slug","code/c-sharp/c-sharp","c",[]],{"children":["__PAGE__",{},"$undefined","$undefined",4608]},"$undefined","$undefined",4608]},"$undefined","$undefined",4608]},"$undefined","$undefined",4624],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/1_mgvd11r2juc.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/3fntmmi971322.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"en","data-theme":"parchment","suppressHydrationWarning":true,"children":[["$","head",null,{"children":["$","script",null,{"dangerouslySetInnerHTML":{"__html":"(function(){try{\nvar s=localStorage.getItem(\"deval-theme\");\nvar t=(s===\"parchment\"||s===\"inkember\")?s:(matchMedia(\"(prefers-color-scheme: dark)\").matches?\"inkember\":\"parchment\");\ndocument.documentElement.setAttribute(\"data-theme\",t);\ndocument.documentElement.style.colorScheme=t===\"inkember\"?\"dark\":\"light\";\n}catch(e){}})();"}}]}],["$","body",null,{"className":"dm_sans_34a85c05-module__gGo3DG__variable fraunces_a0610f6d-module__zt62-W__variable","children":[["$","a",null,{"href":"#main","className":"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-base-200 focus:px-4 focus:py-2 focus:text-sm","children":"Skip to content"}],["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]]}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":["$L4",[["$","script","script-0",{"src":"/_next/static/chunks/2x5jr7_zz9paa.js","async":true,"nonce":"$undefined"}]],["$","$L5",null,{"children":["$","$6",null,{"name":"Next.MetadataOutlet","children":"$@7"}]}]]}],{},null,false,null]},null,false,"$8"]},null,false,"$8"]},null,false,null],["$","$1","h",{"children":[null,["$","$L9",null,{"children":"$La"}],["$","div",null,{"hidden":true,"children":["$","$Lb",null,{"children":["$","$6",null,{"name":"Next.Metadata","children":"$Lc"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],false]],"m":"$undefined","G":["$d",[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/1_mgvd11r2juc.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]]],"S":true,"h":null,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"giF_RFW4uRc7iyZ5XD_ex"}
+e:I[8507,["/_next/static/chunks/3fntmmi971322.js","/_next/static/chunks/2x5jr7_zz9paa.js"],"NavBar"]
+f:I[22016,["/_next/static/chunks/3fntmmi971322.js","/_next/static/chunks/2x5jr7_zz9paa.js"],""]
+10:I[56697,["/_next/static/chunks/3fntmmi971322.js","/_next/static/chunks/2x5jr7_zz9paa.js"],"Reveal"]
+8:C
+11:T2331,<h1 id="background">Background</h1>
+<ul>
+<li><a href="/notes/code/c-sharp/c-sharp/#type">Type</a> Safe language / strongly typed</li>
+<li>Benefits
+<ul>
+<li>Web apps, mobile apps, games</li>
+<li>Microservices, enterprise</li>
+<li>Raspberry pie</li>
+<li>Cross platform</li>
+</ul>
+</li>
+<li>c# code -compiled-> CIL -executed as machine code-> CLR (common language runtime)</li>
+</ul>
+<h1 id="basics"><strong>Basics</strong></h1>
+<h2 id="terms">Terms</h2>
+<ul>
+<li><strong>Type</strong> - blueprint defines structure (value type and reference type)
+<ul>
+<li><strong>Class</strong> - reference type</li>
+<li><strong>(Member</strong> - general term refers to elements in a class (such as: fields, methods, etc))</li>
+<li><strong>Field</strong> - variable in a class (assigned a type)</li>
+<li><strong>Property</strong> - mechanism to read/write/compute on private field (include accessor methods) (getters/setters)</li>
+<li><strong>Attribute</strong> - metadata applied to classes, methods, properties (not data storage, but metadata)</li>
+</ul>
+</li>
+</ul>
+<h2 id="type">Type</h2>
+<ul>
+<li><strong>Value Type</strong> (primitive)
+<ul>
+<li>Kinda like primitives</li>
+<li>Memory: allocated on stack</li>
+<li>Garbage Collection: not managed</li>
+<li>Upon assignment to another variable: copy value</li>
+<li><code>null</code>: not allowed (?)</li>
+<li><strong>Examples</strong>: <code>int</code>, <code>float</code>, <code>bool</code>, <code>char</code>, <code>struct</code>, <code>enum</code></li>
+</ul>
+</li>
+<li><strong>Reference Type</strong> (class)
+<ul>
+<li>Memory: allocated on heap</li>
+<li>Garbage Collection: managed</li>
+<li>Upon assignment to another variable: shared memory</li>
+<li><code>null</code>: allowed</li>
+<li><strong>Examples</strong>: <code>class</code>, <code>interface</code>, <code>delegate</code>, <code>array</code>, <code>string</code></li>
+</ul>
+</li>
+<li>Type Members
+<ul>
+<li><strong>Fields</strong>: Variables that hold data</li>
+<li><strong>Properties</strong>: Accessors for fields</li>
+<li><strong>Methods</strong>: Functions that perform operations</li>
+<li><strong>Events</strong>: Notifications that something has occurred</li>
+<li><strong>Constructors</strong>: Methods called when an instance is created</li>
+<li><strong>Destructors</strong>: Methods called when an instance is destroyed</li>
+</ul>
+</li>
+</ul>
+<h1 id="data-structures">Data Structures</h1>
+<ul>
+<li>record - immutable</li>
+<li>struct - stored in stack (good for small to save memory)</li>
+<li>class - stored in heap (functionality)
+<ul>
+<li>todo: <a href="https://www.youtube.com/watch?v=J0FhV3dM80o" target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v=J0FhV3dM80o</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="inheritance">Inheritance</h1>
+<h1 id="fields">Fields</h1>
+<h1 id="properties">Properties</h1>
+<p>Public accessor for a field</p>
+<pre><code class="language-csharp">public string Count { get; set; }
+
+
+
+public static Error NotFound
+{
+	get
+	{
+		return Error.NotFound(description: "example");
+	}
+}
+
+// short hand
+public static Error NotFound => Error.NotFound(description: "example");
+</code></pre>
+<h1 id="keywords">Keywords</h1>
+<p><strong>General</strong></p>
+<p><code>public</code> - Accessible from any other code in the same assembly or referencing assembly <code>private</code> - Accessible only within the same class or struct
+<code>protected</code> - Accessible within the same class and derived classes
+<code>internal</code> - Accessible within the same assembly
+<code>static</code> - Belongs to the type itself, not to a specific object instance</p>
+<p><strong>Classes</strong></p>
+<p><code>abstract</code> - Cannot be instantiated, may contain abstract methods
+<code>sealed</code> - Cannot be inherited from</p>
+<p><code>partial</code> - Allows splitting a class definition across multiple files
+<code>virtual</code> - Can be overridden by derived classes
+<code>override</code> - Implements a method of an abstract class or overrides a virtual method
+<code>new</code> - Hides an inherited member from a base class</p>
+<p><code>class</code> - Defines a reference type
+<code>struct</code> - Defines a value type (stored in <strong>stack</strong>)</p>
+<ul>
+<li>details
+<ul>
+<li>good for small</li>
+<li>good for immutable value types</li>
+<li>improves performance (stack memory)</li>
+<li>saves memory (stack memory)</li>
+<li>copy by value
+<code>record</code> - Defines an <strong>immutable</strong> reference type with value-based equality (immutable)
+<code>interface</code> - Defines a contract that classes can implement
+<code>enum</code> - Defines a set of named constants</li>
+</ul>
+</li>
+</ul>
+<p><strong>Fields</strong></p>
+<p><code>readonly</code> - Can only be assigned in declaration or constructor (immutable)</p>
+<ul>
+<li>details
+<ul>
+<li>compiler optimization
+<code>const</code> - Compile-time constant (immutable)</li>
+</ul>
+</li>
+<li>details
+<ul>
+<li>saves memory</li>
+<li>compiler optimization</li>
+<li>no stack or heap
+<code>volatile</code> - Indicates that a field might be modified by multiple threads
+<code>fixed</code> - Used in unsafe code to prevent the garbage collector from relocating a variable <code>event</code> - Declares an event</li>
+</ul>
+</li>
+</ul>
+<p><strong>Methods</strong></p>
+<p><code>virtual</code> - Can be overridden by derived classes
+<code>override</code> - Implements a method of an abstract class or overrides a virtual method
+<code>abstract</code> - Must be implemented by derived classes
+<code>sealed</code> - Cannot be overridden further in derived classes
+<code>new</code> - Hides an inherited member from a base class
+<code>async</code> - Method contains asynchronous operations
+<code>extern</code> - Method is implemented externally
+<code>partial</code> - Allows splitting a method definition across multiple files
+<code>unsafe</code> - Allows use of pointer types within the method
+<code>ref</code> - Parameter is passed by reference
+<code>in</code> - Parameter is passed by reference, but cannot be modified
+<code>out</code> - Parameter is passed by reference and must be assigned before method returns</p>
+<ul>
+<li>example
+<pre><code class="language-csharp">if (_breakfasts.TryGetValue(id, out var breakfast))
+{
+	return breakfast;
+}
+return Errors.Breakfast.NotFound;
+</code></pre>
+</li>
+</ul>
+<p><code>params</code> - Allows a variable number of arguments</p>
+<h1 id="implicit-operator">Implicit Operator</h1>
+<p>Allows a method to return multiple types of objects</p>
+<pre><code class="language-csharp">public class Result&#x3C;T>
+{
+    public T Value { get; }
+    public Error Error { get; }
+    public bool IsSuccess { get; }
+
+    private Result(T value)
+    {
+        Value = value;
+        IsSuccess = true;
+    }
+
+    private Result(Error error)
+    {
+        Error = error;
+        IsSuccess = false;
+    }
+
+	// implicit operators
+    public static implicit operator Result&#x3C;T>(T value) 
+    => new Result&#x3C;T>(value);
+    
+    public static implicit operator Result&#x3C;T>(Error error) 
+    => new Result&#x3C;T>(error);
+}
+
+public class Error
+{
+    public string Code { get; }
+    public string Message { get; }
+
+    public Error(string code, string message)
+    {
+        Code = code;
+        Message = message;
+    }
+}
+
+// usage example
+public class Example 
+{
+	public Result&#x3C;User> GetUser(Guid id)
+	{
+	    if (_users.TryGetValue(id, out var user))
+	    {
+		    // Implicitly converted to Result&#x3C;User>
+	        return user;
+	    }
+		// Implicitly converted to Result&#x3C;User>
+	    return new Error("NotFound", "User not found");
+	}
+}
+</code></pre>
+<h1 id="performance-improvements">Performance Improvements</h1>
+<ul>
+<li>Use <code>ReadOnlySpan&#x3C;char></code> instead of String and Substring if readonly</li>
+</ul>
+<h1 id="best-practices">Best Practices</h1>
+<ul>
+<li><code>var</code>
+<ul>
+<li>If right side is defined, can be used to shorten code</li>
+<li>only use when it is very obvious what the type is</li>
+<li><code>iEnumerable&#x3C;Person> vals = ...</code> vs <code>iEnumerable&#x3C;Pet> vals = ...</code>
+<ul>
+<li>do not use var for things like this, because it will be unclear if it is vals of person or pets</li>
+</ul>
+</li>
+<li>cons
+<ul>
+<li>decreases readability by avoiding having to hover and check type</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="naming-convention">Naming Convention</h2>
+<ul>
+<li><code>PascalCase</code> for types, namespaces, and all public members</li>
+<li><code>camelCase</code> for method parameters and local variables</li>
+<li><code>_camelCase</code> for private private instance fields</li>
+<li><code>PascalCase</code> for constant names, both fields and local constants</li>
+<li><code>s_camelCase</code> private static</li>
+<li><code>t_camelCase</code> private thread static</li>
+<li>Interface start with <code>I</code></li>
+<li>Attribute types end with the word <code>Attribute</code></li>
+<li>Namespace end with the word <code>Namespace</code></li>
+</ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>Interface can not have static members</li>
+</ul>4:["$undefined",["$","$Le",null,{}],["$","main",null,{"id":"main","className":"mx-auto max-w-3xl px-5 pt-10 sm:px-6 sm:pt-14","children":[["$","$Lf",null,{"href":"/notes","className":"mb-7 inline-block text-sm text-neutral-content hover:text-primary","children":"← All notes"}],["$","header",null,{"children":[["$","$L10",null,{"index":0,"children":["$","p",null,{"className":"kicker","children":"code"}]}],["$","$L10",null,{"index":1,"children":["$","h1",null,{"className":"display mt-2 text-4xl sm:text-5xl","children":"C Sharp"}]}],"$undefined"]}],null,false,["$","article",null,{"className":"note-prose mt-9","dangerouslySetInnerHTML":{"__html":"$11"}}],false]}],"$L12"]
+12:["$","footer",null,{"className":"mx-auto mt-24 max-w-3xl px-5 pb-16 sm:px-6","children":["$","div",null,{"className":"flex flex-wrap items-center justify-between gap-4 border-t border-[var(--rule)] pt-6","children":[["$","p",null,{"className":"text-xs text-neutral-content","children":[2026," ","Deval Parikh"]}],["$","ul",null,{"className":"flex flex-wrap items-center gap-4","children":[["$","li","github",{"children":["$","a",null,{"href":"https://github.com/devalparikh","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"_blank","rel":"noopener noreferrer","children":["GitHub",["$","svg",null,{"viewBox":"0 0 12 12","fill":"none","stroke":"currentColor","strokeWidth":1.4,"strokeLinecap":"round","strokeLinejoin":"round","className":"size-2.5","aria-hidden":"true","children":["$","path",null,{"d":"M4 8 8 4M4.6 3.8H8.2V7.4"}]}]]}]}],["$","li","linkedin",{"children":["$","a",null,{"href":"https://www.linkedin.com/in/devalparikh1/","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"_blank","rel":"noopener noreferrer","children":["LinkedIn",["$","svg",null,{"viewBox":"0 0 12 12","fill":"none","stroke":"currentColor","strokeWidth":1.4,"strokeLinecap":"round","strokeLinejoin":"round","className":"size-2.5","aria-hidden":"true","children":["$","path",null,{"d":"M4 8 8 4M4.6 3.8H8.2V7.4"}]}]]}]}],["$","li","email",{"children":["$","a",null,{"href":"mailto:devalpp@gmail.com","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"$undefined","rel":"$undefined","children":["Email",false]}]}],["$","li","resume",{"children":["$","$Lf",null,{"href":"/DevalParikhResume.pdf","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"_blank","rel":"noopener noreferrer","children":["Resume",false]}]}]]}]]}]}]
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#faf8f5","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#08080a","media":"(prefers-color-scheme: dark)"}]]
+13:I[27201,["/_next/static/chunks/3fntmmi971322.js"],"IconMark"]
+7:null
+c:[["$","title","0",{"children":"C Sharp - Deval Parikh"}],["$","meta","1",{"name":"description","content":"Background Type Safe language / strongly typedBenefitsWeb apps, mobile apps, gamesMicroservices, enterpriseRaspberry pieCross platformc# code -compiled-> CIL -executed as"}],["$","link","2",{"rel":"author","href":"https://devalparikh.me"}],["$","meta","3",{"name":"author","content":"Deval Parikh"}],["$","link","4",{"rel":"manifest","href":"/manifest.json","crossOrigin":"$undefined"}],["$","meta","5",{"property":"og:title","content":"Deval Parikh"}],["$","meta","6",{"property":"og:description","content":"Hi, I'm Deval 👋. I work on planet-scale distributed systems and AI/ML."}],["$","meta","7",{"property":"og:url","content":"https://devalparikh.me/"}],["$","meta","8",{"property":"og:site_name","content":"Deval Parikh"}],["$","meta","9",{"property":"og:image","content":"https://devalparikh.me/img/og.webp"}],["$","meta","10",{"property":"og:image:width","content":"1200"}],["$","meta","11",{"property":"og:image:height","content":"706"}],["$","meta","12",{"property":"og:image:alt","content":"Deval Parikh"}],["$","meta","13",{"property":"og:type","content":"website"}],["$","meta","14",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","15",{"name":"twitter:title","content":"Deval Parikh"}],["$","meta","16",{"name":"twitter:description","content":"Hi, I'm Deval 👋. I work on planet-scale distributed systems and AI/ML."}],["$","meta","17",{"name":"twitter:image","content":"https://devalparikh.me/img/og.webp"}],["$","meta","18",{"name":"twitter:image:alt","content":"Deval Parikh"}],["$","meta","19",{"name":"twitter:image:width","content":"1200"}],["$","meta","20",{"name":"twitter:image:height","content":"706"}],["$","link","21",{"rel":"icon","href":"/icon.png?icon.2ptxlquxqk1aa.png","sizes":"512x512","type":"image/png"}],["$","link","22",{"rel":"apple-touch-icon","href":"/apple-icon.png?apple-icon.0rev6fufno4rq.png","sizes":"180x180","type":"image/png"}],["$","$L13","23",{}]]

@@ -1,0 +1,272 @@
+<!DOCTYPE html><html lang="en" data-theme="parchment"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/03bda585a99c6450-s.p.32sris142tqlb.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/5c285b27cdda1fe8-s.p.2_mbdogr7ni8i.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/1_mgvd11r2juc.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/1u5zan5bs9a7v.js"/><script src="/_next/static/chunks/37u4y1m2e3g7j.js" async=""></script><script src="/_next/static/chunks/3e4keds9ktjdu.js" async=""></script><script src="/_next/static/chunks/turbopack-1sw-hnwxdqcba.js" async=""></script><script src="/_next/static/chunks/3fntmmi971322.js" async="" crossorigin=""></script><script src="/_next/static/chunks/2x5jr7_zz9paa.js" async="" crossorigin=""></script><meta name="theme-color" content="#faf8f5" media="(prefers-color-scheme: light)"/><meta name="theme-color" content="#08080a" media="(prefers-color-scheme: dark)"/><title>Fundamentals of Embeddings, Encoder-Decoders - Deval Parikh</title><meta name="description" content="token embeddings = 1 vector to represent a token text embeddings = 1 vector to represents text (sentence(s)) process to get text embeddings: (token embeddings -&gt; transfor"/><link rel="author" href="https://devalparikh.me"/><meta name="author" content="Deval Parikh"/><link rel="manifest" href="/manifest.json"/><meta property="og:title" content="Deval Parikh"/><meta property="og:description" content="Hi, I&#x27;m Deval 👋. I work on planet-scale distributed systems and AI/ML."/><meta property="og:url" content="https://devalparikh.me/"/><meta property="og:site_name" content="Deval Parikh"/><meta property="og:image" content="https://devalparikh.me/img/og.webp"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="706"/><meta property="og:image:alt" content="Deval Parikh"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Deval Parikh"/><meta name="twitter:description" content="Hi, I&#x27;m Deval 👋. I work on planet-scale distributed systems and AI/ML."/><meta name="twitter:image" content="https://devalparikh.me/img/og.webp"/><meta name="twitter:image:alt" content="Deval Parikh"/><meta name="twitter:image:width" content="1200"/><meta name="twitter:image:height" content="706"/><link rel="icon" href="/icon.png?icon.2ptxlquxqk1aa.png" sizes="512x512" type="image/png"/><link rel="apple-touch-icon" href="/apple-icon.png?apple-icon.0rev6fufno4rq.png" sizes="180x180" type="image/png"/><meta name="next-size-adjust" content=""/><script>(function(){try{
+var s=localStorage.getItem("deval-theme");
+var t=(s==="parchment"||s==="inkember")?s:(matchMedia("(prefers-color-scheme: dark)").matches?"inkember":"parchment");
+document.documentElement.setAttribute("data-theme",t);
+document.documentElement.style.colorScheme=t==="inkember"?"dark":"light";
+}catch(e){}})();</script><script src="/_next/static/chunks/0cz1d0mv5g_q7.js" noModule=""></script></head><body class="dm_sans_34a85c05-module__gGo3DG__variable fraunces_a0610f6d-module__zt62-W__variable"><div hidden=""><!--$--><!--/$--></div><a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-base-200 focus:px-4 focus:py-2 focus:text-sm">Skip to content</a><div aria-hidden="true" class="h-px w-full"></div><div class="nav-shell" data-stuck="false"><div class="nav-bar"><div class="mx-auto flex h-14 max-w-3xl items-center gap-3 px-5 sm:px-6"><a tabindex="-1" aria-hidden="true" class="hidden shrink-0 font-display text-base tracking-tight sm:block transition-[opacity,transform,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-primary pointer-events-none -translate-x-1 opacity-0" href="/">Deval</a><nav aria-label="Primary" class="relative min-w-0 flex-1"><div class="relative flex items-center gap-0.5"><span aria-hidden="true" class="pill-indicator"></span><a class="pill-link px-3 py-2" href="/">Home</a><a class="pill-link px-3 py-2" href="/experience/">Experience</a><a class="pill-link px-3 py-2" href="/projects/">Projects</a><a class="pill-link px-3 py-2" href="/writing/">Writing</a><a aria-current="page" class="pill-link px-3 py-2" href="/notes/">Notes</a><a class="pill-link px-3 py-2" href="/photography/">Photography</a><a target="_blank" rel="noopener noreferrer" class="pill-link px-3 py-2" href="/DevalParikhResume.pdf">Resume</a><a class="pill-link px-3 py-2" href="/contact/">Contact</a></div><div aria-hidden="true" class="nav-measure-clip"><div class="nav-measure"><span class="pill-link px-3 py-2">Home</span><span class="pill-link px-3 py-2">Experience</span><span class="pill-link px-3 py-2">Projects</span><span class="pill-link px-3 py-2">Writing</span><span class="pill-link px-3 py-2">Notes</span><span class="pill-link px-3 py-2">Photography</span><span class="pill-link px-3 py-2">Resume</span><span class="pill-link px-3 py-2">Contact</span><span class="pill-link py-2 pl-3 pr-2.5">More  </span></div></div></nav><div class="flex shrink-0 items-center gap-0.5 border-l border-[var(--rule)] pl-2"><button type="button" aria-label="Turn interface sounds off" aria-pressed="true" title="Interface sounds on" class="grid size-9 shrink-0 place-items-center rounded-lg text-neutral-content transition-[background-color,color,transform] duration-150 ease-out hover:bg-base-200 hover:text-base-content active:scale-95 [&amp;_svg]:size-[17px]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6.8 8.5H4v7h2.8L11 19V5Z"></path><path d="M15 9.2a4 4 0 0 1 0 5.6"></path><path d="M17.7 6.7a7.4 7.4 0 0 1 0 10.6"></path></svg></button><button type="button" aria-label="Switch to dark theme" title="Switch to dark theme" class="grid size-9 shrink-0 place-items-center rounded-lg text-neutral-content transition-[background-color,color,transform] duration-150 ease-out hover:bg-base-200 hover:text-base-content active:scale-95 [&amp;_svg]:size-[17px]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path></svg></button></div></div></div></div><main id="main" class="mx-auto max-w-3xl px-5 pt-10 sm:px-6 sm:pt-14"><a class="mb-7 inline-block text-sm text-neutral-content hover:text-primary" href="/notes/">← All notes</a><header><div class="reveal" data-reveal="in" style="--reveal-delay:0ms"><p class="kicker">machine learning</p></div><div class="reveal" data-reveal="in" style="--reveal-delay:70ms"><h1 class="display mt-2 text-4xl sm:text-5xl">Fundamentals of Embeddings, Encoder-Decoders</h1></div></header><article class="note-prose mt-9"><p><strong>token embeddings</strong> = 1 vector to represent a token
+<strong>text embeddings</strong> = 1 vector to represents text (sentence(s))
+process to get text embeddings: (token embeddings -> transformer -> contextual embeddings -> pooling -> text embedding)</p>
+<p>GPT LLM model = <strong>decoder</strong> = attention to everything before
+Embedding model = <strong>encoder</strong> = attention to everything before AND after
+input, understand, output = <strong>encoder-decoder</strong> (like translation)</p>
+<p>training an embedding model:</p>
+<ul>
+<li>pretraining on transformer (learn the language)
+<ul>
+<li>masked token prediction (common for encoder models) -> encoder-based embeddings</li>
+<li>or next-token predicition (common for decoder models) -> decoder-based embeddings</li>
+<li>or encoder-decoder model</li>
+<li>or another large-scale language objective</li>
+</ul>
+</li>
+<li>contrastive embedding training (learn similarities)
+<ul>
+<li>train on pairs or groups</li>
+<li>query, positive, negative</li>
+</ul>
+</li>
+</ul>
+<p>during LLM (decoder architecture) pretraining:</p>
+<ul>
+<li>Also trains an embeddings model implicitly (but not specialized for similarity)</li>
+<li>Every Transformer layer produces hidden vectors for the tokens
+<ul>
+<li>Those vectors contain information about the whole preceding context</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+<p><strong>Yes, many dedicated embedding models are trained with contrastive learning.</strong></p>
+<ul>
+<li>Similar text pairs are pulled closer in vector space.</li>
+<li>Unrelated text pairs are pushed farther apart.</li>
+<li>Example:
+<ul>
+<li>“How do I reset my password?”</li>
+<li>“Password reset instructions”</li>
+<li>These should get nearby vectors.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Embedding models are usually separate from GPT-style LLMs.</strong></p>
+<ul>
+<li>GPT model:
+<ul>
+<li>Main goal: predict the next token.</li>
+<li>Usually decoder-only.</li>
+<li>Output: text tokens.</li>
+</ul>
+</li>
+<li>Embedding model:
+<ul>
+<li>Main goal: produce a useful vector for similarity/search.</li>
+<li>Often encoder-only, though other architectures can work.</li>
+<li>Output: one vector for the input text.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>But embedding models can still benefit from LLM-style pretraining.</strong></p>
+<ul>
+<li>Common process:
+<ol>
+<li>Pretrain a Transformer on lots of text.</li>
+<li>Then train or fine-tune it with a contrastive embedding objective.</li>
+</ol>
+</li>
+<li>So it can first learn language generally, then learn:
+<ul>
+<li>which sentences mean similar things,</li>
+<li>which queries match which documents,</li>
+<li>how to organize meaning in vector space.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>It does not have to be trained from a GPT model specifically.</strong></p>
+<ul>
+<li>GPT is decoder-only.</li>
+<li>Many embedding models start from encoder models, such as BERT-like architectures.</li>
+<li>Some modern systems also use decoder-only LLMs and adapt their hidden states into embeddings.</li>
+<li>The important part is the final embedding-specific training objective, not whether it started as GPT.</li>
+</ul>
+</li>
+</ul>
+<h2 id="encoder-vs-decoder">Encoder vs decoder</h2>
+<ul>
+<li><strong>Encoder</strong>
+<ul>
+<li>Reads the input text.</li>
+<li>Produces contextual vectors.</li>
+<li>Usually can look at tokens on both sides of each token.</li>
+<li>Good for:
+<ul>
+<li>embeddings,</li>
+<li>classification,</li>
+<li>search,</li>
+<li>understanding text.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-text">text → encoder → vectors
+</code></pre>
+<ul>
+<li><strong>Decoder</strong>
+<ul>
+<li>Generates tokens one at a time.</li>
+<li>Looks at previous tokens and predicts the next one.</li>
+<li>Good for:
+<ul>
+<li>writing,</li>
+<li>answering questions,</li>
+<li>generating code.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-text">previous tokens → decoder → next token
+</code></pre>
+<ul>
+<li><strong>Encoder–decoder</strong>
+<ul>
+<li>The encoder reads and understands the input.</li>
+<li>The decoder generates a new output based on the encoder’s representations.</li>
+<li>Common for:
+<ul>
+<li>translation,</li>
+<li>summarization,</li>
+<li>text-to-text tasks.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-text">English sentence
+      ↓
+   encoder
+      ↓
+internal representations
+      ↓
+   decoder
+      ↓
+French sentence
+</code></pre>
+<p>Example:</p>
+<pre><code class="language-text">Encoder reads:
+"Translate 'hello' to French"
+
+Decoder generates:
+"bonjour"
+</code></pre>
+<h2 id="token-embeddings-vs-text-embeddings">Token embeddings vs text embeddings</h2>
+<ul>
+<li><strong>Token embedding</strong>
+<ul>
+<li>Represents one token.</li>
+<li>A token may be:
+<ul>
+<li>a whole word,</li>
+<li>part of a word,</li>
+<li>punctuation,</li>
+<li>a few characters.</li>
+</ul>
+</li>
+<li>Example:</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-text">"unbelievable"
+
+might become:
+["un", "believ", "able"]
+</code></pre>
+<p>Each token gets its own starting vector.</p>
+<ul>
+<li><strong>Text embedding</strong>
+<ul>
+<li>Represents the meaning of the entire input.</li>
+<li>It may summarize:
+<ul>
+<li>one sentence,</li>
+<li>multiple sentences,</li>
+<li>a paragraph,</li>
+<li>a document chunk.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-text">"The dog is running through the park."
+        ↓
+one text embedding vector
+</code></pre>
+<h2 id="how-they-are-related">How they are related</h2>
+<ul>
+<li>Yes, they are related parts of the same processing pipeline.</li>
+</ul>
+<pre><code class="language-text">Text
+ ↓
+Tokenizer
+ ↓
+Token IDs
+ ↓
+Token embedding lookup
+ ↓
+One starting vector per token
+ ↓
+Transformer layers
+ ↓
+One contextual vector per token
+ ↓
+Pooling / projection
+ ↓
+One text embedding
+</code></pre>
+<ul>
+<li>Step by step:
+<ul>
+<li>The tokenizer converts text into token IDs.</li>
+<li>The token embedding table converts each token ID into a starting vector.</li>
+<li>The Transformer modifies those vectors using context.</li>
+<li>The final token vectors now contain contextual meaning.</li>
+<li>The model combines those token vectors into one text embedding.</li>
+</ul>
+</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-text">"The bank approved my loan"
+</code></pre>
+<p>Initial token vectors:</p>
+<pre><code class="language-text">"The"  → vector
+"bank" → vector
+"approved" → vector
+"my" → vector
+"loan" → vector
+</code></pre>
+<p>After the Transformer, the vector for “bank” understands that it means a financial institution.</p>
+<p>Then the model combines all the contextual token vectors into one vector representing the full sentence.</p>
+<h2 id="the-simplest-distinction">The simplest distinction</h2>
+<ul>
+<li><strong>Token embedding:</strong> starting vector for one token.</li>
+<li><strong>Contextual token representation:</strong> that token’s vector after Transformer processing.</li>
+<li><strong>Text embedding:</strong> one combined vector representing the whole input.</li>
+<li><strong>GPT output:</strong> probabilities over possible next tokens.</li>
+</ul>
+<p>So the full relationship is:</p>
+<pre><code class="language-text">token embeddings are inputs to the Transformer
+
+contextual token vectors are outputs of Transformer layers
+
+text embeddings ar
+
+e created by combining those contextual token vectors
+</code></pre></article><aside class="mt-12 border-t border-[var(--rule)] pt-6" aria-label="Notes linking here"><h2 class="font-display text-xl">Notes linking here</h2><ul class="mt-4 space-y-2 text-sm"><li><a class="underline underline-offset-4 hover:text-primary" href="/notes/machine-learning/large-language-models/llm/">LLM</a></li></ul></aside></main><footer class="mx-auto mt-24 max-w-3xl px-5 pb-16 sm:px-6"><div class="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--rule)] pt-6"><p class="text-xs text-neutral-content">2026<!-- --> <!-- -->Deval Parikh</p><ul class="flex flex-wrap items-center gap-4"><li><a href="https://github.com/devalparikh" class="inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary" target="_blank" rel="noopener noreferrer">GitHub<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" class="size-2.5" aria-hidden="true"><path d="M4 8 8 4M4.6 3.8H8.2V7.4"></path></svg></a></li><li><a href="https://www.linkedin.com/in/devalparikh1/" class="inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary" target="_blank" rel="noopener noreferrer">LinkedIn<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" class="size-2.5" aria-hidden="true"><path d="M4 8 8 4M4.6 3.8H8.2V7.4"></path></svg></a></li><li><a href="mailto:devalpp@gmail.com" class="inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary">Email</a></li><li><a class="inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary" target="_blank" rel="noopener noreferrer" href="/DevalParikhResume.pdf">Resume</a></li></ul></div></footer><!--$--><!--/$--><script src="/_next/static/chunks/1u5zan5bs9a7v.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[39756,[\"/_next/static/chunks/3fntmmi971322.js\"],\"default\"]\n3:I[37457,[\"/_next/static/chunks/3fntmmi971322.js\"],\"default\"]\n5:I[97367,[\"/_next/static/chunks/3fntmmi971322.js\"],\"OutletBoundary\"]\n6:\"$Sreact.suspense\"\n9:I[97367,[\"/_next/static/chunks/3fntmmi971322.js\"],\"ViewportBoundary\"]\nb:I[97367,[\"/_next/static/chunks/3fntmmi971322.js\"],\"MetadataBoundary\"]\nd:I[68027,[\"/_next/static/chunks/3fntmmi971322.js\"],\"default\",1]\n:HL[\"/_next/static/chunks/1_mgvd11r2juc.css\",\"style\"]\n:HL[\"/_next/static/media/03bda585a99c6450-s.p.32sris142tqlb.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/5c285b27cdda1fe8-s.p.2_mbdogr7ni8i.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n8:X\n0:{\"P\":null,\"c\":[\"\",\"notes\",\"machine-learning\",\"fundamentals-of-embeddings-encoder-decoders\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"notes\",{\"children\":[[\"slug\",\"machine-learning/fundamentals-of-embeddings-encoder-decoders\",\"c\",[]],{\"children\":[\"__PAGE__\",{},\"$undefined\",\"$undefined\",4608]},\"$undefined\",\"$undefined\",4608]},\"$undefined\",\"$undefined\",4608]},\"$undefined\",\"$undefined\",4624],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/1_mgvd11r2juc.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/3fntmmi971322.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"en\",\"data-theme\":\"parchment\",\"suppressHydrationWarning\":true,\"children\":[[\"$\",\"head\",null,{\"children\":[\"$\",\"script\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"(function(){try{\\nvar s=localStorage.getItem(\\\"deval-theme\\\");\\nvar t=(s===\\\"parchment\\\"||s===\\\"inkember\\\")?s:(matchMedia(\\\"(prefers-color-scheme: dark)\\\").matches?\\\"inkember\\\":\\\"parchment\\\");\\ndocument.documentElement.setAttribute(\\\"data-theme\\\",t);\\ndocument.documentElement.style.colorScheme=t===\\\"inkember\\\"?\\\"dark\\\":\\\"light\\\";\\n}catch(e){}})();\"}}]}],[\"$\",\"body\",null,{\"className\":\"dm_sans_34a85c05-module__gGo3DG__variable fraunces_a0610f6d-module__zt62-W__variable\",\"children\":[[\"$\",\"a\",null,{\"href\":\"#main\",\"className\":\"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-base-200 focus:px-4 focus:py-2 focus:text-sm\",\"children\":\"Skip to content\"}],[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L4\",[[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/2x5jr7_zz9paa.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"$L5\",null,{\"children\":[\"$\",\"$6\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@7\"}]}]]}],{},null,false,null]},null,false,\"$8\"]},null,false,\"$8\"]},null,false,null],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$6\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/1_mgvd11r2juc.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]]],\"S\":true,\"h\":null,\"r\":\"$undefined\",\"s\":\"$undefined\",\"a\":\"$undefined\",\"l\":\"$undefined\",\"p\":\"$undefined\",\"d\":\"$undefined\",\"b\":\"giF_RFW4uRc7iyZ5XD_ex\"}\ne:I[8507,[\"/_next/static/chunks/3fntmmi971322.js\",\"/_next/static/chunks/2x5jr7_zz9paa.js\"],\"NavBar\"]\nf:I[22016,[\"/_next/static/chunks/3fntmmi971322.js\",\"/_next/static/chunks/2x5jr7_zz9paa.js\"],\"\"]\n10:I[56697,[\"/_next/static/chunks/3fntmmi971322.js\",\"/_next/static/chunks/2x5jr7_zz9paa.js\"],\"Reveal\"]\n8:C\n11:T1ce4,\u003cp\u003e\u003cstrong\u003etoken embeddings\u003c/strong\u003e = 1 vector to represent a token\n\u003cstrong\u003etext embeddings\u003c/strong\u003e = 1 vector to represents text (sentence(s))\nprocess to get text embeddings: (token embeddings -\u003e transformer -\u003e contextual embeddings -\u003e pooling -\u003e text embedding)\u003c/p\u003e\n\u003cp\u003eGPT LLM model = \u003cstrong\u003edecoder\u003c/strong\u003e = attention to everything before\nEmbedding model = \u003cstrong\u003eencoder\u003c/strong\u003e = attention to everything before AND after\ninput, understand, output = \u003cstrong\u003eencoder-decoder\u003c/strong\u003e (like translation)\u003c/p\u003e\n\u003cp\u003etraining an embedding model:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003epretraining on transformer (learn the language)\n\u003cul\u003e\n\u003cli\u003emasked token prediction (common for encoder models) -\u003e encoder-based embeddings\u003c/li\u003e\n\u003cli\u003eor next-token predicition (common for decoder models) -\u003e decoder-based embeddings\u003c/li\u003e\n\u003cli\u003eor encoder-decoder model\u003c/li\u003e\n\u003cli\u003eor another large-scale language objective\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003cli\u003econtrastive embedding training (learn similarities)\n\u003cul\u003e\n\u003cli\u003etrain on pairs or groups\u003c/li\u003e\n\u003cli\u003equery, positive, negative\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eduring LLM (decoder architecture) pretraining:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eAlso trains an embeddings model implicitly (but not specialized for similarity)\u003c/li\u003e\n\u003cli\u003eEvery Transformer layer produces hidden vectors for the tokens\n\u003cul\u003e\n\u003cli\u003eThose vectors contain information about the whole preceding context\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eYes, many dedicated embedding models are trained with contrastive learning.\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eSimilar text pairs are pulled closer in vector space.\u003c/li\u003e\n\u003cli\u003eUnrelated text pairs are pushed farther apart.\u003c/li\u003e\n\u003cli\u003eExample:\n\u003cul\u003e\n\u003cli\u003e“How do I reset my password?”\u003c/li\u003e\n\u003cli\u003e“Password reset instructions”\u003c/li\u003e\n\u003cli\u003eThese should get nearby vectors.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eEmbedding models are usually separate from GPT-style LLMs.\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eGPT model:\n\u003cul\u003e\n\u003cli\u003eMain goal: predict the next token.\u003c/li\u003e\n\u003cli\u003eUsually decoder-only.\u003c/li\u003e\n\u003cli\u003eOutput: text tokens.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003cli\u003eEmbedding model:\n\u003cul\u003e\n\u003cli\u003eMain goal: produce a useful vector for similarity/search.\u003c/li\u003e\n\u003cli\u003eOften encoder-only, though other architectures can work.\u003c/li\u003e\n\u003cli\u003eOutput: one vector for the input text.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eBut embedding models can still benefit from LLM-style pretraining.\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eCommon process:\n\u003col\u003e\n\u003cli\u003ePretrain a Transformer on lots of text.\u003c/li\u003e\n\u003cli\u003eThen train or fine-tune it with a contrastive embedding objective.\u003c/li\u003e\n\u003c/ol\u003e\n\u003c/li\u003e\n\u003cli\u003eSo it can first learn language generally, then learn:\n\u003cul\u003e\n\u003cli\u003ewhich sentences mean similar things,\u003c/li\u003e\n\u003cli\u003ewhich queries match which documents,\u003c/li\u003e\n\u003cli\u003ehow to organize meaning in vector space.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eIt does not have to be trained from a GPT model specifically.\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eGPT is decoder-only.\u003c/li\u003e\n\u003cli\u003eMany embedding models start from encoder models, such as BERT-like architectures.\u003c/li\u003e\n\u003cli\u003eSome modern systems also use decoder-only LLMs and adapt their hidden states into embeddings.\u003c/li\u003e\n\u003cli\u003eThe important part is the final embedding-specific training objective, not whether it started as GPT.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch2 id=\"encoder-vs-decoder\"\u003eEncoder vs decoder\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eEncoder\u003c/strong\u003e\n\u003cul\u003e\n\u003cli\u003eReads the input text.\u003c/li\u003e\n\u003cli\u003eProduces contextual vectors.\u003c/li\u003e\n\u003cli\u003eUsually can look at tokens on both sides of each token.\u003c/li\u003e\n\u003cli\u003eGood for:\n\u003cul\u003e\n\u003cli\u003eembeddings,\u003c/li\u003e\n\u003cli\u003eclassification,\u003c/li\u003e\n\u003cli\u003esearch,\u003c/li\u003e\n\u003cli\u003eunderstanding text.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003etext → encoder → vectors\n\u003c/code\u003e\u003c/pre\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eDecoder\u003c/strong\u003e\n\u003cul\u003e\n\u003cli\u003eGenerates tokens one at a time.\u003c/li\u003e\n\u003cli\u003eLooks at previous tokens and predicts the next one.\u003c/li\u003e\n\u003cli\u003eGood for:\n\u003cul\u003e\n\u003cli\u003ewriting,\u003c/li\u003e\n\u003cli\u003eanswering questions,\u003c/li\u003e\n\u003cli\u003egenerating code.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003eprevious tokens → decoder → next token\n\u003c/code\u003e\u003c/pre\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eEncoder–decoder\u003c/strong\u003e\n\u003cul\u003e\n\u003cli\u003eThe encoder reads and understands the input.\u003c/li\u003e\n\u003cli\u003eThe decoder generates a new output based on the encoder’s representations.\u003c/li\u003e\n\u003cli\u003eCommon for:\n\u003cul\u003e\n\u003cli\u003etranslation,\u003c/li\u003e\n\u003cli\u003esummarization,\u003c/li\u003e\n\u003cli\u003etext-to-text tasks.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003eEnglish sentence\n      ↓\n   encoder\n      ↓\ninternal representations\n      ↓\n   decoder\n      ↓\nFrench sentence\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eExample:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003eEncoder reads:\n\"Translate 'hello' to French\"\n\nDecoder generates:\n\"bonjour\"\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch2 id=\"token-embeddings-vs-text-embeddings\"\u003eToken embeddings vs text embeddings\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eToken embedding\u003c/strong\u003e\n\u003cul\u003e\n\u003cli\u003eRepresents one token.\u003c/li\u003e\n\u003cli\u003eA token may be:\n\u003cul\u003e\n\u003cli\u003ea whole word,\u003c/li\u003e\n\u003cli\u003epart of a word,\u003c/li\u003e\n\u003cli\u003epunctuation,\u003c/li\u003e\n\u003cli\u003ea few characters.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003cli\u003eExample:\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003e\"unbelievable\"\n\nmight become:\n[\"un\", \"believ\", \"able\"]\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eEach token gets its own starting vector.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eText embedding\u003c/strong\u003e\n\u003cul\u003e\n\u003cli\u003eRepresents the meaning of the entire input.\u003c/li\u003e\n\u003cli\u003eIt may summarize:\n\u003cul\u003e\n\u003cli\u003eone sentence,\u003c/li\u003e\n\u003cli\u003emultiple sentences,\u003c/li\u003e\n\u003cli\u003ea paragraph,\u003c/li\u003e\n\u003cli\u003ea document chunk.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003e\"The dog is running through the park.\"\n        ↓\none text embedding vector\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch2 id=\"how-they-are-related\"\u003eHow they are related\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003eYes, they are related parts of the same processing pipeline.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003eText\n ↓\nTokenizer\n ↓\nToken IDs\n ↓\nToken embedding lookup\n ↓\nOne starting vector per token\n ↓\nTransformer layers\n ↓\nOne contextual vector per token\n ↓\nPooling / projection\n ↓\nOne text embedding\n\u003c/code\u003e\u003c/pre\u003e\n\u003cul\u003e\n\u003cli\u003eStep by step:\n\u003cul\u003e\n\u003cli\u003eThe tokenizer converts text into token IDs.\u003c/li\u003e\n\u003cli\u003eThe token embedding table converts each token ID into a starting vector.\u003c/li\u003e\n\u003cli\u003eThe Transformer modifies those vectors using context.\u003c/li\u003e\n\u003cli\u003eThe final token vectors now contain contextual meaning.\u003c/li\u003e\n\u003cli\u003eThe model combines those token vectors into one text embedding.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eExample:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003e\"The bank approved my loan\"\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eInitial token vectors:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003e\"The\"  → vector\n\"bank\" → vector\n\"approved\" → vector\n\"my\" → vector\n\"loan\" → vector\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eAfter the Transformer, the vector for “bank” understands that it means a financial institution.\u003c/p\u003e\n\u003cp\u003eThen the model combines all the contextual token vectors into one vector representing the full sentence.\u003c/p\u003e\n\u003ch2 id=\"the-simplest-distinction\"\u003eThe simplest distinction\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eToken embedding:\u003c/strong\u003e starting vector for one token.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eContextual token representation:\u003c/strong\u003e that token’s vector after Transformer processing.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eText embedding:\u003c/strong\u003e one combined vector representing the whole input.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eGPT output:\u003c/strong\u003e probabilities over possible next tokens.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eSo the full relationship is:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003etoken embeddings are inputs to the Transformer\n\ncontextual token vectors are outputs of Transformer layers\n\ntext embeddings ar\n\ne created by combining those contextual token vectors\n\u003c/code\u003e\u003c/pre\u003e4:[\"$undefined\",[\"$\",\"$Le\",null,{}],[\"$\",\"main\",null,{\"id\":\"main\",\"className\":\"mx-auto max-w-3xl px-5 pt-10 sm:px-6 sm:pt-14\",\"children\":[[\"$\",\"$Lf\",null,{\"href\":\"/notes\",\"className\":\"mb-7 inline-block text-sm text-neutral-content hover:text-primary\",\"children\":\"← All notes\"}],[\"$\",\"header\",null,{\"children\":[[\"$\",\"$L10\",null,{\"index\":0,\"children\":[\"$\",\"p\",null,{\"className\":\"kicker\",\"children\":\"machine learning\"}]}],[\"$\",\"$L10\",null,{\"index\":1,\"children\":[\"$\",\"h1\",null,{\"className\":\"display mt-2 text-4xl sm:text-5xl\",\"children\":\"Fundamentals of Embeddings, Encoder-Decoders\"}]}],\"$undefined\"]}],null,false,[\"$\",\"article\",null,{\"className\":\"note-prose mt-9\",\"dangerouslySetInnerHTML\":{\"__html\":\"$11\"}}],\"$L12\"]}],\"$L13\"]\n12:[\"$\",\"aside\",null,{\"className\":\"mt-12 border-t border-[var(--rule)] pt-6\",\"aria-label\":\"Notes linking here\",\"children\":[[\"$\",\"h2\",null,{\"className\":\"font-display text-xl\",\"children\":\"Notes linking here\"}],[\"$\",\"ul\",null,{\"className\":\"mt-4 space-y-2 text-sm\",\"children\":[[\"$\",\"li\",\"machine-learning/large-language-models/llm\",{\"children\":[\"$\",\"$Lf\",null,{\"href\":\"/notes/machine-learning/large-language-models/llm/\",\"className\":\"underline underline-offset-4 hover:text-primary\",\"children\":\"LLM\"}]}]]}]]}]\n13:[\"$\",\"footer\",null,{\"className\":\"mx-auto mt-24 max-w-3xl px-5 pb-16 sm:px-6\",\"children\":[\"$\",\"div\",null,{\"className\":\"flex flex-wrap items-center justify-between gap-4 border-t border-[var(--rule)] pt-6\",\"children\":[[\"$\",\"p\",null,{\"className\":\"text-xs text-neutral-content\",\"children\":[2026,\" \",\"Deval Parikh\"]}],[\"$\",\"ul\",null,{\"className\":\"flex flex-wrap items-center gap-4\",\"children\":[[\"$\",\"li\",\"github\",{\"children\":[\"$\",\"a\",null,{\"href\":\"https://github.com/devalparikh\",\"className\":\"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary\",\"onClick\":\"$undefined\",\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":[\"GitHub\",[\"$\",\"svg\",null,{\"viewBox\":\"0 0 12 12\",\"fill\":\"none\",\"stroke\":\"currentColor\",\"strokeWidth\":1.4,\"strokeLinecap\":\"round\",\"strokeLinejoin\":\"round\",\"className\":\"size-2.5\",\"aria-hidden\":\"true\",\"children\":[\"$\",\"path\",null,{\"d\":\"M4 8 8 4M4.6 3.8H8.2V7.4\"}]}]]}]}],[\"$\",\"li\",\"linkedin\",{\"children\":[\"$\",\"a\",null,{\"href\":\"https://www.linkedin.com/in/devalparikh1/\",\"className\":\"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary\",\"onClick\":\"$undefined\",\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":[\"LinkedIn\",[\"$\",\"svg\",null,{\"viewBox\":\"0 0 12 12\",\"fill\":\"none\",\"stroke\":\"currentColor\",\"strokeWidth\":1.4,\"strokeLinecap\":\"round\",\"strokeLinejoin\":\"round\",\"className\":\"size-2.5\",\"aria-hidden\":\"true\",\"children\":[\"$\",\"path\",null,{\"d\":\"M4 8 8 4M4.6 3.8H8.2V7.4\"}]}]]}]}],[\"$\",\"li\",\"email\",{\"children\":[\"$\",\"a\",null,{\"href\":\"mailto:devalpp@gmail.com\",\"className\":\"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary\",\"onClick\":\"$undefined\",\"target\":\"$undefined\",\"rel\":\"$undefined\",\"children\":[\"Email\",false]}]}],[\"$\",\"li\",\"resume\",{\"children\":[\"$\",\"$Lf\",null,{\"href\":\"/DevalParikhResume.pdf\",\"className\":\"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary\",\"onClick\":\"$undefined\",\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":[\"Resume\",false]}]}]]}]]}]}]\na:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}],[\"$\",\"meta\",\"2\",{\"name\":\"theme-color\",\"content\":\"#faf8f5\",\"media\":\"(prefers-color-scheme: light)\"}],[\"$\",\"meta\",\"3\",{\"name\":\"theme-color\",\"content\":\"#08080a\",\"media\":\"(prefers-color-scheme: dark)\"}]]\n14:I[27201,[\"/_next/static/chunks/3fntmmi971322.js\"],\"IconMark\"]\n7:null\nc:[[\"$\",\"title\",\"0\",{\"children\":\"Fundamentals of Embeddings, Encoder-Decoders - Deval Parikh\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"token embeddings = 1 vector to represent a token text embeddings = 1 vector to represents text (sentence(s)) process to get text embeddings: (token embeddings -\u003e transfor\"}],[\"$\",\"link\",\"2\",{\"rel\":\"author\",\"href\":\"https://devalparikh.me\"}],[\"$\",\"meta\",\"3\",{\"name\":\"author\",\"content\":\"Deval Parikh\"}],[\"$\",\"link\",\"4\",{\"rel\":\"manifest\",\"href\":\"/manifest.json\",\"crossOrigin\":\"$undefined\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:title\",\"content\":\"Deval Parikh\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:description\",\"content\":\"Hi, I'm Deval 👋. I work on planet-scale distributed systems and AI/ML.\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:url\",\"content\":\"https://devalparikh.me/\"}],[\"$\",\"meta\",\"8\",{\"property\":\"og:site_name\",\"content\":\"Deval Parikh\"}],[\"$\",\"meta\",\"9\",{\"property\":\"og:image\",\"content\":\"https://devalparikh.me/img/og.webp\"}],[\"$\",\"meta\",\"10\",{\"property\":\"og:image:width\",\"content\":\"1200\"}],[\"$\",\"meta\",\"11\",{\"property\":\"og:image:height\",\"content\":\"706\"}],[\"$\",\"meta\",\"12\",{\"property\":\"og:image:alt\",\"content\":\"Deval Parikh\"}],[\"$\",\"meta\",\"13\",{\"property\":\"og:type\",\"content\":\"website\"}],[\"$\",\"meta\",\"14\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"15\",{\"name\":\"twitter:title\",\"content\":\"Deval Parikh\"}],[\"$\",\"meta\",\"16\",{\"name\":\"twitter:description\",\"content\":\"Hi, I'm Deval 👋. I work on planet-scale distributed systems and AI/ML.\"}],[\"$\",\"meta\",\"17\",{\"name\":\"twitter:image\",\"content\":\"https://devalparikh.me/img/og.webp\"}],[\"$\",\"meta\",\"18\",{\"name\":\"twitter:image:alt\",\"content\":\"Deval Parikh\"}],[\"$\",\"meta\",\"19\",{\"name\":\"twitter:image:width\",\"content\":\"1200\"}],[\"$\",\"meta\",\"20\",{\"name\":\"twitter:image:height\",\"content\":\"706\"}],[\"$\",\"link\",\"21\",{\"rel\":\"icon\",\"href\":\"/icon.png?icon.2ptxlquxqk1aa.png\",\"sizes\":\"512x512\",\"type\":\"image/png\"}],[\"$\",\"link\",\"22\",{\"rel\":\"apple-touch-icon\",\"href\":\"/apple-icon.png?apple-icon.0rev6fufno4rq.png\",\"sizes\":\"180x180\",\"type\":\"image/png\"}],[\"$\",\"$L14\",\"23\",{}]]\n"])</script></body></html>

@@ -1,0 +1,308 @@
+1:"$Sreact.fragment"
+2:I[39756,["/_next/static/chunks/3fntmmi971322.js"],"default"]
+3:I[37457,["/_next/static/chunks/3fntmmi971322.js"],"default"]
+5:I[97367,["/_next/static/chunks/3fntmmi971322.js"],"OutletBoundary"]
+6:"$Sreact.suspense"
+9:I[97367,["/_next/static/chunks/3fntmmi971322.js"],"ViewportBoundary"]
+b:I[97367,["/_next/static/chunks/3fntmmi971322.js"],"MetadataBoundary"]
+d:I[68027,["/_next/static/chunks/3fntmmi971322.js"],"default",1]
+:HL["/_next/static/chunks/1_mgvd11r2juc.css","style"]
+:HL["/_next/static/media/03bda585a99c6450-s.p.32sris142tqlb.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/5c285b27cdda1fe8-s.p.2_mbdogr7ni8i.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+8:X
+0:{"P":null,"c":["","notes","tooling","local-llm-setup-on-m3-max",""],"q":"","i":false,"f":[[["",{"children":["notes",{"children":[["slug","tooling/local-llm-setup-on-m3-max","c",[]],{"children":["__PAGE__",{},"$undefined","$undefined",4608]},"$undefined","$undefined",4608]},"$undefined","$undefined",4608]},"$undefined","$undefined",4624],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/1_mgvd11r2juc.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/3fntmmi971322.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"en","data-theme":"parchment","suppressHydrationWarning":true,"children":[["$","head",null,{"children":["$","script",null,{"dangerouslySetInnerHTML":{"__html":"(function(){try{\nvar s=localStorage.getItem(\"deval-theme\");\nvar t=(s===\"parchment\"||s===\"inkember\")?s:(matchMedia(\"(prefers-color-scheme: dark)\").matches?\"inkember\":\"parchment\");\ndocument.documentElement.setAttribute(\"data-theme\",t);\ndocument.documentElement.style.colorScheme=t===\"inkember\"?\"dark\":\"light\";\n}catch(e){}})();"}}]}],["$","body",null,{"className":"dm_sans_34a85c05-module__gGo3DG__variable fraunces_a0610f6d-module__zt62-W__variable","children":[["$","a",null,{"href":"#main","className":"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-base-200 focus:px-4 focus:py-2 focus:text-sm","children":"Skip to content"}],["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]]}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":["$L4",[["$","script","script-0",{"src":"/_next/static/chunks/2x5jr7_zz9paa.js","async":true,"nonce":"$undefined"}]],["$","$L5",null,{"children":["$","$6",null,{"name":"Next.MetadataOutlet","children":"$@7"}]}]]}],{},null,false,null]},null,false,"$8"]},null,false,"$8"]},null,false,null],["$","$1","h",{"children":[null,["$","$L9",null,{"children":"$La"}],["$","div",null,{"hidden":true,"children":["$","$Lb",null,{"children":["$","$6",null,{"name":"Next.Metadata","children":"$Lc"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],false]],"m":"$undefined","G":["$d",[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/1_mgvd11r2juc.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]]],"S":true,"h":null,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"giF_RFW4uRc7iyZ5XD_ex"}
+e:I[8507,["/_next/static/chunks/3fntmmi971322.js","/_next/static/chunks/2x5jr7_zz9paa.js"],"NavBar"]
+f:I[22016,["/_next/static/chunks/3fntmmi971322.js","/_next/static/chunks/2x5jr7_zz9paa.js"],""]
+10:I[56697,["/_next/static/chunks/3fntmmi971322.js","/_next/static/chunks/2x5jr7_zz9paa.js"],"Reveal"]
+8:C
+11:T3305,<hr>
+<h1 id="lm-studio">LM Studio</h1>
+<ul>
+<li>open and run server</li>
+<li>apply
+<ul>
+<li>update .codex config</li>
+<li>add to opencode config</li>
+</ul>
+</li>
+</ul>
+<h1 id="local-llm-setup-on-m3-max-llamacpp--hugging-face">Local LLM Setup on M3 Max (llama.cpp + Hugging Face)</h1>
+<h2 id="overview">Overview</h2>
+<ul>
+<li>Run open-source LLMs locally on M3 Max 36GB</li>
+<li>Stack: <code>llama.cpp</code> for inference + <code>hf</code> CLI for model downloads</li>
+<li>Exposes OpenAI-compatible API → drops into Codex, OpenCode, Aider, Continue</li>
+<li>Claude Code support via LiteLLM proxy (Anthropic ↔ OpenAI translation)</li>
+<li>MLX is a faster alternative for raw throughput — see <a href="/notes/tooling/local-llm-setup-on-m3-max/#alternative-runtimes">Alternative Runtimes</a></li>
+<li>Analogy: <code>llama-server</code> is to local LLMs what Postgres is to local DBs — a daemon you point clients at</li>
+</ul>
+<h2 id="default-model-qwen36-27b">Default Model: Qwen3.6-27B</h2>
+<ul>
+<li><strong>Top pick for 36GB</strong> as of Apr 2026
+<ul>
+<li>27B dense, ~16GB at Q4_K_M</li>
+<li>Beats prior-gen Qwen3.5-397B-A17B on coding benchmarks</li>
+<li>262k native context (extensible to 1M)</li>
+<li>Apache 2.0</li>
+<li>GGUF community quants already published</li>
+</ul>
+</li>
+</ul>
+<h2 id="setup-steps">Setup Steps</h2>
+<h3 id="1-install-both-tools">1. Install both tools</h3>
+<pre><code class="language-bash">brew install llama.cpp hf
+</code></pre>
+<ul>
+<li><code>llama.cpp</code> ships with Metal enabled by default on macOS</li>
+<li><code>hf</code> is the renamed HuggingFace CLI (was <code>huggingface-cli</code>)</li>
+</ul>
+<h3 id="2-authenticate-with-hugging-face">2. Authenticate with Hugging Face</h3>
+<pre><code class="language-bash">hf auth login
+</code></pre>
+<ul>
+<li>Token from <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener noreferrer">https://huggingface.co/settings/tokens</a></li>
+<li>Required for gated models (Gemma, Llama) — also accept license on the model page in browser first</li>
+</ul>
+<h3 id="3-download-a-model-gguf-format">3. Download a model (GGUF format)</h3>
+<ul>
+<li>
+<p><strong>Coding default</strong> — Qwen3.6-27B (~16GB):</p>
+<pre><code class="language-bash">hf download unsloth/Qwen3.6-27B-GGUF \
+  Qwen3.6-27B-Q4_K_M.gguf \
+  --local-dir ~/models
+</code></pre>
+</li>
+<li>
+<p><strong>General</strong> — Gemma 3 27B (~16GB):</p>
+<pre><code class="language-bash">hf download bartowski/gemma-3-27b-it-GGUF \
+  gemma-3-27b-it-Q4_K_M.gguf \
+  --local-dir ~/models
+</code></pre>
+</li>
+<li>
+<p>Quant cheat sheet for 36GB:</p>
+<ul>
+<li><code>Q4_K_M</code> → default, best size/quality tradeoff</li>
+<li><code>Q5_K_M</code> → +25% size, slight quality bump</li>
+<li><code>IQ4_XS</code> → smaller, near Q4_K_M quality (uses imatrix)</li>
+<li><code>Q8_0</code> → near-lossless, only viable for ≤14B models</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-run-the-server-openai-compatible-api">4. Run the server (OpenAI-compatible API)</h3>
+<pre><code class="language-bash">llama-server \
+  -m ~/models/Qwen3.6-27B-Q4_K_M.gguf \
+  -ngl 99 \
+  -c 16384 \
+  --flash-attn on \
+  --cache-type-k q8_0 \
+  --cache-type-v q8_0 \
+  --port 8080
+</code></pre>
+<ul>
+<li>Endpoint live at <code>http://localhost:8080/v1</code></li>
+<li>Critical flags:
+<ul>
+<li><code>-ngl 99</code> → all layers on GPU (Metal). <strong>Always set this</strong></li>
+<li><code>--flash-attn on</code> → ~30% speedup, lower memory (use <code>on|off|auto</code>, no longer a bare toggle)</li>
+<li><code>--cache-type-k/v q8_0</code> → halves KV cache memory</li>
+<li><code>-c 16384</code> → 16k context (KV cache scales linearly, only bump if needed)</li>
+<li><code>--mlock</code> → optional, pins model in RAM, prevents macOS swapping</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-wire-into-agentic-coding-tools">5. Wire into agentic coding tools</h3>
+<h4 id="opencode-recommended--native-openai-compatible-no-proxy">OpenCode (recommended — native OpenAI-compatible, no proxy)</h4>
+<ul>
+<li>Install:
+<pre><code class="language-bash">npm install -g opencode-ai
+# or: brew install sst/tap/opencode
+</code></pre>
+</li>
+<li>Configure <code>~/.config/opencode/opencode.json</code>:
+<pre><code class="language-json">{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "local": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Local llama.cpp",
+      "options": {
+        "baseURL": "http://localhost:8080/v1",
+        "apiKey": "dummy"
+      },
+      "models": {
+        "qwen3.6-27b": {
+          "name": "Qwen3.6 27B (local)"
+        }
+      }
+    }
+  }
+}
+</code></pre>
+</li>
+<li>Run: <code>opencode</code> → use <code>/models</code> to pick <code>local/qwen3.6-27b</code></li>
+<li>Quick env-var alternative (no config file):
+<pre><code class="language-bash">export OPENAI_BASE_URL=http://localhost:8080/v1
+export OPENAI_API_KEY=dummy
+opencode
+</code></pre>
+</li>
+</ul>
+<h4 id="codex--aider-also-openai-compatible">Codex / Aider (also OpenAI-compatible)</h4>
+<pre><code class="language-bash">export OPENAI_BASE_URL=http://localhost:8080/v1
+export OPENAI_API_KEY=dummy
+</code></pre>
+<h4 id="claude-code-needs-anthropic--openai-proxy">Claude Code (needs Anthropic ↔ OpenAI proxy)</h4>
+<pre><code class="language-bash">pip install 'litellm[proxy]' --break-system-packages
+litellm --model openai/qwen \
+  --api_base http://localhost:8080/v1 \
+  --api_key dummy --port 4000
+
+export ANTHROPIC_BASE_URL=http://localhost:4000
+export ANTHROPIC_AUTH_TOKEN=dummy
+export ANTHROPIC_MODEL=qwen
+export ANTHROPIC_SMALL_FAST_MODEL=qwen
+</code></pre>
+<ul>
+<li>Alternative: <a href="https://github.com/musistudio/claude-code-router" target="_blank" rel="noopener noreferrer"><code>claude-code-router</code></a> — purpose-built proxy for Claude Code with per-task model routing</li>
+</ul>
+<h4 id="tool-call-expectations">Tool-call expectations</h4>
+<ul>
+<li><strong>OpenCode</strong>: best of the bunch for local — provider-aware, handles smaller-model quirks</li>
+<li><strong>Claude Code</strong>: works but rough — Claude Code expects frontier-model quality tool calls; expect malformed JSON occasionally</li>
+<li><strong>All tools</strong>: bump <code>-c</code> to 64k+ for usable agentic work (tools eat context fast)</li>
+<li>If tool calls fail repeatedly → add <code>--chat-template chatml</code> to llama-server</li>
+</ul>
+<h3 id="6-verify-performance">6. Verify performance</h3>
+<pre><code class="language-bash">llama-bench -m ~/models/Qwen3.6-27B-Q4_K_M.gguf -ngl 99 -fa 1
+</code></pre>
+<ul>
+<li>Expected on M3 Max for 27B Q4_K_M:
+<ul>
+<li>Prompt eval: ~200–400 tok/s</li>
+<li>Generation: ~18–22 tok/s</li>
+</ul>
+</li>
+<li>If gen &#x3C;10 tok/s → swapping. Close Chrome/Docker, check <code>sudo memory_pressure</code></li>
+</ul>
+<h2 id="optimization-knobs-matter-a-lot">Optimization Knobs (matter a lot)</h2>
+<ul>
+<li><strong>Quant level</strong>: 4-bit is the sweet spot. Below 4-bit = noticeable quality loss</li>
+<li><strong>Context length</strong>: KV cache scales linearly. Drop to 8k–16k unless you need long context</li>
+<li><strong>Flash attention</strong>: always enable on M-series (<code>--flash-attn on</code>)</li>
+<li><strong>KV cache quantization</strong>: <code>q8_0</code> halves memory with negligible quality hit</li>
+<li><strong>Speculative decoding</strong>: pair big model with tiny draft model → 1.5–2x speedup
+<ul>
+<li>Example: 27B target + 1.5B draft, both same family</li>
+<li>Best gains on predictable text (code, structured output)</li>
+</ul>
+</li>
+<li><strong>Memory pressure</strong>: keep ~6GB free for macOS or you'll swap and tank tok/s</li>
+<li><strong>Unified memory caveat</strong>: Chrome/Docker/etc fight for the same pool. Close before long sessions</li>
+</ul>
+<h2 id="speculative-decoding-example">Speculative Decoding Example</h2>
+<pre><code class="language-bash">llama-server \
+  -m ~/models/Qwen3.6-27B-Q4_K_M.gguf \
+  -md ~/models/Qwen3-1.5B-Q4_K_M.gguf \
+  -ngl 99 -ngld 99 \
+  --draft-max 16 --draft-min 4 \
+  --flash-attn on -c 8192
+</code></pre>
+<ul>
+<li>Draft model generates N tokens, big model verifies in one pass</li>
+<li><code>-md</code> = draft model path, <code>-ngld</code> = draft model GPU layers</li>
+</ul>
+<h2 id="models-that-wont-fit-on-36gb">Models That Won't Fit on 36GB</h2>
+<p>These are the current frontier open models — all need data-center GPUs:</p>
+<ul>
+<li><strong>Kimi K2.6</strong> (Moonshot) — 1T total / 32B active MoE
+<ul>
+<li>Smallest viable quant: 350GB (2-bit dynamic GGUF)</li>
+<li>Needs 8x H100 for production</li>
+</ul>
+</li>
+<li><strong>DeepSeek-V4-Pro</strong> — 1.6T total / 49B active MoE
+<ul>
+<li>1M-token context with hybrid CSA/HCA attention</li>
+<li>Even V4-Flash (284B/13B active) needs ~140GB at 4-bit</li>
+</ul>
+</li>
+<li><strong>GLM-5.1</strong> (zai-org) — 754B total / 40B active MoE
+<ul>
+<li>Smallest quant (Unsloth dynamic 1-bit): 200GB</li>
+<li>Strong on SWE-Bench Pro and Terminal-Bench 2.0</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>warning: MoE saves compute, <strong>not memory</strong>. All experts must stay resident. Active param count (the smaller number) only tells you inference cost, not RAM requirement.</p>
+</blockquote>
+<p>For these models: use APIs (OpenRouter, DeepInfra, provider direct) instead of local hosting.</p>
+<h2 id="other-models-that-fit-on-36gb">Other Models That Fit on 36GB</h2>
+<ul>
+<li><strong>Gemma 3 27B</strong> (~16GB at 4-bit) — strong general reasoning, multimodal</li>
+<li><strong>Qwen2.5-Coder 32B</strong> (~18GB at 4-bit) — previous default, still solid</li>
+<li><strong>Llama 3.3 70B</strong> at IQ2_XXS (~22GB) — pushes limits, slower, quality dips noticeably</li>
+<li><strong>Qwen3 14B / Gemma 3 12B</strong> at 4-bit — fast, leaves headroom for big context</li>
+</ul>
+<h2 id="common-gotchas">Common Gotchas</h2>
+<ul>
+<li>Forgot <code>-ngl 99</code> → runs on CPU, 10x slower</li>
+<li>Context too large → OOM crash. Watch <code>sudo memory_pressure</code> while running</li>
+<li>Wrong chat template → garbage output. Pass <code>--chat-template chatml|llama3|gemma</code> if auto-detect fails</li>
+<li>Gated model 401 → accept license in browser first, even with valid token</li>
+<li>Partial GGUF download → cryptic errors. Verify <code>ls -lh</code> matches HF size</li>
+<li><strong>Flag drift</strong>: llama.cpp renames flags often. Recent breakage:
+<ul>
+<li><code>--flash-attn</code> → now requires value: <code>--flash-attn on|off|auto</code></li>
+<li>Run <code>llama-server -h | grep &#x3C;flag></code> if a flag errors</li>
+</ul>
+</li>
+</ul>
+<h2 id="quick-alias">Quick Alias</h2>
+<p>Add to <code>~/.zshrc</code>:</p>
+<pre><code class="language-bash">alias llm-serve='llama-server -m ~/models/Qwen3.6-27B-Q4_K_M.gguf -ngl 99 -c 16384 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --port 8080'
+</code></pre>
+<h2 id="alternative-runtimes">Alternative Runtimes</h2>
+<ul>
+<li><strong>MLX / <code>mlx-lm</code></strong> — Apple's native framework, ~10–30% faster on Apple Silicon
+<ul>
+<li>Separate runtime, separate model format (MLX folder, <strong>not GGUF</strong> — no interop with llama.cpp)</li>
+<li>Use when raw throughput matters more than ecosystem/quant variety</li>
+<li>Install: <code>pip install mlx-lm --break-system-packages</code></li>
+<li>Download: <code>hf download unsloth/Qwen3.6-27B-UD-MLX-4bit --local-dir ~/models/qwen3.6-mlx</code></li>
+<li>Run: <code>mlx_lm.server --model ~/models/qwen3.6-mlx --port 8080</code></li>
+<li>Tradeoffs: smaller model selection, fewer quant variants, no spec decoding yet</li>
+</ul>
+</li>
+<li><strong>Ollama</strong> — wraps llama.cpp, easier ergonomics, model registry
+<ul>
+<li>Use as always-on daemon: <code>brew install ollama &#x26;&#x26; ollama serve</code></li>
+<li>Endpoint at <code>http://localhost:11434/v1</code></li>
+</ul>
+</li>
+<li><strong>LM Studio</strong> — GUI for browsing/comparing quants
+<ul>
+<li>Bundles both MLX and llama.cpp runtimes (pick per model)</li>
+</ul>
+</li>
+</ul>
+<h2 id="resources">Resources</h2>
+<ul>
+<li><a href="https://github.com/ggerganov/llama.cpp" target="_blank" rel="noopener noreferrer">llama.cpp repo</a></li>
+<li><a href="https://huggingface.co/docs/huggingface_hub/guides/cli" target="_blank" rel="noopener noreferrer">hf CLI docs</a></li>
+<li><a href="https://huggingface.co/bartowski" target="_blank" rel="noopener noreferrer">bartowski's GGUF quants</a> — go-to source for community GGUF quants</li>
+<li><a href="https://huggingface.co/unsloth" target="_blank" rel="noopener noreferrer">unsloth</a> — both GGUF and MLX, often with dynamic quants</li>
+<li><a href="https://huggingface.co/mlx-community" target="_blank" rel="noopener noreferrer">mlx-community</a> — MLX-formatted models</li>
+<li><a href="https://docs.litellm.ai/docs/simple_proxy" target="_blank" rel="noopener noreferrer">LiteLLM proxy docs</a></li>
+</ul>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="/notes/machine-learning/gpu-kernels-ml-optimization/">GPU Kernels ML Optimization</a></li>
+<li>temp Claude Code</li>
+</ul>4:["$undefined",["$","$Le",null,{}],["$","main",null,{"id":"main","className":"mx-auto max-w-3xl px-5 pt-10 sm:px-6 sm:pt-14","children":[["$","$Lf",null,{"href":"/notes","className":"mb-7 inline-block text-sm text-neutral-content hover:text-primary","children":"← All notes"}],["$","header",null,{"children":[["$","$L10",null,{"index":0,"children":["$","p",null,{"className":"kicker","children":"tooling"}]}],["$","$L10",null,{"index":1,"children":["$","h1",null,{"className":"display mt-2 text-4xl sm:text-5xl","children":"Local LLM Setup on M3 Max (llama.cpp + Hugging Face)"}]}],"$undefined"]}],["$","p",null,{"className":"mt-4 text-xs text-neutral-content","children":["Updated ",["$","time",null,{"dateTime":"2026-04-29","children":"Apr 29, 2026"}]]}],["$","p",null,{"className":"mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-content","children":[["$","span","tooling",{"children":["#","tooling"]}],["$","span","llm",{"children":["#","llm"]}],["$","span","llama-cpp",{"children":["#","llama-cpp"]}],["$","span","mlx",{"children":["#","mlx"]}],["$","span","apple-silicon",{"children":["#","apple-silicon"]}],["$","span","local-inference",{"children":["#","local-inference"]}],["$","span","agentic-coding",{"children":["#","agentic-coding"]}]]}],["$","article",null,{"className":"note-prose mt-9","dangerouslySetInnerHTML":{"__html":"$11"}}],false]}],"$L12"]
+12:["$","footer",null,{"className":"mx-auto mt-24 max-w-3xl px-5 pb-16 sm:px-6","children":["$","div",null,{"className":"flex flex-wrap items-center justify-between gap-4 border-t border-[var(--rule)] pt-6","children":[["$","p",null,{"className":"text-xs text-neutral-content","children":[2026," ","Deval Parikh"]}],["$","ul",null,{"className":"flex flex-wrap items-center gap-4","children":[["$","li","github",{"children":["$","a",null,{"href":"https://github.com/devalparikh","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"_blank","rel":"noopener noreferrer","children":["GitHub",["$","svg",null,{"viewBox":"0 0 12 12","fill":"none","stroke":"currentColor","strokeWidth":1.4,"strokeLinecap":"round","strokeLinejoin":"round","className":"size-2.5","aria-hidden":"true","children":["$","path",null,{"d":"M4 8 8 4M4.6 3.8H8.2V7.4"}]}]]}]}],["$","li","linkedin",{"children":["$","a",null,{"href":"https://www.linkedin.com/in/devalparikh1/","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"_blank","rel":"noopener noreferrer","children":["LinkedIn",["$","svg",null,{"viewBox":"0 0 12 12","fill":"none","stroke":"currentColor","strokeWidth":1.4,"strokeLinecap":"round","strokeLinejoin":"round","className":"size-2.5","aria-hidden":"true","children":["$","path",null,{"d":"M4 8 8 4M4.6 3.8H8.2V7.4"}]}]]}]}],["$","li","email",{"children":["$","a",null,{"href":"mailto:devalpp@gmail.com","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"$undefined","rel":"$undefined","children":["Email",false]}]}],["$","li","resume",{"children":["$","$Lf",null,{"href":"/DevalParikhResume.pdf","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"_blank","rel":"noopener noreferrer","children":["Resume",false]}]}]]}]]}]}]
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#faf8f5","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#08080a","media":"(prefers-color-scheme: dark)"}]]
+13:I[27201,["/_next/static/chunks/3fntmmi971322.js"],"IconMark"]
+7:null
+c:[["$","title","0",{"children":"Local LLM Setup on M3 Max (llama.cpp + Hugging Face) - Deval Parikh"}],["$","meta","1",{"name":"description","content":"LM Studio open and run serverapplyupdate .codex configadd to opencode config Local LLM Setup on M3 Max (llama.cpp + Hugging Face) Overview Run open-source LLMs locally on"}],["$","link","2",{"rel":"author","href":"https://devalparikh.me"}],["$","meta","3",{"name":"author","content":"Deval Parikh"}],["$","link","4",{"rel":"manifest","href":"/manifest.json","crossOrigin":"$undefined"}],["$","meta","5",{"property":"og:title","content":"Deval Parikh"}],["$","meta","6",{"property":"og:description","content":"Hi, I'm Deval 👋. I work on planet-scale distributed systems and AI/ML."}],["$","meta","7",{"property":"og:url","content":"https://devalparikh.me/"}],["$","meta","8",{"property":"og:site_name","content":"Deval Parikh"}],["$","meta","9",{"property":"og:image","content":"https://devalparikh.me/img/og.webp"}],["$","meta","10",{"property":"og:image:width","content":"1200"}],["$","meta","11",{"property":"og:image:height","content":"706"}],["$","meta","12",{"property":"og:image:alt","content":"Deval Parikh"}],["$","meta","13",{"property":"og:type","content":"website"}],["$","meta","14",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","15",{"name":"twitter:title","content":"Deval Parikh"}],["$","meta","16",{"name":"twitter:description","content":"Hi, I'm Deval 👋. I work on planet-scale distributed systems and AI/ML."}],["$","meta","17",{"name":"twitter:image","content":"https://devalparikh.me/img/og.webp"}],["$","meta","18",{"name":"twitter:image:alt","content":"Deval Parikh"}],["$","meta","19",{"name":"twitter:image:width","content":"1200"}],["$","meta","20",{"name":"twitter:image:height","content":"706"}],["$","link","21",{"rel":"icon","href":"/icon.png?icon.2ptxlquxqk1aa.png","sizes":"512x512","type":"image/png"}],["$","link","22",{"rel":"apple-touch-icon","href":"/apple-icon.png?apple-icon.0rev6fufno4rq.png","sizes":"180x180","type":"image/png"}],["$","$L13","23",{}]]
