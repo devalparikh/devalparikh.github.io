@@ -14,20 +14,20 @@ export const projects: Collection = {
       id: "autoeval",
       title: "AutoEval",
       meta: "2026",
-      summary: "Trace, version, and evaluate AI agents.",
+      summary: "Building an open-source workspace to trace, version, and evaluate AI agents.",
       categories: ["fullstack", "ml"],
       href: "https://github.com/devalparikh/auto-eval",
       image: "/img/autoeval.webp",
       sections: [
         {
           heading: "About",
-          body: "A workspace for tracing, versioning, and evaluating AI agents.",
+          body: "Building an open-source workspace for tracing, versioning, and evaluating AI agents.",
         },
         {
           heading: "Architecture",
           bullets: [
             "Architected a LangGraph execution and evaluation engine with per-node traces for inputs, outputs, latency, token usage, and cost.",
-            "Built immutable graph, prompt, and dataset versioning with trace-to-dataset provenance for reproducible model comparisons.",
+            "Built version control for agent workflows, prompts, and datasets so evaluations can be rerun with the same setup.",
           ],
         },
       ],
