@@ -157,8 +157,6 @@ body::after {
 .note-breadcrumb { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; font-size: .67rem; color: var(--color-neutral-content); }
 .note-path-part { display: inline-flex; align-items: baseline; gap: .4rem; min-width: 0; }
 .note-path-separator { opacity: .5; }
-.note-motion-word { display: inline-block; max-width: 100%; }
-.note-motion-letter { display: inline-block; }
 .note-breadcrumb a:hover { color: var(--color-primary); }
 .note-header h1 { font-size: 1.95rem; font-weight: 650; line-height: 1.2; letter-spacing: -.035em; overflow-wrap: anywhere; }
 .note-properties { display: flex; flex-wrap: wrap; gap: .35rem 1rem; color: var(--color-neutral-content); font-size: .68rem; }
@@ -341,6 +339,9 @@ body::after {
    scroll variant ships as `pending` and is promoted by an IntersectionObserver.
    Ordering comes from `--reveal-delay`, set per element.
    ========================================================================== */
+
+.letter-reveal-word { display: inline-block; max-width: 100%; }
+.letter-reveal-letter { display: inline-block; }
 
 @keyframes revealIn {
   from {

@@ -16,7 +16,7 @@ export default function PhotographyPage() {
 
   return (
     <PageFrame>
-      <PageHeader title="Photography" />
+      <PageHeader title="Photography" animateTitle={false} />
 
       {heroPhoto && (
         <Reveal index={1} className="mt-9">
