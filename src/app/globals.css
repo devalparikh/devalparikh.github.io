@@ -205,7 +205,7 @@ body::after {
 .note-backlinks a span { flex-shrink: 0; color: var(--color-neutral-content); }
 .note-graph { border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
 .graph-toolbar { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .4rem .6rem; color: var(--color-neutral-content); font-size: .68rem; }
-.graph-toolbar > div { display: flex; }
+.graph-toolbar > div { display: flex; margin-left: auto; }
 .graph-toolbar button { width: 28px; height: 28px; border-radius: 4px; font-size: 1rem; cursor: pointer; }
 .graph-toolbar button:hover { background: var(--wash); color: var(--color-base-content); }
 .graph-toolbar button:disabled { opacity: .3; cursor: default; }
@@ -223,6 +223,7 @@ body::after {
 .graph-node:focus-visible .graph-hit { stroke: var(--color-primary); stroke-width: 1.5; }
 .graph-label { fill: var(--color-base-content); opacity: 0; transition: opacity 140ms var(--ease-out-quint); pointer-events: none; paint-order: stroke; stroke: var(--color-base-100); stroke-width: 3px; stroke-linejoin: round; }
 .graph-label[data-visible="true"] { opacity: 1; }
+.graph-label[data-visible="true"][data-muted="true"] { opacity: .22; }
 .graph-caption { min-height: 2rem; padding: .4rem .7rem; font-size: .66rem; color: var(--color-neutral-content); text-align: center; }
 .graph-help { padding: .5rem .7rem; border-top: 1px solid var(--rule-soft); text-align: center; font-size: .65rem; color: var(--color-neutral-content); }
 .note-graph-compact { margin-top: .4rem; }
