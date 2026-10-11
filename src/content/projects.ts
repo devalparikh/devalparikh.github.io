@@ -21,7 +21,14 @@ export const projects: Collection = {
       sections: [
         {
           heading: "About",
-          body: "A local workspace for building and evaluating LangGraph agents. Inspect executions node by node, turn reviewed traces into versioned datasets, and compare models on accuracy, cost, and latency. Each evaluation records the exact graph, prompt, and dataset versions used so results can be reproduced.",
+          body: "A workspace for tracing, versioning, and evaluating AI agents.",
+        },
+        {
+          heading: "Architecture",
+          bullets: [
+            "Architected a LangGraph execution and evaluation engine with per-node traces for inputs, outputs, latency, token usage, and cost.",
+            "Built immutable graph, prompt, and dataset versioning with trace-to-dataset provenance for reproducible model comparisons.",
+          ],
         },
       ],
       tags: [
@@ -43,17 +50,27 @@ export const projects: Collection = {
       id: "pearup",
       title: "PearUp",
       meta: "2026",
-      summary: "Private AI spaces for couples to communicate better.",
+      summary: "An AI companion for couples to reflect and grow together.",
       categories: ["fullstack", "ml"],
       href: "https://www.pearup.app/",
       image: "/img/pearup.webp",
       sections: [
         {
           heading: "About",
-          body: "An AI companion that gives each partner a private place to work through their thoughts. Choose whether to keep a message private, send a gentle nudge, or share openly. Weekly insights help couples reflect on how they communicate.",
+          body: "An AI companion that guides couples through their thoughts, reflection, and growth together.",
+        },
+        {
+          heading: "Architecture",
+          bullets: [
+            "Architected and built privacy-tiered companion chat with separate partner contexts and controlled sharing.",
+            "Architected and built agent memory with semantic retrieval and conversation summaries. Designed recursive graph traversal to expand related context.",
+          ],
         },
       ],
       tags: [
+        "Agent Memory",
+        "RAG",
+        "Embeddings",
         "Python",
         "JavaScript",
         "Next.js",
@@ -70,6 +87,37 @@ export const projects: Collection = {
       ],
     },
     {
+      id: "clublifty",
+      title: "ClubLifty",
+      meta: "2026",
+      summary: "Workout tracking and an AI personal trainer.",
+      categories: ["fullstack", "ml"],
+      sections: [
+        {
+          heading: "About",
+          body: "A fitness app with workout tracking and an AI trainer that adapts guidance to training history and goals.",
+        },
+        {
+          heading: "Architecture",
+          bullets: [
+            "Architected and built agent memory based on recursive retrieval across workout history, exercise records, and past conversations.",
+            "Built streaming trainer chat with user-confirmed plan changes and Supabase row-level access controls.",
+          ],
+        },
+      ],
+      tags: [
+        "Agent Memory",
+        "Recursive Retrieval",
+        "TypeScript",
+        "Next.js",
+        "React",
+        "Supabase",
+        "Postgres",
+        "OpenRouter API",
+        "Tailwind CSS",
+      ],
+    },
+    {
       id: "rolodex",
       title: "Rolodex",
       badge: "building",
@@ -80,11 +128,19 @@ export const projects: Collection = {
       sections: [
         {
           heading: "About",
-          body: "Rolodex helps organizations quickly identify and assemble the right team members by analyzing people's actual work contributions to create digital twins and match people based on real expertise rather than job titles.",
+          body: "An AI system for assembling teams from people's work contributions, past collaborations, and shared project experience.",
         },
         {
           heading: "Architecture",
-          body: "A custom GraphRAG architecture optimized for structured sources (like GitHub repos). Built connectors architecture using typed entity schemas. The retrieval index is roughly six times faster than the general-purpose implementation.",
+          bullets: [
+            "Built a custom GraphRAG pipeline with typed source connectors, semantic search, and multi-hop traversal across people, contributions, and projects to surface past collaborators and related expertise.",
+            "Achieved roughly 6x faster indexing than Microsoft GraphRAG on the same GitHub dataset.",
+            "Built agent-driven source traversal to gather evidence for team recommendations.",
+          ],
+        },
+        {
+          heading: "Planned",
+          body: "An RLM agent to recursively explore the relationship graph and compare team pairings using collaboration history, shared project experience, and self-reported working styles or personality types.",
         },
       ],
       tags: [
@@ -94,6 +150,7 @@ export const projects: Collection = {
         "React",
         "RAG",
         "GraphRAG",
+        "RLM · planned",
         "Embeddings",
         "OpenAI API",
         "FAISS",
