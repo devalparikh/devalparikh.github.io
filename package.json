@@ -15,7 +15,7 @@
     "photos": "node scripts/build-photos.mjs",
     "previews": "node scripts/fetch-previews.mjs",
     "notes:sync": "node scripts/sync-notes.mjs",
-    "test:notes": "node --test scripts/notes.test.mjs"
+    "test:notes": "node --experimental-strip-types --test scripts/notes.test.mjs scripts/notes-navigation.test.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

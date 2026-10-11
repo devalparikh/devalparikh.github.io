@@ -1,5 +1,6 @@
 import { GlobeHalftone } from "./GlobeHalftone";
 import { Reveal } from "@/components/primitives/Reveal";
+import { LetterReveal } from "@/components/primitives/LetterReveal";
 import { site } from "@/content/site";
 import { CirclePortrait } from "./Portrait";
 import { SocialRow } from "./SocialRow";
@@ -25,9 +26,9 @@ export function Hero() {
           </Reveal>
 
           <div className="hero-plate max-w-md">
-            <Reveal index={1}>
-              <h1 className="display text-[2.1rem] sm:text-[2.6rem]">{site.name}</h1>
-            </Reveal>
+            <h1 className="display text-[2.1rem] sm:text-[2.6rem]">
+              <LetterReveal text={site.name} delay={70} />
+            </h1>
 
             <Reveal index={2}>
               <p className="kicker kicker-lead mt-3">{site.role}</p>

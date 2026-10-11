@@ -6,15 +6,16 @@ export interface NavItem {
   label: string;
   newTab?: boolean;
   destination?: string;
+  prefetch?: boolean;
 }
 
 export const navItems: NavItem[] = [
-  { href: "/", label: "Home" },
+  { href: "/", label: "Home", prefetch: false },
   { href: "/experience", label: "Experience" },
   { href: "/projects", label: "Projects" },
   { href: "/writing", label: "Writing" },
-  { href: "/notes", label: "Notes" },
-  { href: "/photography", label: "Photography" },
+  { href: "/notes", label: "Notes", prefetch: false },
+  { href: "/photography", label: "Photography", prefetch: false },
   { href: "/resume", label: "Resume", destination: site.resume, newTab: true },
   { href: "/contact", label: "Contact" },
 ];

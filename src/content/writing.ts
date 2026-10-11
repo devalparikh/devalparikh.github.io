@@ -1,5 +1,7 @@
 import { ALL_FILTER, type Collection } from "./types";
 
+const BLOG_URL = "https://deval-blog.vercel.app/blog";
+
 /**
  * Articles published elsewhere. Each entry carries the publication as a badge
  * so the row makes the source obvious before the link is followed.
@@ -16,31 +18,76 @@ export const writing: Collection = {
   ],
   entries: [
     {
+      id: "building-with-jev",
+      title: "Building with Jev: use cases and implementation architectures",
+      badge: "Blog",
+      summary:
+        "Using fast decision models in search, browser agents, model routing, and other applications.",
+      categories: ["ai", "fullstack", "systems"],
+      href: `${BLOG_URL}/tech/building-with-jev`,
+    },
+    {
+      id: "transformer-basics",
+      title: "Transformer basics: prefill, decode, and the KV cache",
+      badge: "Blog",
+      summary:
+        "How a prompt moves through embeddings, attention, prefill, and token-by-token decoding.",
+      categories: ["ai"],
+      href: `${BLOG_URL}/tech/transformer-basics-prefill-and-decode`,
+    },
+    {
+      id: "jev-and-system-one-models",
+      title: "Jev and System One models",
+      badge: "Blog",
+      summary:
+        "Shared prefill, decision training, and fast judgments inside software.",
+      categories: ["ai"],
+      href: `${BLOG_URL}/tech/jev-and-system-one-models`,
+    },
+    {
+      id: "multi-agent-systems",
+      title: "Multi-agent systems scale thought in parallel",
+      badge: "Blog",
+      summary:
+        "When parallel agents save time, and how coordination and duplicated work limit the gains.",
+      categories: ["ai", "systems"],
+      href: `${BLOG_URL}/tech/multi-agent-systems-scale-thought-in-parallel`,
+    },
+    {
+      id: "compound-engineering",
+      title: "Compound Engineering: My Self-Improving Remote Agent Setup",
+      badge: "Blog",
+      summary:
+        "A Slack and Hermes setup where conversations, corrections, and completed tasks improve future work.",
+      categories: ["ai", "fullstack"],
+      href: `${BLOG_URL}/tech/compound-engineering`,
+    },
+    {
       id: "durable-execution",
       title: "Durable execution vs atomic execution",
-      badge: "deval.blog",
+      badge: "Blog",
       summary:
         "A blog post comparing durable and atomic execution strategies.",
       categories: ["systems"],
-      href: "https://deval.blog/blog/tech/durable-execution-vs-atomic-execution",
+      href: `${BLOG_URL}/tech/durable-execution-vs-atomic-execution`,
     },
     {
       id: "speculative-decoding",
       title: "Speculative decoding",
-      badge: "deval.blog",
+      badge: "Blog",
       summary:
         "A knowledge post on speculative decoding, a technique to speed up LLM inference by using a smaller model to generate candidate tokens and a larger model to verify them.",
       categories: ["ai"],
-      href: "https://deval.blog/blog/tech/speculative-decoding",
+      href: `${BLOG_URL}/tech/speculative-decoding`,
     },
     {
       id: "vision-action-transformers",
       title: "Vision-Action Transformers vs. VLA vs. World-Action Models",
-      badge: "deval.blog",
+      badge: "Blog",
       summary:
         "A blog post comparing different approaches to vision-action learning.",
       categories: ["ai"],
-      href: "https://deval.blog/blog/tech/vision-action-transformers-vla-wam",
+      href: `${BLOG_URL}/tech/vision-action-transformers-vla-wam`,
     },
     {
       id: "graphrag-architecture",

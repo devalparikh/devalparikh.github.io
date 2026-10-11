@@ -17,6 +17,7 @@ export type TagTier = (typeof TIER_ORDER)[number];
 const TIERS: Record<Exclude<TagTier, "service">, ReadonlySet<string>> = {
   // Architecture and technique - the substance of the work.
   concept: new Set([
+    "agent memory",
     "ai/ml",
     "authentication",
     "cryptography",
@@ -31,7 +32,10 @@ const TIERS: Record<Exclude<TagTier, "service">, ReadonlySet<string>> = {
     "neural networks",
     "nlp",
     "rag",
+    "recursive retrieval",
     "rest apis",
+    "rlm",
+    "rlm · planned",
     "web sockets",
   ]),
 
@@ -83,6 +87,7 @@ const TIERS: Record<Exclude<TagTier, "service">, ReadonlySet<string>> = {
     "faiss",
     "fastapi",
     "flask",
+    "langgraph",
     "mermaid",
     "networkx",
     "next.js",

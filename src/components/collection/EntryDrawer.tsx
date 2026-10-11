@@ -37,7 +37,7 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
 
       // Keep focus inside the drawer while it is open.
       const focusable = drawerRef.current?.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        'a[href], button:not([disabled]), video[controls], [tabindex]:not([tabindex="-1"])',
       );
       if (!focusable?.length) return;
 
@@ -60,10 +60,10 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
     };
   }, [onClose]);
 
-  // An entry's own screenshot wins; otherwise fall back to the linked site's
+  // An entry's own media wins; otherwise fall back to the linked site's
   // share image, captured at build time.
-  const preview = entry.image ? null : getPreview(entry.id);
-  const media = entry.image ?? preview?.src;
+  const preview = entry.video || entry.image ? null : getPreview(entry.id);
+  const media = entry.video?.src ?? entry.image ?? preview?.src;
 
   return (
     <Portal>
@@ -104,10 +104,12 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
           {media && (
             <div className="mt-6">
               <EntryMedia
+                key={media}
                 src={media}
-                alt={`${entry.title} preview`}
-                width={preview?.width}
-                height={preview?.height}
+                alt={`${entry.title} ${entry.video ? "launch video" : "preview"}`}
+                poster={entry.video?.poster}
+                width={entry.video?.width ?? preview?.width}
+                height={entry.video?.height ?? preview?.height}
               />
             </div>
           )}

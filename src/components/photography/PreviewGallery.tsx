@@ -43,12 +43,25 @@ export function PreviewGallery({ photos }: { photos: Photo[] }) {
   const [infoOpen, setInfoOpen] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [loaded, setLoaded] = useState<Record<string, boolean>>({});
+  const [mediaReady, setMediaReady] = useState(false);
 
   const windowRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const touchStartX = useRef<number | null>(null);
 
   useEffect(() => onStudioViewRequest(setView), []);
+
+  useEffect(() => {
+    const gallery = windowRef.current;
+    if (!gallery) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setMediaReady(true);
+      observer.disconnect();
+    }, { rootMargin: "100px" });
+    observer.observe(gallery);
+    return () => observer.disconnect();
+  }, []);
 
   if (photos.length === 0) return null;
   const photo = photos[index];
@@ -193,7 +206,7 @@ export function PreviewGallery({ photos }: { photos: Photo[] }) {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={item.thumb}
+                    src={mediaReady ? item.thumb : undefined}
                     alt=""
                     width={item.width}
                     height={item.height}
@@ -240,14 +253,15 @@ export function PreviewGallery({ photos }: { photos: Photo[] }) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   key={photo.id}
-                  src={photo.src}
+                  src={mediaReady ? photo.src : undefined}
                   alt={photo.alt}
                   width={photo.width}
                   height={photo.height}
+                  loading="lazy"
                   decoding="async"
                   ref={(node) => {
                     // A cached file can finish before React attaches onLoad.
-                    if (node?.complete) markLoaded(photo.id);
+                    if (node?.complete && node.naturalWidth > 0) markLoaded(photo.id);
                   }}
                   onLoad={() => markLoaded(photo.id)}
                   className={clsx(loaded[photo.id] ? "opacity-100" : "opacity-0")}
@@ -282,7 +296,7 @@ export function PreviewGallery({ photos }: { photos: Photo[] }) {
                     }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={item.thumb} alt="" loading="lazy" decoding="async" />
+                    <img src={mediaReady ? item.thumb : undefined} alt="" loading="lazy" decoding="async" />
                   </span>
                   <span className="pv-tile-name">{item.alt}</span>
                 </button>

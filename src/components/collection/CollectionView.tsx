@@ -78,7 +78,7 @@ export function CollectionView({ collection }: { collection: Collection }) {
             Nothing here yet.
           </p>
         ) : (
-          <div className="row-list">
+          <div className="row-list" data-collection={collection.id}>
             {visible.map((entry) => (
               <EntryRow
                 key={entry.id}

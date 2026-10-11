@@ -12,6 +12,7 @@ import { useOverflowNav } from "@/lib/use-overflow-nav";
 import { NavMenu, NAV_MENU_ID } from "./NavMenu";
 import { SoundToggle } from "./SoundToggle";
 import { ThemeToggle } from "./ThemeToggle";
+import { SearchTrigger } from "@/components/search/SiteSearch";
 
 const LINK_CLASS = "pill-link px-3 py-2";
 
@@ -68,6 +69,7 @@ export function NavBar({ floating = false }: { floating?: boolean }) {
                 appears once the bar has taken over the top of the screen. */}
             <Link
               href="/"
+              prefetch={false}
               onClick={() => playInterfaceSound("tap")}
               tabIndex={stuck ? undefined : -1}
               aria-hidden={!stuck}
@@ -95,7 +97,7 @@ export function NavBar({ floating = false }: { floating?: boolean }) {
                     href={(item.destination ?? item.href) as typeof item.href}
                     target={item.newTab ? "_blank" : undefined}
                     rel={item.newTab ? "noopener noreferrer" : undefined}
-                    prefetch={item.newTab ? false : undefined}
+                    prefetch={item.newTab ? false : item.prefetch}
                     ref={registerItem(item.href)}
                     aria-current={activeHref === item.href ? "page" : undefined}
                     onMouseEnter={() => setHovered(item.href)}
@@ -132,6 +134,7 @@ export function NavBar({ floating = false }: { floating?: boolean }) {
             </nav>
 
             <div className="flex shrink-0 items-center gap-0.5 border-l border-[var(--rule)] pl-2">
+              <SearchTrigger />
               <SoundToggle />
               <ThemeToggle />
             </div>

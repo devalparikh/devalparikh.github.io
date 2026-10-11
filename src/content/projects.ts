@@ -11,6 +11,120 @@ export const projects: Collection = {
   ],
   entries: [
     {
+      id: "autoeval",
+      title: "AutoEval",
+      meta: "2026",
+      summary: "Building an open-source workspace to trace, version, and evaluate AI agents.",
+      categories: ["fullstack", "ml"],
+      href: "https://github.com/devalparikh/auto-eval",
+      image: "/img/autoeval.webp",
+      sections: [
+        {
+          heading: "About",
+          body: "Building an open-source workspace for tracing, versioning, and evaluating AI agents.",
+        },
+        {
+          heading: "Architecture",
+          bullets: [
+            "Architected a LangGraph execution and evaluation engine with per-node traces for inputs, outputs, latency, token usage, and cost.",
+            "Built version control for agent workflows, prompts, and datasets so evaluations can be rerun with the same setup.",
+          ],
+        },
+      ],
+      tags: [
+        "Python",
+        "TypeScript",
+        "FastAPI",
+        "Next.js",
+        "React",
+        "LangGraph",
+        "React Flow",
+        "SQLite",
+        "OpenRouter API",
+      ],
+      links: [
+        { label: "GitHub", href: "https://github.com/devalparikh/auto-eval", kind: "repo" },
+      ],
+    },
+    {
+      id: "pearup",
+      title: "PearUp",
+      meta: "2026",
+      summary: "An AI companion for couples to reflect and grow together.",
+      categories: ["fullstack", "ml"],
+      href: "https://www.pearup.app/",
+      image: "/img/pearup.webp",
+      sections: [
+        {
+          heading: "About",
+          body: "An AI companion that guides couples through their thoughts, reflection, and growth together.",
+        },
+        {
+          heading: "Architecture",
+          bullets: [
+            "Architected and built privacy-tiered companion chat with separate partner contexts and controlled sharing.",
+            "Architected and built an agent memory system with semantic retrieval and conversation summaries. Designed recursive graph traversal to expand related context.",
+          ],
+        },
+      ],
+      tags: [
+        "Agent Memory",
+        "RAG",
+        "Embeddings",
+        "Python",
+        "JavaScript",
+        "Next.js",
+        "React",
+        "FastAPI",
+        "Supabase",
+        "Postgres",
+        "OpenAI API",
+        "Anthropic API",
+        "Tailwind CSS",
+      ],
+      links: [
+        { label: "pearup.app", href: "https://www.pearup.app/", kind: "site" },
+      ],
+    },
+    {
+      id: "clublifty",
+      title: "ClubLifty",
+      meta: "2026",
+      summary: "Workout tracking and an AI personal trainer.",
+      categories: ["fullstack", "ml"],
+      video: {
+        src: "/video/clublifty-launch.mp4",
+        poster: "/img/clublifty-poster.webp",
+        width: 960,
+        height: 960,
+      },
+      sections: [
+        {
+          heading: "About",
+          body: "A fitness app with workout tracking and an AI trainer that adapts guidance to training history and goals.",
+        },
+        {
+          heading: "Architecture",
+          bullets: [
+            "Architected and built an agent memory system based on recursive retrieval across workout history, exercise records, and past conversations.",
+            "Built a modular, reusable Supabase retrieval package that supports recursive agent queries through authenticated, scoped read tools with query limits.",
+            "Built a reusable confirmation framework and in-chat approval UI for agent-proposed Supabase writes and updates.",
+          ],
+        },
+      ],
+      tags: [
+        "Agent Memory",
+        "Recursive Retrieval",
+        "TypeScript",
+        "Next.js",
+        "React",
+        "Supabase",
+        "Postgres",
+        "OpenRouter API",
+        "Tailwind CSS",
+      ],
+    },
+    {
       id: "rolodex",
       title: "Rolodex",
       badge: "building",
@@ -21,11 +135,19 @@ export const projects: Collection = {
       sections: [
         {
           heading: "About",
-          body: "Rolodex helps organizations quickly identify and assemble the right team members by analyzing people's actual work contributions to create digital twins and match people based on real expertise rather than job titles.",
+          body: "An AI system for assembling teams from people's work contributions, past collaborations, and shared project experience.",
         },
         {
           heading: "Architecture",
-          body: "A custom GraphRAG architecture optimized for structured sources (like GitHub repos). Built connectors architecture using typed entity schemas. The retrieval index is roughly six times faster than the general-purpose implementation.",
+          bullets: [
+            "Built a custom GraphRAG pipeline with typed source connectors, semantic search, and multi-hop traversal across people, contributions, and projects to surface past collaborators and related expertise.",
+            "Achieved roughly 6x faster indexing than Microsoft GraphRAG on the same GitHub dataset.",
+            "Built agent-driven source traversal to gather evidence for team recommendations.",
+          ],
+        },
+        {
+          heading: "Planned",
+          body: "An RLM agent to recursively explore the relationship graph and compare team pairings using collaboration history, shared project experience, and self-reported working styles or personality types.",
         },
       ],
       tags: [
@@ -35,6 +157,7 @@ export const projects: Collection = {
         "React",
         "RAG",
         "GraphRAG",
+        "RLM · planned",
         "Embeddings",
         "OpenAI API",
         "FAISS",

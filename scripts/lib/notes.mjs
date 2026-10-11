@@ -127,9 +127,18 @@ export async function buildNotes(files, assets = []) {
     });
     const plain = note.tree.children.map(textOf).join(" ").replace(/\s+/g, " ").trim();
     const headings = new GithubSlugger();
+    const toc = [];
     const processor = unified().use(remarkRehype).use(rehypeSanitize).use(() => (tree) => {
       visit(tree, "element", (node) => {
-        if (/^h[1-6]$/.test(node.tagName)) node.properties.id = headings.slug(textOf(node));
+        if (node.tagName === "img") {
+          node.properties.loading = "lazy";
+          node.properties.decoding = "async";
+        }
+        if (/^h[1-6]$/.test(node.tagName)) {
+          const text = textOf(node);
+          node.properties.id = headings.slug(text);
+          toc.push({ id: node.properties.id, text, depth: Number(node.tagName[1]) });
+        }
         if (node.tagName === "a" && /^https?:\/\//i.test(String(node.properties.href))) {
           node.properties.target = "_blank";
           node.properties.rel = ["noopener", "noreferrer"];
@@ -138,6 +147,7 @@ export async function buildNotes(files, assets = []) {
     }).use(rehypeStringify);
     const html = processor.stringify(await processor.run(note.tree));
     return { id: note.id, title: note.title, category: note.category, tags: note.tags,
+      folders: note.relative.split("/").slice(0, -1), toc,
       updated: note.updated, excerpt: plain.slice(0, 170), search: plain.toLowerCase(), html,
       outgoing: [...outgoing], attachments: [...attachments],
     };

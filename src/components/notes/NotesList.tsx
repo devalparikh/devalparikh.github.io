@@ -2,57 +2,60 @@
 
 import Link from "next/link";
 import type { Route } from "next";
-import { useState } from "react";
+import { useMemo } from "react";
+import { useNotesBrowse } from "@/lib/use-notes-browse";
+import { updateNotesBrowse, updateNotesGraph, saveNotesScroll } from "@/lib/notes-browse";
 import type { NoteSummary } from "@/lib/notes";
-import { notesContent } from "@/content/notes";
+import { notesContent as copy } from "@/content/notes";
 import { playInterfaceSound } from "@/lib/interface-sound";
+import { NoteIcon } from "./NoteIcons";
+import { NoteGraph } from "./NoteGraph";
+import { NotesViewSwitch } from "./NotesViewSwitch";
+
+function filterNotes(notes: NoteSummary[], query: string, topic: string) {
+  const words = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  return notes.filter((note) => (!topic || note.category === topic) && words.every((word) =>
+    `${note.title} ${note.folders.join(" ")} ${note.tags.join(" ")} ${note.search}`.toLowerCase().includes(word)));
+}
+
+function useFilteredNotes(notes: NoteSummary[], query: string, topic: string) {
+  return useMemo(() => filterNotes(notes, query, topic), [notes, query, topic]);
+}
 
 export function NotesList({ notes }: { notes: NoteSummary[] }) {
-  const [query, setQuery] = useState("");
-  const [topic, setTopic] = useState("");
+  const { query, topic, view, graph } = useNotesBrowse();
   const topics = [...new Set(notes.map((note) => note.category))].sort();
-  const words = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
-  const visible = notes.filter((note) => (!topic || note.category === topic) && words.every((word) =>
-    `${note.title} ${note.category} ${note.tags.join(" ")} ${note.search}`.toLowerCase().includes(word)));
+  const visible = useFilteredNotes(notes, query, topic);
 
-  return (
-    <section className="mt-9" aria-label="Browse notes">
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <label className="flex-1">
-          <span className="sr-only">Search notes</span>
-          <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search notes…" className="w-full rounded-lg border border-[var(--rule)] bg-base-100 px-3 py-2.5 text-sm" />
-        </label>
-        <label>
-          <span className="sr-only">Filter by topic</span>
-          <select value={topic} onChange={(event) => { setTopic(event.target.value); playInterfaceSound("tap"); }}
-            className="w-full rounded-lg border border-[var(--rule)] bg-base-100 px-3 py-2.5 text-sm sm:w-48">
-            <option value="">All topics</option>
-            {topics.map((item) => <option key={item} value={item}>{item}</option>)}
-          </select>
-        </label>
-      </div>
-      <p className="my-4 text-right font-mono text-[0.65rem] text-neutral-content" aria-live="polite">
-        {visible.length} {visible.length === 1 ? "note" : "notes"}
-      </p>
-      <ul className="row-list">
-        {visible.map((note) => (
-          <li key={note.id} className="notes-row">
-            <Link href={`/notes/${note.id}/` as Route} className="notes-title"
-              onClick={() => playInterfaceSound("tap")}>{note.title}</Link>
-            {note.updated && <time dateTime={note.updated} className="notes-date">{new Intl.DateTimeFormat("en-US", { month: "short", day: "2-digit", year: "numeric", timeZone: "UTC" }).format(new Date(note.updated))}</time>}
-            <div className="notes-topics">
-              <button type="button" onClick={() => setTopic(note.category)}>{note.category}</button>
-              {note.tags.map((tag) => <button type="button" key={tag} onClick={() => setQuery(tag)}>#{tag}</button>)}
-            </div>
-          </li>
-        ))}
-      </ul>
-      {!visible.length && <p className="border-b border-[var(--rule)] py-16 text-center text-sm text-neutral-content">
-        {notes.length ? notesContent.noResults : notesContent.empty}
-      </p>}
-      {(query || topic) && <button type="button" className="mt-4 text-sm underline underline-offset-4"
-        onClick={() => { setQuery(""); setTopic(""); }}>Clear filters</button>}
-    </section>
-  );
+  return <section className="notes-browser" aria-label={copy.browseLabel}>
+    <div className="notes-toolbar">
+      <label className="notes-filter"><NoteIcon kind="search" /><span className="sr-only">{copy.searchLabel}</span>
+        <input type="search" value={query} onChange={(event) => updateNotesBrowse({ query: event.target.value })} placeholder={copy.search} />
+      </label>
+      <label className="notes-topic"><span className="sr-only">{copy.topicLabel}</span>
+        <select value={topic} onChange={(event) => updateNotesBrowse({ topic: event.target.value })}>
+          <option value="">{copy.allTopics}</option>
+          {topics.map((item) => <option key={item} value={item}>{item}</option>)}
+        </select>
+      </label>
+      <NotesViewSwitch view={view} onSelect={(mode) => {
+        saveNotesScroll(view, window.scrollY);
+        updateNotesBrowse({ view: mode });
+        playInterfaceSound("toggle");
+      }} />
+    </div>
+    <div className="notes-column-labels"><span>{view === "list" ? copy.titleColumn : copy.graph}</span><span aria-live="polite">{visible.length} {visible.length === 1 ? "note" : "notes"}</span></div>
+    <div key={view} className="notes-view-panel">
+      {view === "graph" && visible.length > 0 ? <NoteGraph notes={visible} view={graph} onViewChange={updateNotesGraph} /> : <ul className="notes-rows">
+        {visible.map((note) => <li key={note.id}>
+          <Link href={`/notes/${note.id}/` as Route} prefetch={false} className="notes-row" onClick={() => playInterfaceSound("tap")}>
+            <NoteIcon /><span className="notes-title">{note.title}</span>
+            <span className="notes-row-topic">{note.category}</span><span className="notes-row-arrow" aria-hidden="true">↗</span>
+          </Link>
+        </li>)}
+      </ul>}
+    </div>
+    {!visible.length && <p className="notes-empty">{notes.length ? copy.noResults : copy.empty}</p>}
+    {(query || topic) && <button type="button" className="notes-clear" onClick={() => { updateNotesBrowse({ query: "", topic: "" }); }}>{copy.clear}</button>}
+  </section>;
 }

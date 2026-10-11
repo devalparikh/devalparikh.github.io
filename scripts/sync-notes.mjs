@@ -72,4 +72,13 @@ async function sync() {
   console.log(`Notes: synced ${notes.length} notes and ${downloads.length} images from ${repository}.`);
 }
 
-sync().catch((error) => { console.error(error.message); process.exitCode = 1; });
+sync().then(async () => {
+  // A small, public index fetched only when global search opens. It uses the
+  // same filtered snapshot as the pages, so no unpublished vault text leaks.
+  const { notes } = JSON.parse(await readFile(output, "utf8"));
+  const index = notes.map(({ id, title, category, tags, search }) => ({
+    title, href: `/notes/${id}/`, section: "Notes", detail: category,
+    text: `${tags.join(" ")} ${search}`,
+  }));
+  await writeFile(path.join(root, "public/notes-search.json"), JSON.stringify(index));
+}).catch((error) => { console.error(error.message); process.exitCode = 1; });

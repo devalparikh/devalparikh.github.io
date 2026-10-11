@@ -36,3 +36,4 @@ next-env.d.ts
 
 # Local vaults, previews, and task scratch files
 /work/
+/public/notes-search.json

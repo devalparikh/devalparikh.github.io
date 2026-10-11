@@ -60,6 +60,7 @@ test("only includes images referenced by published notes", async () => {
   ], ["knowledge/images/diagram.png", "knowledge/secret.png"]);
   assert.deepEqual(notes[0].attachments, ["knowledge/images/diagram.png"]);
   assert.match(notes[0].html, /<img src="\/img\/notes\/[^" ]+\.png" alt="Diagram"/);
+  assert.match(notes[0].html, /loading="lazy" decoding="async"/);
   assert.doesNotMatch(notes[0].html, /src="[^"]*Gone/);
 });
 
@@ -80,4 +81,17 @@ test("invalid metadata fails instead of exposing unfiltered content", async () =
 test("uses the Obsidian filename when the first heading is a section or embed", async () => {
   const notes = await buildNotes([file("Tools", "# ![[Message Queue]]"), file("Java", "# Background\nSome context")]);
   assert.deepEqual(notes.map((note) => note.title), ["Java", "Tools"]);
+});
+
+test("table of contents matches sanitized heading IDs and keeps the vault hierarchy", async () => {
+  const [note] = await buildNotes([file("Systems/Networking/Example", "# Example\n## A **bold** heading\n### Repeat\n### Repeat\n> #### Inside a callout\n\n```md\n## Not a heading\n```\n\n%%## Private heading%%")]);
+  assert.deepEqual(note.folders, ["Systems", "Networking"]);
+  assert.deepEqual(note.toc, [
+    { id: "a-bold-heading", text: "A bold heading", depth: 2 },
+    { id: "repeat", text: "Repeat", depth: 3 },
+    { id: "repeat-1", text: "Repeat", depth: 3 },
+    { id: "inside-a-callout", text: "Inside a callout", depth: 4 },
+  ]);
+  for (const heading of note.toc) assert.ok(note.html.includes(`id="${heading.id}"`));
+  assert.doesNotMatch(JSON.stringify(note.toc), /Private|Not a heading/);
 });

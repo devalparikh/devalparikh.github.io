@@ -36,7 +36,7 @@ export function PreviewList({ collection, href, limit = 3, index = 0 }: PreviewL
         </Link>
       </div>
 
-      <div className="row-list">
+      <div className="row-list" data-collection={collection.id}>
         {entries.map((entry) => {
           const deepLink = hasDetail(entry);
           const target = deepLink ? `${href}#${entry.id}` : entry.href;
