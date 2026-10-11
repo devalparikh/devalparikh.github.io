@@ -33,13 +33,18 @@ function MotionText({ text }: { text: string }) {
 /** The layout remembers the previous path, even when a note page remounts. */
 export function NoteHeading({ id, title, folders }: { id: string; title: string; folders?: string[] }) {
   const previousRef = useContext(MotionContext);
+  const transitionFrom = useRef<PreviousHeading>(null);
   const root = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (!previousRef || !root.current) return;
-    const before = previousRef.current;
-    previousRef.current = { id, folders: folders ?? [] };
-    if (before?.id === id) return;
+    // Preserve this transition's origin when React replays the effect in
+    // development. Cleanup cancels its animations, so setup must restart them.
+    if (previousRef.current?.id !== id) {
+      transitionFrom.current = previousRef.current;
+      previousRef.current = { id, folders: folders ?? [] };
+    }
+    const before = transitionFrom.current;
 
     let shared = 0;
     while (folders && shared < folders.length && before?.folders[shared] === folders[shared]) shared++;
