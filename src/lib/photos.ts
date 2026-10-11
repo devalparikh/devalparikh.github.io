@@ -13,11 +13,15 @@ export interface PhotoExif {
 export interface Photo {
   id: string;
   src: string;
+  /** A ~640px derivative for thumbnail- and tile-sized slots. */
+  thumb: string;
   alt: string;
   width: number;
   height: number;
   aspectRatio: number;
   placeholder: string;
+  /** Size of the served WebP, for the Preview inspector. */
+  outputBytes: number;
   orientation: "landscape" | "portrait";
   exif: PhotoExif | null;
 }
@@ -65,6 +69,24 @@ const CAMERA_NAMES: Record<string, string> = {
   "Apple iPhone 13": "iPhone 13",
 };
 
+/**
+ * Fixed-lens bodies write no lens into EXIF; their lens is known from the
+ * body alone.
+ */
+const BUILT_IN_LENSES: Record<string, string> = {
+  "FUJIFILM X100VI": "Fujinon 23mm F2 (built in)",
+};
+
+/** The lens a frame was made with, from EXIF or from a fixed-lens body. */
+export function lensName(exif: PhotoExif): string | undefined {
+  return exif.lens ?? (exif.camera ? BUILT_IN_LENSES[exif.camera] : undefined);
+}
+
+/** A body's everyday name, or the raw EXIF model when it has none. */
+export function cameraName(model: string): string {
+  return CAMERA_NAMES[model] ?? model;
+}
+
 export interface GearItem {
   camera: string;
   lenses: string[];
@@ -96,7 +118,7 @@ export function getCameraGear(): GearItem[] {
 
   return [...byCamera.entries()]
     .map(([camera, entry]) => ({
-      camera: CAMERA_NAMES[camera] ?? camera,
+      camera: cameraName(camera),
       lenses: [...entry.lenses],
       frames: entry.frames,
     }))

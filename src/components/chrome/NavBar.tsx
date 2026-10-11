@@ -23,8 +23,12 @@ const LINK_CLASS = "pill-link px-3 py-2";
  *
  * Items that do not fit collapse into a "More" menu rather than scrolling off
  * the edge, so nothing is ever hidden without an affordance.
+ *
+ * `floating` is the photography page's variant: identical at the top of the
+ * page, but once stuck the bar lifts off the edge into a free-floating capsule
+ * with organic, slowly shifting edges. Its styles live with that page.
  */
-export function NavBar() {
+export function NavBar({ floating = false }: { floating?: boolean }) {
   const pathname = usePathname();
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [stuck, setStuck] = useState(false);
@@ -58,7 +62,7 @@ export function NavBar() {
     <>
       <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
 
-      <div className="nav-shell" data-stuck={stuck}>
+      <div className="nav-shell" data-stuck={stuck} data-floating={floating || undefined}>
         <div className="nav-bar">
           <div className="mx-auto flex h-14 max-w-3xl items-center gap-3 px-5 sm:px-6">
             {/* The name is already the hero on the home page, so the mark only
