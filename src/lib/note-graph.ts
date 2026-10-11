@@ -76,30 +76,63 @@ export function graphLabels(
   width: number, height: number, compact: boolean, current?: string, hovered?: string | null,
   size = compact ? 14 : 11,
 ) {
-  const visible = new Set<string>();
+  const visible = new Map<string, { x: number; y: number }>();
   const boxes: { x: number; y: number; width: number; height: number }[] = [];
-  const limit = compact ? 4 : Math.max(6, Math.min(40, Math.round(14 * view.scale)));
+  const limit = compact ? 4 : Math.max(3, Math.round(Math.max(6, Math.min(40, 14 * view.scale)) * Math.min(1, (11 / size) ** 2)));
   const dots = nodes.map((node) => ({
     id: node.id,
     x: width / 2 + view.x + (node.x - width / 2) * view.scale,
     y: height / 2 + view.y + (node.y - height / 2) * view.scale,
     radius: (3.5 + Math.min(node.degree, 8) * 0.65) * view.scale + 3,
   }));
-  const prioritized = [...nodes].sort((a, b) =>
+  const onScreen = nodes.filter((node, index) => node.id === hovered || node.id === current ||
+    (dots[index].x >= 0 && dots[index].x <= width && dots[index].y >= 0 && dots[index].y <= height));
+  // Reserve labels by connectivity before considering clearance. Dense hubs
+  // must not lose their titles to isolated nodes with more empty space.
+  const prioritized = onScreen.sort((a, b) =>
     Number(b.id === hovered || b.id === current) - Number(a.id === hovered || a.id === current) ||
-    b.degree - a.degree || a.title.localeCompare(b.title));
+    b.degree - a.degree || a.title.localeCompare(b.title)).slice(0, limit);
+  const overlap = (a: typeof boxes[number], b: typeof boxes[number]) =>
+    Math.max(0, Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x)) *
+    Math.max(0, Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y));
   for (const node of prioritized) {
-    const forced = node.id === hovered || node.id === current;
     const x = width / 2 + view.x + (node.x - width / 2) * view.scale;
-    const y = height / 2 + view.y + (node.y - height / 2) * view.scale + (3.5 + Math.min(node.degree, 8) * 0.65) * view.scale + size + 3;
+    const y = height / 2 + view.y + (node.y - height / 2) * view.scale;
+    const radius = (3.5 + Math.min(node.degree, 8) * 0.65) * view.scale;
     const labelWidth = Math.min(node.title.length, 26) * size * 0.55;
-    const box = { x: x - labelWidth / 2 - 3, y: y - size, width: labelWidth + 6, height: size + 6 };
-    if (!forced && (visible.size >= limit || box.x < 3 || box.x + box.width > width - 3 || box.y < 3 || box.y + box.height > height - 3)) continue;
-    if (!forced && boxes.some((other) => box.x < other.x + other.width && box.x + box.width > other.x && box.y < other.y + other.height && box.y + box.height > other.y)) continue;
-    if (!forced && dots.some((dot) => dot.id !== node.id &&
-      dot.x + dot.radius > box.x && dot.x - dot.radius < box.x + box.width &&
-      dot.y + dot.radius > box.y && dot.y - dot.radius < box.y + box.height)) continue;
-    visible.add(node.id);
+    const side = radius + labelWidth / 2 + 6;
+    const below = y + radius + size + 3, above = y - radius - 6;
+    const candidates = [
+      { x, y: below }, { x, y: above },
+      { x: x + side, y: y + size * 0.35 }, { x: x - side, y: y + size * 0.35 },
+      { x: x + labelWidth / 2, y: below }, { x: x - labelWidth / 2, y: below },
+      { x: x + labelWidth / 2, y: above }, { x: x - labelWidth / 2, y: above },
+      ...[x, x + labelWidth / 2, x - labelWidth / 2].flatMap((labelX) => [
+        { x: labelX, y: below + size + 8 }, { x: labelX, y: above - size - 8 },
+      ]),
+    ].map((point, index) => {
+      const box = {
+        x: Math.max(3, Math.min(width - labelWidth - 9, point.x - labelWidth / 2 - 3)),
+        y: Math.max(3, Math.min(height - size - 9, point.y - size)),
+        width: labelWidth + 6, height: size + 6,
+      };
+      // Title collisions matter most; nearby dots are a soft constraint so
+      // they can never suppress an important title. The text halo preserves contrast.
+      const titleOverlap = boxes.reduce((sum, other) => sum + overlap(box, other), 0);
+      const score = titleOverlap * 1000 +
+        dots.reduce((sum, dot) => sum + overlap(box, {
+          x: dot.x - dot.radius, y: dot.y - dot.radius, width: dot.radius * 2, height: dot.radius * 2,
+        }), 0) + (index >= 8 ? size * size : 0) + index * 0.01;
+      return { box, score, titleOverlap };
+    });
+    const { box, titleOverlap } = candidates.reduce((best, candidate) => candidate.score < best.score ? candidate : best);
+    // Keep the strongest hubs visible. If further titles cannot fit, stop
+    // here instead of replacing this node with lower-priority labels.
+    if (titleOverlap > 0 && visible.size >= 3) break;
+    visible.set(node.id, {
+      x: width / 2 + (box.x + box.width / 2 - width / 2 - view.x) / view.scale,
+      y: height / 2 + (box.y + size - height / 2 - view.y) / view.scale,
+    });
     boxes.push(box);
   }
   return visible;

@@ -58,6 +58,28 @@ test("graph shows useful labels when zoomed out and always includes the focused 
   assert.ok(graphLabels(nodes, { x: 0, y: 0, scale: 1 }, 600, 420, false, undefined, "0").has("0"));
 });
 
+test("crowded hubs keep label priority over isolated notes on desktop, mobile, and zoom out", () => {
+  const hubs = Array.from({ length: 8 }, (_, i) => ({
+    id: `hub-${i}`, title: `Connected note ${i}`, folders: [], outgoing: [], degree: 20 - i,
+    x: 220 + (i % 4) * 35, y: 190 + Math.floor(i / 4) * 45,
+  }));
+  const neighbors = hubs.map((hub, i) => ({ ...hub, id: `neighbor-${i}`, title: `Neighbor ${i}`, degree: 1, y: hub.y + 17 }));
+  const isolated = Array.from({ length: 12 }, (_, i) => ({
+    id: `isolated-${i}`, title: `Isolated ${i}`, folders: [], outgoing: [], degree: 0,
+    x: 70 + (i % 4) * 140, y: i < 4 ? 60 : 340 + Math.floor((i - 4) / 4) * 70,
+  }));
+  const nodes = [...hubs, ...neighbors, ...isolated];
+  for (const size of [11, 20]) for (const scale of [1, 0.5]) {
+    const view = { x: 0, y: 0, scale };
+    const labels = graphLabels(nodes, view, 600, 500, false, undefined, undefined, size);
+    for (const hub of hubs.slice(0, 3)) assert.ok(labels.has(hub.id), `${hub.id} must remain visible at size ${size}, scale ${scale}`);
+    assert.ok(!isolated.some((node) => labels.has(node.id)));
+    const focused = graphLabels(nodes, view, 600, 500, false, undefined, "isolated-0", size);
+    assert.ok(focused.has("isolated-0"));
+    assert.ok(focused.has("hub-0"));
+  }
+});
+
 test("browse memory retains filters, graph viewport, and separate scroll positions", () => {
   const saved = { controls: { view: "graph", query: "cache", topic: "distributed systems", graph: { x: 82, y: -19, scale: 1.8 } }, scroll: { list: 970, graph: 110 } };
   assert.deepEqual(parseNotesBrowseState(JSON.stringify(saved)), saved);

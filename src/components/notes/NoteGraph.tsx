@@ -96,7 +96,9 @@ export function NoteGraph({ notes, current, compact = false, view: savedView, on
         {/* Labels paint last so a neighboring dot cannot cover a focused title. */}
         <g aria-hidden="true">{nodes.map((node) => <text key={node.id} data-note={node.id}
             data-muted={!!hovered && !related.has(node.id)}
-            x={node.x} y={node.y + 3.5 + Math.min(node.degree, 8) * 0.65 + (labelSize + 3) / view.scale} textAnchor="middle" className="graph-label"
+            x={labels.get(node.id)?.x ?? node.x}
+            y={labels.get(node.id)?.y ?? node.y + 3.5 + Math.min(node.degree, 8) * 0.65 + (labelSize + 3) / view.scale}
+            textAnchor="middle" className="graph-label"
             style={{ fontSize: `${labelSize / view.scale}px` }} data-visible={labels.has(node.id)}>
             {node.title.length > 26 ? `${node.title.slice(0, 25)}…` : node.title}
           </text>)}</g>
