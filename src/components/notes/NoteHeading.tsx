@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { createContext, useContext, useLayoutEffect, useRef, type ReactNode, type RefObject } from "react";
 import { notesContent } from "@/content/notes";
 import { playInterfaceSound } from "@/lib/interface-sound";
@@ -10,6 +11,11 @@ const MotionContext = createContext<RefObject<PreviousHeading> | null>(null);
 
 export function NoteMotionProvider({ children }: { children: ReactNode }) {
   const previousRef = useRef<PreviousHeading>(null);
+  const pathname = usePathname();
+  useLayoutEffect(() => {
+    // The index has no visible heading, but returning there resets the path.
+    if (/^\/notes\/?$/.test(pathname)) previousRef.current = null;
+  }, [pathname]);
   return <MotionContext value={previousRef}>{children}</MotionContext>;
 }
 

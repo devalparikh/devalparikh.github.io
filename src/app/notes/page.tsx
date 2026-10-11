@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { NoteHeading } from "@/components/notes/NoteHeading";
 import { NotesList } from "@/components/notes/NotesList";
 import { NotesExplorer } from "@/components/notes/NotesExplorer";
 import { notesContent } from "@/content/notes";
@@ -11,7 +10,7 @@ export default function NotesPage() {
   return <div className="notes-layout notes-index-layout">
     <NotesExplorer notes={noteLinks} />
     <div className="notes-main">
-      <header className="notes-header"><NoteHeading id="/notes" title={notesContent.title} /><p>{notesContent.description}</p></header>
+      <h1 className="sr-only">{notesContent.title}</h1>
       <NotesList notes={noteSummaries} />
     </div>
   </div>;

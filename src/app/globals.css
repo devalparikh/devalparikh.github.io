@@ -107,9 +107,6 @@ body::after {
 .notes-frame { max-width: 1240px; margin-inline: auto; padding: 2.5rem 1.5rem 0; }
 .notes-layout { display: grid; gap: 1.5rem; align-items: start; }
 .notes-main, .note-header { min-width: 0; }
-.notes-header h1 { font-family: var(--font-display); font-size: 2rem; line-height: 1.2; letter-spacing: -.035em; }
-.notes-header p { margin-top: .55rem; font-size: .82rem; color: var(--color-neutral-content); }
-.notes-browser { margin-top: 1.8rem; }
 .notes-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
 .notes-filter { display: flex; align-items: center; flex: 1; min-width: 120px; gap: .45rem; padding: .4rem .5rem; border: 1px solid var(--rule); border-radius: 6px; }
 .notes-filter svg { width: 15px; flex-shrink: 0; color: var(--color-neutral-content); }
@@ -254,8 +251,7 @@ body::after {
 @media (max-width: 600px) {
   .notes-frame { padding: 1.3rem 1.25rem 0; }
   .notes-layout { gap: 1rem; }
-  .notes-header h1, .note-header h1 { font-size: 1.7rem; }
-  .notes-browser { margin-top: 1.3rem; }
+  .note-header h1 { font-size: 1.7rem; }
   .notes-view-switch button span { display: none; }
   .notes-topic select { width: 100px; }
   .notes-row { min-height: 40px; gap: .4rem; grid-template-columns: 13px minmax(0, 1fr) 12px; }
@@ -414,6 +410,10 @@ body::after {
   background-color: var(--wash);
   pointer-events: none;
   opacity: 0;
+}
+
+/* Initial placement is immediate; hover/focus changes glide from there. */
+.pill-indicator[data-animate="true"] {
   transition:
     transform 300ms var(--ease-out-quint),
     width 300ms var(--ease-out-quint),
