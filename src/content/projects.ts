@@ -101,7 +101,8 @@ export const projects: Collection = {
           heading: "Architecture",
           bullets: [
             "Architected and built agent memory based on recursive retrieval across workout history, exercise records, and past conversations.",
-            "Built streaming trainer chat with user-confirmed plan changes and Supabase row-level access controls.",
+            "Built a modular, reusable Supabase retrieval package that supports recursive agent queries through authenticated, scoped read tools with query limits.",
+            "Built a reusable confirmation framework and in-chat approval UI for agent-proposed Supabase writes and updates.",
           ],
         },
       ],
