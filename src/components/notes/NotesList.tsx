@@ -48,7 +48,7 @@ export function NotesList({ notes }: { notes: NoteSummary[] }) {
     <div key={view} className="notes-view-panel">
       {view === "graph" && visible.length > 0 ? <NoteGraph notes={visible} view={graph} onViewChange={updateNotesGraph} /> : <ul className="notes-rows">
         {visible.map((note) => <li key={note.id}>
-          <Link href={`/notes/${note.id}/` as Route} className="notes-row" onClick={() => playInterfaceSound("tap")}>
+          <Link href={`/notes/${note.id}/` as Route} prefetch={false} className="notes-row" onClick={() => playInterfaceSound("tap")}>
             <NoteIcon /><span className="notes-title">{note.title}</span>
             <span className="notes-row-topic">{note.category}</span><span className="notes-row-arrow" aria-hidden="true">↗</span>
           </Link>

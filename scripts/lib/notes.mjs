@@ -130,6 +130,10 @@ export async function buildNotes(files, assets = []) {
     const toc = [];
     const processor = unified().use(remarkRehype).use(rehypeSanitize).use(() => (tree) => {
       visit(tree, "element", (node) => {
+        if (node.tagName === "img") {
+          node.properties.loading = "lazy";
+          node.properties.decoding = "async";
+        }
         if (/^h[1-6]$/.test(node.tagName)) {
           const text = textOf(node);
           node.properties.id = headings.slug(text);

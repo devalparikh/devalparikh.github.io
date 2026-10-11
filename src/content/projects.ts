@@ -92,6 +92,12 @@ export const projects: Collection = {
       meta: "2026",
       summary: "Workout tracking and an AI personal trainer.",
       categories: ["fullstack", "ml"],
+      video: {
+        src: "/video/clublifty-launch.mp4",
+        poster: "/img/clublifty-poster.webp",
+        width: 960,
+        height: 960,
+      },
       sections: [
         {
           heading: "About",

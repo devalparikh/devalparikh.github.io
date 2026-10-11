@@ -48,7 +48,7 @@ export function NoteHeading({ id, title, folders }: { id: string; title: string;
 
   return <div ref={root} className="note-heading">
     {folders && <nav className="note-breadcrumb" aria-label="Breadcrumb">
-      <Link href="/notes" onClick={() => playInterfaceSound("tap")}>{notesContent.title}</Link>
+      <Link href="/notes" prefetch={false} onClick={() => playInterfaceSound("tap")}>{notesContent.title}</Link>
       {folders.map((folder, index) => <span className="note-path-part" key={folders.slice(0, index + 1).join("/")}>
         <span className="note-path-separator" aria-hidden="true">/</span>
         <span data-path-part={index}><SplitLetters text={folder} /></span>

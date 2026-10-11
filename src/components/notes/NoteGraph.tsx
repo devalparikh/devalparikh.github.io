@@ -84,7 +84,7 @@ export function NoteGraph({ notes, current, compact = false, view: savedView, on
       <g className="graph-scene" data-gesture={gesture} transform={`translate(${width / 2 + view.x} ${height / 2 + view.y}) scale(${view.scale}) translate(${-width / 2} ${-height / 2})`}>
         {edges.map(({ source, target }) => <line key={`${source.id}:${target.id}`} x1={source.x} y1={source.y} x2={target.x} y2={target.y}
           className="graph-edge" data-active={hovered === source.id || hovered === target.id} />)}
-        {nodes.map((node) => <Link key={node.id} href={`/notes/${node.id}/` as Route} aria-label={node.title}
+        {nodes.map((node) => <Link key={node.id} href={`/notes/${node.id}/` as Route} prefetch={false} aria-label={node.title}
           aria-current={current === node.id ? "page" : undefined}
           className="graph-node" data-muted={!!hovered && !related.has(node.id)} data-active={hovered === node.id || current === node.id}
           onMouseEnter={() => setHovered(node.id)} onMouseLeave={() => setHovered(null)}

@@ -38,7 +38,7 @@ function Children({ folder, current }: { folder: Folder; current?: string }) {
   return <>
     {folder.folders.sort((a, b) => a.name.localeCompare(b.name)).map((item) => <Branch key={item.path} folder={item} current={current} />)}
     {folder.notes.sort((a, b) => a.title.localeCompare(b.title)).map((note) => <Link key={note.id}
-      href={`/notes/${note.id}/` as Route} className="explorer-note" title={note.title}
+      href={`/notes/${note.id}/` as Route} prefetch={false} className="explorer-note" title={note.title}
       aria-current={note.id === current ? "page" : undefined} onClick={() => playInterfaceSound("tap")}>
       <NoteIcon /><span>{note.title}</span>
     </Link>)}
@@ -93,7 +93,7 @@ export function NotesExplorer({ notes, current }: { notes: NoteLink[]; current?:
           if (details) details.open = false;
         }
       }}>
-        <Link href="/notes" className="explorer-all" aria-current={!current ? "page" : undefined}>
+        <Link href="/notes" prefetch={false} className="explorer-all" aria-current={!current ? "page" : undefined}>
           <NoteIcon kind="list" /><span>{notesContent.allNotes}</span><small>{notes.length}</small>
         </Link>
         <Children folder={makeTree(notes)} current={current} />

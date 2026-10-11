@@ -69,6 +69,7 @@ export function NavBar({ floating = false }: { floating?: boolean }) {
                 appears once the bar has taken over the top of the screen. */}
             <Link
               href="/"
+              prefetch={false}
               onClick={() => playInterfaceSound("tap")}
               tabIndex={stuck ? undefined : -1}
               aria-hidden={!stuck}
@@ -96,7 +97,7 @@ export function NavBar({ floating = false }: { floating?: boolean }) {
                     href={(item.destination ?? item.href) as typeof item.href}
                     target={item.newTab ? "_blank" : undefined}
                     rel={item.newTab ? "noopener noreferrer" : undefined}
-                    prefetch={item.newTab ? false : undefined}
+                    prefetch={item.newTab ? false : item.prefetch}
                     ref={registerItem(item.href)}
                     aria-current={activeHref === item.href ? "page" : undefined}
                     onMouseEnter={() => setHovered(item.href)}

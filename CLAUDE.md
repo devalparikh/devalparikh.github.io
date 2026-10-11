@@ -52,7 +52,7 @@ so they share one `Entry` shape:
   **square** asset in `public/img/logos/`; wide wordmarks are illegible at 22px,
   so those fall back to `{ monogram, color }` (Capital One does this today -
   drop in a square `capital-one.svg` and switch it over if one turns up)
-- `tags`, `sections`, `highlights`, `links`, `image` - drawer content. Stack
+- `tags`, `sections`, `highlights`, `links`, `image`, `video` - drawer content. Stack
   chips are reordered at render time by `lib/tags.ts`, so declare them in
   whatever order reads best
 - `href` - where the row goes when it has no drawer content
@@ -130,6 +130,9 @@ WebP into `public/img/photography/`, reads each shot's EXIF, and writes
 
 - Both `npm run dev` and `npm run build` run it first.
 - The derived images are gitignored; the manifest is committed.
+- The gallery attaches image sources within 100px of the viewport. The hero
+  trail loads thumbnails on interaction (or as needed on touch screens),
+  and skips them with reduced motion or data saving enabled.
 - A source file named `hero` leads the page.
 - Sharp cannot read HEIC - convert to JPEG before adding.
 
@@ -166,9 +169,18 @@ rarely enough not to warrant a pipeline.
 
 ## Drawer media
 
-The detail drawer shows, in order of preference: the entry's own `image` (a
-screenshot, GIF, or `.mp4`/`.webm`, which plays inline muted and looping), or
-the linked site's Open Graph image.
+The detail drawer shows, in order of preference: the entry's `video` (source,
+poster and dimensions), its `image`, or the linked site's Open Graph image.
+Media mounts only in an open drawer. Video sources attach when visible, play
+inline muted and looping with native controls, and pause offscreen or in a
+hidden tab. Reduced motion and data saving require an explicit play click.
+Older video URLs in `image` remain supported.
+
+Compress launch clips to H.264 MP4 with fast-start metadata, 30fps and a
+maximum 960px edge; include a small WebP poster and explicit dimensions.
+The ClubLifty clip is 1.28MB with a 27KB poster; keep originals outside `public/`.
+Notes links do not prefetch unopened articles; note images load lazily, and
+the full-text search index loads only when search opens.
 
 Share images are captured at build time by `npm run previews`, stored under
 `public/img/previews/` and recorded in `src/content/previews.generated.json`.

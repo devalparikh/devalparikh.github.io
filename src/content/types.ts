@@ -53,6 +53,7 @@ export interface Entry {
   /** Extra links surfaced inside the detail panel. */
   links?: EntryLink[];
   image?: string;
+  video?: { src: string; poster: string; width: number; height: number };
   sections?: EntrySection[];
   highlights?: string[];
 }

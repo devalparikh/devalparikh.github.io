@@ -60,6 +60,7 @@ test("only includes images referenced by published notes", async () => {
   ], ["knowledge/images/diagram.png", "knowledge/secret.png"]);
   assert.deepEqual(notes[0].attachments, ["knowledge/images/diagram.png"]);
   assert.match(notes[0].html, /<img src="\/img\/notes\/[^" ]+\.png" alt="Diagram"/);
+  assert.match(notes[0].html, /loading="lazy" decoding="async"/);
   assert.doesNotMatch(notes[0].html, /src="[^"]*Gone/);
 });
 
