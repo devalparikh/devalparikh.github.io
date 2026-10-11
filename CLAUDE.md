@@ -23,7 +23,7 @@ src/
     chrome/      nav bar, footer, page frame, the three icon buttons
     collection/  the shared row list, filter tabs and detail drawer
     home/        hero, social row, home-page preview lists
-    photography/ gallery, photo frame, lightbox
+    photography/ Studio Deval: frame, hero, trail, Preview window, lightbox
     primitives/  Reveal, Portal, PageHeader, icons
   content/       all copy and data - see below
   lib/           theme, sound, and the gliding-indicator hook
@@ -39,6 +39,7 @@ Every page reads from a typed module there. **Copy changes belong in
 - `site.ts` - name, role, tagline, portrait, social links
 - `nav.ts` - the nav bar's items and active-route matching
 - `experience.ts`, `projects.ts`, `writing.ts` - the three collections
+- `studio.ts` - the photography page's title and label, and its stickers
 - `types.ts` - `Entry`, `Collection`, `Filter` and the filter helper
 
 Experience, projects and writing all render through the same `CollectionView`,
@@ -124,12 +125,37 @@ otherwise the sticky nav bar paints over them.
 `photos/` holds full-resolution originals - over 100MB, and deliberately
 outside `public/` so they are never deployed. `npm run photos` derives web-sized
 WebP into `public/img/photography/`, reads each shot's EXIF, and writes
-`src/content/photos.generated.json`.
+`src/content/photos.generated.json`. Each photo also gets a ~640px
+`-thumb.webp` for small slots: the Preview sidebar and grid, and the trail.
 
 - Both `npm run dev` and `npm run build` run it first.
 - The derived images are gitignored; the manifest is committed.
 - A source file named `hero` leads the page.
 - Sharp cannot read HEIC - convert to JPEG before adding.
+
+### Studio Deval
+
+The photography page has its own vibe, apart from the career pages. It is
+framed by `StudioFrame` rather than `PageFrame`, and its styles live in
+`app/photography/studio.css`, scoped under `.studio`, not in `globals.css`.
+Theme tokens are shared, so light and dark carry over.
+
+- **Type** - Helvetica throughout via `--font-grotesk` (Inter Tight, loaded
+  without preload, where the OS has no Helvetica). Uppercase, bracketed labels.
+- **Nav** - `<NavBar floating />`: the usual bar at the top; once stuck it
+  lifts into a capsule whose corner radii drift (`navBlob`) so the outline
+  reads as organic. The lift is a transform, so sticking never shifts layout.
+- **Hero** - "STUDIO DEVAL" with letters rising out of a mask. `PhotoTrail`
+  pops the next item under the cursor every 110px of travel, tilted, then
+  lets it fall away; on touch screens it plays on a timer instead. Items are
+  the photographs as polaroids, interleaved with `stickers` from `studio.ts`
+  (transparent cut-outs in `public/img/stickers/`, shown unframed).
+- **Gallery** - `PreviewGallery`, a macOS Preview window: thumbnail sidebar
+  (filmstrip on phones), stage that opens the `Lightbox` and swipes on touch,
+  an Inspector (i) with file and EXIF, and a grid view. `#grid` / `#preview`
+  deep-link to a view; the hero's pills switch it through `lib/studio-view.ts`.
+- Lenses come from EXIF, or from `BUILT_IN_LENSES` in `lib/photos.ts` for
+  fixed-lens bodies that write none.
 
 Project screenshots in `public/img/` are converted to WebP by hand; they change
 rarely enough not to warrant a pipeline.

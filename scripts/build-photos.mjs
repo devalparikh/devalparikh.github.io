@@ -26,6 +26,10 @@ const SOURCE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", ".
 const MAX_EDGE = 2200;
 const QUALITY = 78;
 const PLACEHOLDER_WIDTH = 16;
+// Long edge of the small derivative used wherever a photo shows small - the
+// Preview window's sidebar and grid, the hero's polaroid trail - so none of
+// them pulls the full 2200px file. Sized for a grid tile on a 2x screen.
+const THUMB_EDGE = 640;
 
 const EXIF_FIELDS = [
   "Make",
@@ -106,6 +110,13 @@ async function buildPhoto(fileName) {
   const output = await resized.clone().webp({ quality: QUALITY }).toBuffer({ resolveWithObject: true });
   await writeFile(path.join(OUTPUT_DIR, `${slug}.webp`), output.data);
 
+  const thumb = await resized
+    .clone()
+    .resize({ width: THUMB_EDGE, height: THUMB_EDGE, fit: "inside" })
+    .webp({ quality: 72 })
+    .toBuffer();
+  await writeFile(path.join(OUTPUT_DIR, `${slug}-thumb.webp`), thumb);
+
   const placeholder = await resized
     .clone()
     .resize({ width: PLACEHOLDER_WIDTH })
@@ -115,6 +126,7 @@ async function buildPhoto(fileName) {
   return {
     id: slug,
     src: `/img/photography/${slug}.webp`,
+    thumb: `/img/photography/${slug}-thumb.webp`,
     alt: titleize(fileName),
     width: output.info.width,
     height: output.info.height,

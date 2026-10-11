@@ -1,0 +1,884 @@
+/* ==========================================================================
+   Studio Deval - the photography page
+
+   This page has its own vibe, apart from the career pages: Helvetica set
+   large and uppercase, a free-floating nav capsule, a hover trail of
+   polaroids, and the photographs in a macOS Preview window. The theme
+   tokens are the same ones `globals.css` declares, so light and dark carry
+   over untouched. Everything here is scoped under `.studio` or to classes
+   only this page renders.
+
+   Kept apart from `globals.css` so the page can change without touching the
+   shared stylesheet.
+   ========================================================================== */
+
+.studio {
+  /* Real Helvetica wherever the OS ships it; Inter Tight, the closest open
+     neo-grotesk, everywhere else. */
+  --font-grotesk: "Helvetica Neue", Helvetica, var(--font-inter-tight), Arial, sans-serif;
+  /* Polaroid stock - the same off-white in both themes, as paper would be. */
+  --studio-paper: #fbfaf7;
+  /* macOS window controls. Also the same in both themes, as on the real thing. */
+  --light-close: #ff5f57;
+  --light-minimize: #febc2e;
+  --light-zoom: #28c840;
+  --studio-margin: 1rem;
+  --studio-shadow: color-mix(in oklab, black 26%, transparent);
+
+  font-family: var(--font-grotesk);
+}
+
+@media (min-width: 640px) {
+  .studio {
+    --studio-margin: 1.25rem;
+  }
+}
+
+/* ==========================================================================
+   Floating nav
+
+   At the top of the page the bar is the site's usual one. Once it sticks it
+   lifts off the edge into a capsule whose corners drift between a few
+   uneven radii, so its outline reads as organic rather than machined. The
+   lift is a transform, not a margin, so sticking never shifts the page.
+   ========================================================================== */
+
+.nav-shell[data-floating] .nav-bar {
+  width: 100%;
+  margin-inline: auto;
+  border: 1px solid transparent;
+  transition:
+    width 560ms var(--ease-out-quint),
+    transform 560ms var(--ease-out-quint),
+    border-radius 560ms var(--ease-out-quint),
+    border-color 320ms var(--ease-out-quint),
+    background-color 320ms var(--ease-out-quint),
+    box-shadow 420ms var(--ease-out-quint);
+}
+
+@keyframes navBlob {
+  0% {
+    border-radius: 26px 92px 44px 78px / 34px 22px 30px 26px;
+  }
+  33% {
+    border-radius: 84px 30px 96px 40px / 24px 32px 22px 34px;
+  }
+  66% {
+    border-radius: 40px 100px 28px 70px / 32px 26px 34px 22px;
+  }
+  100% {
+    border-radius: 96px 46px 70px 30px / 22px 34px 26px 32px;
+  }
+}
+
+.nav-shell[data-floating][data-stuck="true"] .nav-bar {
+  width: min(46rem, 100% - 1.25rem);
+  border-color: var(--rule);
+  box-shadow:
+    0 1px 2px color-mix(in oklab, black 8%, transparent),
+    0 16px 40px -18px var(--studio-shadow);
+  transform: translateY(0.65rem);
+  animation: navBlob 16s ease-in-out infinite alternate;
+}
+
+.nav-shell[data-floating][data-stuck="true"] .nav-bar > div {
+  padding-inline: 1rem 0.65rem;
+}
+
+/* ==========================================================================
+   Hero
+   ========================================================================== */
+
+.studio-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - 3.5rem);
+  padding: 1.75rem var(--studio-margin) 1.1rem;
+  overflow: clip;
+  text-transform: uppercase;
+}
+
+/* The bracketed label: brackets pinned to the ends, words in the middle. */
+.studio-label {
+  display: flex;
+  justify-content: space-between;
+  width: min(75%, 22rem);
+  margin-inline: auto;
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  white-space: pre;
+}
+
+.studio-label::before {
+  content: "[";
+}
+
+.studio-label::after {
+  content: "]";
+}
+
+@media (min-width: 768px) {
+  .studio-label {
+    width: min(26%, 24rem);
+    font-size: clamp(0.78rem, 1.1vw, 1rem);
+  }
+}
+
+.studio-title {
+  position: relative;
+  z-index: 0;
+  margin-top: 1.5rem;
+  font-size: min(23vw, 18rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.8;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .studio-title {
+    margin-top: 2rem;
+    /* Wide, but never so tall that a short laptop screen loses the foot. */
+    font-size: min(16.6vw, 27svh);
+  }
+}
+
+/* Each word is the mask its letters rise out of. */
+.studio-title-word {
+  display: block;
+  overflow: hidden;
+  padding-top: 0.06em;
+}
+
+@keyframes studioLetterRise {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.studio-letter {
+  display: inline-block;
+  animation: studioLetterRise 1100ms var(--ease-out-quint) both;
+  animation-delay: calc(var(--letter-delay, 0ms) + 100ms);
+}
+
+.studio-hero-foot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .studio-hero-foot {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.studio-intro {
+  max-width: 24ch;
+  font-size: clamp(1.05rem, 2vw, 1.75rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.studio-intro strong {
+  font-weight: 700;
+}
+
+.studio-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem 0.65rem;
+}
+
+/* An outlined capsule that fills with ink from below on hover. */
+.studio-pill {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  overflow: hidden;
+  padding: 0.3em 0.55em 0.22em;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  line-height: 0.95;
+  transition: color 260ms var(--ease-out-quint);
+}
+
+.studio-pill::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  background-color: var(--color-base-content);
+  transform: translateY(102%);
+  transition: transform 320ms var(--ease-out-quint);
+}
+
+.studio-pill:hover,
+.studio-pill:focus-visible {
+  color: var(--color-base-100);
+}
+
+.studio-pill:hover::before,
+.studio-pill:focus-visible::before {
+  transform: none;
+}
+
+.studio-scroll-cue {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .studio-scroll-cue {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    margin-top: 1.25rem;
+    font-size: 0.78rem;
+    letter-spacing: -0.01em;
+  }
+
+  .studio-scroll-cue::before {
+    content: "[ ";
+    white-space: pre;
+  }
+
+  .studio-scroll-cue::after {
+    content: " ]";
+    white-space: pre;
+  }
+
+  .studio-scroll-rule {
+    width: 2.85em;
+    margin-inline: 0.5em;
+    border-bottom: 1px solid currentColor;
+  }
+}
+
+/* ==========================================================================
+   Trail - polaroids (and, later, stickers) that pop up under the cursor
+
+   Every item sits in the layer from the start, invisible, and PhotoTrail
+   animates one into place at the pointer. Positioned by left/top from
+   script; the animation owns the transform.
+   ========================================================================== */
+
+.trail-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.trail-polaroid,
+.trail-sticker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  will-change: transform, opacity;
+  user-select: none;
+}
+
+.trail-polaroid {
+  --polaroid: clamp(96px, 11vw, 176px);
+  width: var(--polaroid);
+  margin: 0;
+  /* Percentages here would resolve against the whole layer, not the card. */
+  padding: calc(var(--polaroid) * 0.06) calc(var(--polaroid) * 0.06) calc(var(--polaroid) * 0.24);
+  border-radius: 2px;
+  background-color: var(--studio-paper);
+  box-shadow:
+    0 1px 2px color-mix(in oklab, black 14%, transparent),
+    0 18px 34px -16px var(--studio-shadow);
+}
+
+.trail-polaroid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.trail-sticker {
+  width: clamp(110px, 13vw, 210px);
+  height: auto;
+  filter: drop-shadow(0 10px 14px var(--studio-shadow));
+}
+
+/* ==========================================================================
+   Main column
+   ========================================================================== */
+
+.studio-main {
+  max-width: 76rem;
+  margin-inline: auto;
+  padding: 2.5rem var(--studio-margin) 0;
+}
+
+.studio-anchor {
+  display: block;
+  height: 0;
+  scroll-margin-top: 5.5rem;
+}
+
+/* ==========================================================================
+   Preview window
+
+   Dressed as macOS Preview: traffic lights, a unified title bar with real
+   working tools, a thumbnail sidebar and the photo on a plain stage. The
+   chrome uses the system UI face, as the real one does.
+   ========================================================================== */
+
+.pv-window {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background-color: var(--color-base-100);
+  box-shadow:
+    0 1px 2px color-mix(in oklab, black 8%, transparent),
+    0 34px 70px -34px var(--studio-shadow);
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  text-transform: none;
+}
+
+.pv-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 3.25rem;
+  padding: 0 0.7rem 0 0.9rem;
+  border-bottom: 1px solid var(--rule);
+  background-color: var(--color-base-200);
+  color: var(--color-neutral-content);
+}
+
+.pv-lights {
+  display: flex;
+  flex: none;
+  gap: 0.45rem;
+  margin-right: 0.35rem;
+}
+
+.pv-lights i,
+.pv-inspector-close i {
+  display: block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  box-shadow: inset 0 0 0 0.5px color-mix(in oklab, black 18%, transparent);
+}
+
+[data-light="close"] {
+  background-color: var(--light-close);
+}
+
+[data-light="minimize"] {
+  background-color: var(--light-minimize);
+}
+
+[data-light="zoom"] {
+  background-color: var(--light-zoom);
+}
+
+.pv-title {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  margin-left: 0.25rem;
+  line-height: 1.2;
+}
+
+.pv-filename {
+  overflow: hidden;
+  color: var(--color-base-content);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pv-subtitle {
+  overflow: hidden;
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pv-tools {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.pv-tool {
+  display: grid;
+  width: 1.9rem;
+  height: 1.75rem;
+  place-items: center;
+  border-radius: 6px;
+  color: var(--color-neutral-content);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.pv-tool svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.pv-tool:hover {
+  background-color: var(--wash);
+  color: var(--color-base-content);
+}
+
+.pv-tool[aria-pressed="true"] {
+  background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
+  color: var(--color-base-content);
+}
+
+.pv-tool:disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.pv-segmented {
+  display: flex;
+  margin-right: 0.3rem;
+  padding: 2px;
+  border-radius: 8px;
+  background-color: var(--wash);
+}
+
+.pv-segmented .pv-tool {
+  height: 1.55rem;
+}
+
+.pv-segmented .pv-tool[aria-pressed="true"] {
+  background-color: var(--color-base-100);
+  box-shadow: 0 1px 2px color-mix(in oklab, black 14%, transparent);
+}
+
+.pv-desktop-only {
+  display: none;
+}
+
+.pv-body {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+/* A filmstrip under the photo on phones... */
+.pv-sidebar {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0.55rem 0.6rem;
+  border-top: 1px solid var(--rule);
+  background-color: var(--color-base-200);
+  scrollbar-width: none;
+}
+
+.pv-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.pv-thumb {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.pv-thumb img {
+  display: block;
+  width: auto;
+  height: 3.6rem;
+  border-radius: 2px;
+  background-color: var(--color-base-300);
+  box-shadow: 0 1px 3px color-mix(in oklab, black 22%, transparent);
+  transition: box-shadow 200ms var(--ease-out-quint);
+}
+
+.pv-thumb-index {
+  color: var(--color-neutral-content);
+  font-size: 0.6rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.pv-thumb:hover {
+  background-color: var(--wash);
+}
+
+.pv-thumb[aria-selected="true"] {
+  background-color: color-mix(in oklab, var(--color-base-content) 11%, transparent);
+}
+
+.pv-thumb[aria-selected="true"] img {
+  box-shadow:
+    0 0 0 2px var(--color-base-200),
+    0 0 0 3.5px var(--color-primary);
+}
+
+.pv-thumb[aria-selected="true"] .pv-thumb-index {
+  color: var(--color-base-content);
+  font-weight: 600;
+}
+
+.pv-stage {
+  display: flex;
+  min-width: 0;
+  height: clamp(22rem, 66svh, 44rem);
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  cursor: zoom-in;
+}
+
+.pv-photo {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 2px;
+  background-position: center;
+  background-size: cover;
+  box-shadow: 0 12px 34px -16px var(--studio-shadow);
+  transition: transform 500ms var(--ease-out-quint);
+}
+
+.pv-stage:hover .pv-photo {
+  transform: scale(1.01);
+}
+
+.pv-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 500ms ease-out;
+}
+
+/* ...and a sidebar down the left from a tablet up. */
+@media (min-width: 640px) {
+  .pv-desktop-only {
+    display: grid;
+  }
+
+  .pv-body {
+    flex-direction: row;
+  }
+
+  .pv-sidebar {
+    flex: none;
+    flex-direction: column;
+    width: 7.25rem;
+    height: clamp(24rem, 74svh, 46rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0.7rem 0.6rem;
+    border-top: 0;
+    border-right: 1px solid var(--rule);
+  }
+
+  .pv-window[data-sidebar="false"] .pv-sidebar {
+    display: none;
+  }
+
+  .pv-thumb {
+    padding: 0.45rem;
+  }
+
+  .pv-thumb img {
+    width: 4.4rem;
+    height: auto;
+  }
+
+  .pv-stage {
+    flex: 1;
+    height: clamp(24rem, 74svh, 46rem);
+    padding: 1.75rem;
+  }
+}
+
+/* --- Grid view: a contact sheet ------------------------------------------ */
+
+.pv-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem 0.9rem;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .pv-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.6rem 1.4rem;
+    padding: 1.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pv-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.pv-tile {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+}
+
+.pv-tile-frame {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  background-position: center;
+  background-size: cover;
+  box-shadow: 0 8px 20px -12px var(--studio-shadow);
+  transition:
+    transform 420ms var(--ease-out-quint),
+    box-shadow 420ms var(--ease-out-quint);
+}
+
+.pv-tile-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pv-tile:hover .pv-tile-frame {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 30px -14px var(--studio-shadow);
+}
+
+.pv-tile[aria-current="true"] .pv-tile-frame {
+  box-shadow:
+    0 0 0 3px var(--color-base-100),
+    0 0 0 4.5px var(--color-primary);
+}
+
+.pv-tile-name {
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  color: var(--color-neutral-content);
+  font-size: 0.68rem;
+}
+
+.pv-tile[aria-current="true"] .pv-tile-name {
+  background-color: var(--color-primary);
+  color: var(--color-base-100);
+}
+
+/* --- Inspector: a small floating panel, as in Preview ------------------- */
+
+@keyframes inspectorIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.pv-inspector {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  left: 0.6rem;
+  z-index: 5;
+  max-height: 70%;
+  overflow-y: auto;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background-color: color-mix(in oklab, var(--color-base-100) 94%, transparent);
+  box-shadow: 0 22px 50px -20px var(--studio-shadow);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  animation: inspectorIn 240ms var(--ease-out-quint) both;
+}
+
+@media (min-width: 640px) {
+  .pv-inspector {
+    top: 4rem;
+    right: 1rem;
+    bottom: auto;
+    left: auto;
+    width: 18.5rem;
+    max-height: calc(100% - 5rem);
+  }
+}
+
+.pv-inspector-bar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  height: 1.9rem;
+  padding: 0 0.6rem;
+  border-bottom: 1px solid var(--rule);
+  background-color: var(--color-base-200);
+  color: var(--color-base-content);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.pv-inspector-bar span {
+  flex: 1;
+  margin-right: 0.75rem;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pv-inspector-close {
+  display: grid;
+  width: 1.1rem;
+  height: 1.1rem;
+  place-items: center;
+  cursor: pointer;
+}
+
+.pv-inspector-close i {
+  width: 0.65rem;
+  height: 0.65rem;
+}
+
+.pv-inspector-group {
+  padding: 0.65rem 0.85rem 0.75rem;
+}
+
+.pv-inspector-group + .pv-inspector-group {
+  border-top: 1px solid var(--rule);
+}
+
+.pv-inspector-heading {
+  margin-bottom: 0.4rem;
+  color: var(--color-neutral-content);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pv-inspector dl > div {
+  display: grid;
+  grid-template-columns: 5.6rem minmax(0, 1fr);
+  gap: 0.6rem;
+  padding: 0.18rem 0;
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
+.pv-inspector dt {
+  color: var(--color-neutral-content);
+  text-align: right;
+}
+
+.pv-inspector dd {
+  color: var(--color-base-content);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Gear
+   ========================================================================== */
+
+.studio-gear {
+  margin-top: 5rem;
+  text-transform: uppercase;
+}
+
+.studio-gear .studio-label {
+  margin-inline: 0;
+  scroll-margin-top: 5.5rem;
+}
+
+.studio-gear ul {
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+}
+
+.studio-gear li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.2rem 1.5rem;
+  align-items: baseline;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .studio-gear li {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
+  }
+}
+
+.studio-gear-camera {
+  font-size: clamp(1.15rem, 2.6vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.studio-gear-lenses {
+  grid-row: 2;
+  color: var(--color-neutral-content);
+  font-size: 0.78rem;
+}
+
+.studio-gear-count {
+  grid-row: 1;
+  grid-column: 2;
+  color: var(--color-neutral-content);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 640px) {
+  .studio-gear-lenses {
+    grid-row: auto;
+  }
+
+  .studio-gear-count {
+    grid-row: auto;
+    grid-column: auto;
+  }
+}

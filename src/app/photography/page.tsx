@@ -1,47 +1,41 @@
 import type { Metadata } from "next";
-import { PageFrame } from "@/components/chrome/PageFrame";
-import { Gallery } from "@/components/photography/Gallery";
-import { PhotoFrame } from "@/components/photography/PhotoFrame";
-import { PageHeader } from "@/components/primitives/PageHeader";
+import { PreviewGallery } from "@/components/photography/PreviewGallery";
+import { StudioFrame } from "@/components/photography/StudioFrame";
+import { StudioHero } from "@/components/photography/StudioHero";
 import { Reveal } from "@/components/primitives/Reveal";
 import { galleryPhotos, getCameraGear, heroPhoto } from "@/lib/photos";
 
 export const metadata: Metadata = {
   title: "Photography",
-  description: "Photographs by Deval Parikh.",
+  description: "Studio Deval - photographs by Deval Parikh.",
 };
 
 export default function PhotographyPage() {
   const gear = getCameraGear();
+  // The `hero` source still leads: it is the first frame in the window.
+  const photos = heroPhoto ? [heroPhoto, ...galleryPhotos] : galleryPhotos;
+  const gearLine = `Shot on ${new Intl.ListFormat("en", { type: "conjunction" }).format(
+    gear.map((item) => item.camera),
+  )}.`;
 
   return (
-    <PageFrame>
-      <PageHeader title="Photography" />
-
-      {heroPhoto && (
-        <Reveal index={1} className="mt-9">
-          <PhotoFrame photo={heroPhoto} priority className="max-h-[68vh]" />
-        </Reveal>
-      )}
-
-      <div className="mt-12">
-        <Gallery photos={galleryPhotos} />
-      </div>
+    <StudioFrame hero={<StudioHero photos={photos} gearLine={gearLine} />}>
+      <Reveal onScroll>
+        <PreviewGallery photos={photos} />
+      </Reveal>
 
       {gear.length > 0 && (
-        <Reveal onScroll as="section" className="mt-16 border-t border-[var(--rule)] pt-7">
-          <h2 className="kicker">Gear</h2>
+        <Reveal onScroll as="section" className="studio-gear">
+          <h2 id="gear" className="studio-label">
+            <span>Gear</span>
+          </h2>
 
-          <ul className="mt-4 grid gap-2.5">
+          <ul>
             {gear.map((item) => (
-              <li key={item.camera} className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                <span className="text-sm text-base-content">{item.camera}</span>
-                {item.lenses.map((lens) => (
-                  <span key={lens} className="font-mono text-[0.68rem] text-neutral-content">
-                    {lens}
-                  </span>
-                ))}
-                <span className="ml-auto font-mono text-[0.62rem] tabular-nums text-neutral-content/70">
+              <li key={item.camera}>
+                <span className="studio-gear-camera">{item.camera}</span>
+                <span className="studio-gear-lenses">{item.lenses.join(", ")}</span>
+                <span className="studio-gear-count">
                   {item.frames} {item.frames === 1 ? "frame" : "frames"}
                 </span>
               </li>
@@ -49,6 +43,6 @@ export default function PhotographyPage() {
           </ul>
         </Reveal>
       )}
-    </PageFrame>
+    </StudioFrame>
   );
 }
