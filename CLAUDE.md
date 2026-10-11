@@ -143,8 +143,10 @@ Theme tokens are shared, so light and dark carry over.
 - **Type** - Helvetica throughout via `--font-grotesk` (Inter Tight, loaded
   without preload, where the OS has no Helvetica). Uppercase, bracketed labels.
 - **Nav** - `<NavBar floating />`: the usual bar at the top; once stuck it
-  lifts into a capsule whose corner radii drift (`navBlob`) so the outline
-  reads as organic. The lift is a transform, so sticking never shifts layout.
+  lifts into a capsule that slowly breathes between asymmetric shapes
+  (`navBreathe`). Keep every vertical radius at `50%` - only the horizontal
+  radii vary - or the ends turn pointed. The lift is a transform, so sticking
+  never shifts layout.
 - **Hero** - "STUDIO DEVAL" with letters rising out of a mask. `PhotoTrail`
   pops the next item under the cursor every 110px of travel, tilted, then
   lets it fall away; on touch screens it plays on a timer instead. Items are
@@ -154,6 +156,9 @@ Theme tokens are shared, so light and dark carry over.
   (filmstrip on phones), stage that opens the `Lightbox` and swipes on touch,
   an Inspector (i) with file and EXIF, and a grid view. `#grid` / `#preview`
   deep-link to a view; the hero's pills switch it through `lib/studio-view.ts`.
+- **Banner** - `StudioBanner` loops "STUDIO DEVAL" full-bleed behind the top
+  edge of the window. `.studio` clips horizontal overflow (`clip`, not
+  `hidden`, so the sticky nav still sticks).
 - Lenses come from EXIF, or from `BUILT_IN_LENSES` in `lib/photos.ts` for
   fixed-lens bodies that write none.
 

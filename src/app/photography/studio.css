@@ -26,6 +26,9 @@
   --studio-shadow: color-mix(in oklab, black 26%, transparent);
 
   font-family: var(--font-grotesk);
+  /* The banner runs edge to edge; it must never widen the page. Clip, unlike
+     hidden, makes no scroll container, so the sticky nav still sticks. */
+  overflow-x: clip;
 }
 
 @media (min-width: 640px) {
@@ -38,9 +41,11 @@
    Floating nav
 
    At the top of the page the bar is the site's usual one. Once it sticks it
-   lifts off the edge into a capsule whose corners drift between a few
-   uneven radii, so its outline reads as organic rather than machined. The
-   lift is a transform, not a margin, so sticking never shifts the page.
+   lifts off the edge into a capsule that slowly breathes between a few
+   asymmetric shapes. Every corner keeps a vertical radius of exactly half
+   the bar's height, so the ends stay perfectly smooth; only how long each
+   curve runs changes, which is what reads as organic. The lift is a
+   transform, not a margin, so sticking never shifts the page.
    ========================================================================== */
 
 .nav-shell[data-floating] .nav-bar {
@@ -48,41 +53,49 @@
   margin-inline: auto;
   border: 1px solid transparent;
   transition:
-    width 560ms var(--ease-out-quint),
-    transform 560ms var(--ease-out-quint),
-    border-radius 560ms var(--ease-out-quint),
+    width 600ms var(--ease-out-quint),
+    transform 600ms var(--ease-out-quint),
+    border-radius 600ms var(--ease-out-quint),
     border-color 320ms var(--ease-out-quint),
     background-color 320ms var(--ease-out-quint),
     box-shadow 420ms var(--ease-out-quint);
 }
 
-@keyframes navBlob {
+@keyframes navBreathe {
   0% {
-    border-radius: 26px 92px 44px 78px / 34px 22px 30px 26px;
+    border-radius: 40px 56px 46px 60px / 50%;
   }
-  33% {
-    border-radius: 84px 30px 96px 40px / 24px 32px 22px 34px;
-  }
-  66% {
-    border-radius: 40px 100px 28px 70px / 32px 26px 34px 22px;
+  50% {
+    border-radius: 58px 42px 60px 44px / 50%;
   }
   100% {
-    border-radius: 96px 46px 70px 30px / 22px 34px 26px 32px;
+    border-radius: 46px 60px 40px 54px / 50%;
   }
 }
 
 .nav-shell[data-floating][data-stuck="true"] .nav-bar {
   width: min(46rem, 100% - 1.25rem);
+  /* The first frame of the breathing, so the bar eases straight into it. */
+  border-radius: 40px 56px 46px 60px / 50%;
   border-color: var(--rule);
   box-shadow:
-    0 1px 2px color-mix(in oklab, black 8%, transparent),
-    0 16px 40px -18px var(--studio-shadow);
+    inset 0 1px 0 color-mix(in oklab, white 60%, transparent),
+    0 1px 2px color-mix(in oklab, black 6%, transparent),
+    0 10px 24px -12px color-mix(in oklab, black 18%, transparent),
+    0 28px 60px -30px var(--studio-shadow);
   transform: translateY(0.65rem);
-  animation: navBlob 16s ease-in-out infinite alternate;
+  animation: navBreathe 14s ease-in-out 600ms infinite alternate;
+}
+
+[data-theme="inkember"] .nav-shell[data-floating][data-stuck="true"] .nav-bar {
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, white 9%, transparent),
+    0 1px 2px color-mix(in oklab, black 30%, transparent),
+    0 18px 44px -18px color-mix(in oklab, black 70%, transparent);
 }
 
 .nav-shell[data-floating][data-stuck="true"] .nav-bar > div {
-  padding-inline: 1rem 0.65rem;
+  padding-inline: 1.15rem 0.75rem;
 }
 
 /* ==========================================================================
@@ -330,6 +343,72 @@
   max-width: 76rem;
   margin-inline: auto;
   padding: 2.5rem var(--studio-margin) 0;
+}
+
+/* ==========================================================================
+   Banner - "STUDIO DEVAL" on a loop behind the Preview window
+
+   A full-bleed strip, the way Karo runs its capsule banner, set big and bold.
+   It crosses behind the top edge of the window, so the upper half of the
+   letters shows above it and the sides show past it on wide screens. Two
+   identical runs slide left by exactly one run's width, so the loop is
+   seamless.
+   ========================================================================== */
+
+.studio-stage {
+  --banner-size: clamp(4.25rem, 13vw, 12rem);
+  position: relative;
+  isolation: isolate;
+  /* Tied to the banner's size, so about two thirds of the lettering clears
+     the top of the window at every width. */
+  padding-top: calc(var(--banner-size) * 0.72);
+}
+
+.studio-banner {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: -1;
+  width: 100vw;
+  overflow: hidden;
+  padding-block: 0.08em 0.02em;
+  background-color: var(--color-base-200);
+  font-size: var(--banner-size);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  white-space: nowrap;
+  translate: -50% 0;
+  user-select: none;
+}
+
+@keyframes bannerLoop {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.studio-banner-track {
+  display: flex;
+  width: max-content;
+  animation: bannerLoop 46s linear infinite;
+}
+
+.studio-banner-run {
+  display: flex;
+  align-items: center;
+}
+
+.studio-banner-run span:not(.contents) {
+  padding-inline: 0.22em;
+}
+
+.studio-banner-run svg {
+  flex: none;
+  width: 0.62em;
+  height: 0.62em;
+  margin-inline: 0.12em;
 }
 
 .studio-anchor {

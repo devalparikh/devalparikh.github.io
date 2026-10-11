@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PreviewGallery } from "@/components/photography/PreviewGallery";
+import { StudioBanner } from "@/components/photography/StudioBanner";
 import { StudioFrame } from "@/components/photography/StudioFrame";
 import { StudioHero } from "@/components/photography/StudioHero";
 import { Reveal } from "@/components/primitives/Reveal";
@@ -20,9 +21,12 @@ export default function PhotographyPage() {
 
   return (
     <StudioFrame hero={<StudioHero photos={photos} gearLine={gearLine} />}>
-      <Reveal onScroll>
-        <PreviewGallery photos={photos} />
-      </Reveal>
+      <div className="studio-stage">
+        <StudioBanner />
+        <Reveal onScroll>
+          <PreviewGallery photos={photos} />
+        </Reveal>
+      </div>
 
       {gear.length > 0 && (
         <Reveal onScroll as="section" className="studio-gear">
