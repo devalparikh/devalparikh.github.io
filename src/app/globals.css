@@ -541,6 +541,15 @@ body::after {
   cursor: default;
 }
 
+/* Experience starts with the company mark, without a spare caret column. */
+.row-list[data-collection="experience"] .row-trigger {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.row-list[data-collection="experience"] .row-caret {
+  display: none;
+}
+
 /* Stretches the click target across the row without wrapping the action
    links, which would be invalid markup and would swallow their clicks. */
 .row-trigger::after {
@@ -736,6 +745,10 @@ body::after {
     justify-content: flex-start;
     gap: 0.6rem;
     margin-left: calc(12px + 0.7rem);
+  }
+
+  .row-list[data-collection="experience"] .row-actions {
+    margin-left: 0;
   }
 
   .row-meta {
