@@ -41,7 +41,6 @@ export const experience: Collection = {
       highlights: [
         "Shipped 0->1 a new MFA mechanism to combat social engineering and deployed it to 100 million Capital One customers.",
         "Led a team of engineers through the design, development, and launch of novel identity applications, APIs, and distributed systems on a global scale.",
-        "Designed and developed large scale, fault-tolerant, and low-latency identity applications that eliminate social engineering vulnerabilities for over 100 million customers.",
       ],
       tags: [
         "Java",
