@@ -16,9 +16,10 @@ export const experience: Collection = {
         "Leading the development of core infra to deploy Azure Sovereign Clouds.",
       categories: ["fulltime"],
       highlights: [
-        "Leading the development of core infra to deploy Azure Sovereign Clouds.",
-        "Leading the design, development, and launch of a greenfield, global cloud service that serves as core infrastructure for sovereign clouds and secure supercomputing workloads.",
-        "Architecting distributed systems and new disjoint network protocols for orchestrating data transfer and training/inference of multimodal ML systems.",
+        "Tech lead in Azure. Leading development of core infra to bring planet-scale supercomputing clusters and frontier AI to secure and sovereign environments.",
+        "Architected large-scale distributed systems and created novel disjoint-network protocols for secure, highly available, durable, cross-boundary data transfer to support the scale of all internal Microsoft teams and third-party customers.",
+        "Founded a security-focused AI initiative and built a real-time VLM-based agentic system to detect malicious activity in secure clouds. Trained multimodal models through supervised fine-tuning (SFT) of open-weight models (e.g., Qwen3.6-27B)",
+        "Built an internal agent evaluation platform to ingest traces, build datasets, run evaluations, and benchmark models and agent architectures, supporting several internal agent systems."
       ],
       tags: [
         "Distributed Systems",
@@ -27,6 +28,10 @@ export const experience: Collection = {
         "AI/ML",
         "Cryptography",
         "Authentication",
+        "Agentic Engineering",
+        "Agentic Systems",
+        "Agentic Memory",
+        "Evals",
       ],
     },
     {
@@ -36,11 +41,11 @@ export const experience: Collection = {
       mark: { src: "/img/logos/capital-one.webp" },
       meta: "Feb 2022 - Jul 2024",
       summary:
-        "Shipped 0->1 a new MFA mechanism to combat social engineering and deployed it to 100 million Capital One customers.",
+        "Shipped 0->1 a new MFA mechanism to combat social engineering fraud and deployed it to 100 million Capital One customers.",
       categories: ["fulltime"],
       highlights: [
-        "Shipped 0->1 a new MFA mechanism to combat social engineering and deployed it to 100 million Capital One customers.",
-        "Led a team of engineers through the design, development, and launch of novel identity applications, APIs, and distributed systems on a global scale.",
+        "Led the development of a novel Multi-Factor Authentication (MFA) mechanism to combat social engineering fraud. Led the initiative from idea to production. Oversaw coordination between 8+ teams across engineering, product, vendors, cyber, pentesters, and senior leadership, resulting in a successful launch, scaled to over 15 million authentication transactions per day.",
+        "Designed and built reliable and scalable distributed systems and APIs for the MFA system, achieving near-zero downtime by leveraging Java, AWS, distributed database design, data consistency design, and regional auto-failover mechanisms.",
         "Led a team of engineers to build the end-to-end authentication stack that secures all APIs called by external parties (e.g. Plaid, Stripe, Intuit).",
       ],
       tags: [
@@ -57,13 +62,14 @@ export const experience: Collection = {
       subtitle: "Software Engineer",
       mark: { src: "/img/logos/capital-one.webp" },
       meta: "Feb 2021 - Feb 2022",
-      summary: "The customer-facing credit card application platform.",
+      summary: "Built customer facing interfaces for applying to a new credit card.",
       categories: ["fulltime"],
       highlights: [
-        "The customer-facing credit card application platform.",
-        "Developed features for the customer-facing credit card application platform.",
+        "Built the full stack platform for customers to apply for a credit card, capitalone.com/apply, using JavaScript, React, Node.js. Collaborated with Engineers, Product Owners, Designers, and Accessibility teams.",
+        "Led A/B experiments to increase credit card application conversions.",
+        "Mentored engineers and served as a core reviewer for the company-wide React monorepo, raising the bar for high-performance, quality, and modular codebase architecture.",
       ],
-      tags: ["React", "Redux", "JavaScript", "Node.js", "AWS"],
+      tags: ["React", "Redux", "JavaScript", "Node.js", "AWS", "Software Design"],
     },
     {
       id: "capital-one-intern",
@@ -71,10 +77,10 @@ export const experience: Collection = {
       subtitle: "Software Engineering Intern",
       mark: { src: "/img/logos/capital-one.webp" },
       meta: "2020",
-      summary: "Automated onboarding for the multi-factor authorization pipeline.",
+      summary: "Automated securing sensitive account actions behind MFA (e.g. Zelle, change password, etc).",
       categories: ["internship"],
       highlights: [
-        "Automated onboarding for the multi-factor authorization pipeline.",
+        "Built a full-stack system to automate onboarding customer features across the company to the Multi-Factor Authentication (MFA) platform, gating sensitive customer actions behind extra security (e.g. Zelle, change password, etc).",
         "Full stack and distributed systems development on the Consumer Identity Team.",
         "Developed and designed an end to end, multi-tier, full stack application that automates onboarding clients to the multi-factor authorization security pipeline used by capitalone.com web and mobile, improving the process duration by 1,500%.",
       ],
