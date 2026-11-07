@@ -16,6 +16,7 @@ export const experience: Collection = {
         "Leading the development of core infra to deploy Azure Sovereign Clouds.",
       categories: ["fulltime"],
       highlights: [
+        "Leading the development of core infra to deploy Azure Sovereign Clouds.",
         "Leading the design, development, and launch of a greenfield, global cloud service that serves as core infrastructure for sovereign clouds and secure supercomputing workloads.",
         "Architecting distributed systems and new disjoint network protocols for orchestrating data transfer and training/inference of multimodal ML systems.",
       ],
@@ -38,6 +39,7 @@ export const experience: Collection = {
         "Shipped 0->1 a new MFA mechanism to combat social engineering and deployed it to 100 million Capital One customers.",
       categories: ["fulltime"],
       highlights: [
+        "Shipped 0->1 a new MFA mechanism to combat social engineering and deployed it to 100 million Capital One customers.",
         "Led a team of engineers through the design, development, and launch of novel identity applications, APIs, and distributed systems on a global scale.",
         "Designed and developed large scale, fault-tolerant, and low-latency identity applications that eliminate social engineering vulnerabilities for over 100 million customers.",
       ],
@@ -58,6 +60,7 @@ export const experience: Collection = {
       summary: "The customer-facing credit card application platform.",
       categories: ["fulltime"],
       highlights: [
+        "The customer-facing credit card application platform.",
         "Developed features for the customer-facing credit card application platform.",
       ],
       tags: ["React", "Redux", "JavaScript", "Node.js", "AWS"],
@@ -71,6 +74,7 @@ export const experience: Collection = {
       summary: "Automated onboarding for the multi-factor authorization pipeline.",
       categories: ["internship"],
       highlights: [
+        "Automated onboarding for the multi-factor authorization pipeline.",
         "Full stack and distributed systems development on the Consumer Identity Team.",
         "Developed and designed an end to end, multi-tier, full stack application that automates onboarding clients to the multi-factor authorization security pipeline used by capitalone.com web and mobile, improving the process duration by 1,500%.",
       ],
@@ -95,6 +99,7 @@ export const experience: Collection = {
       summary: "Map data caching on the Geospatial Performance Enhancing Proxy team.",
       categories: ["internship"],
       highlights: [
+        "Map data caching on the Geospatial Performance Enhancing Proxy team.",
         "Full stack development on the Geospatial Performance Enhancing Proxy team.",
         "Improved and developed API services for map data caching and front end features for map components, logs, and dashboards.",
       ],
