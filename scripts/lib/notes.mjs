@@ -10,11 +10,16 @@ import rehypeStringify from "rehype-stringify";
 import GithubSlugger, { slug } from "github-slugger";
 import { visit } from "unist-util-visit";
 
-export function isNotePath(file) {
+export function isPublicKnowledgePath(file) {
   const parts = file.split("/");
-  return parts[0] === "knowledge" && /\.md$/i.test(file) &&
-    !parts.some((part) => part.startsWith(".") || /^(templates?|private|drafts?)$/i.test(part)) &&
-    !/^(readme|agents|claude)\.md$/i.test(parts.at(-1));
+  return parts[0] === "knowledge" && !file.includes("\\") &&
+    parts.every((part) => part && part !== "..") &&
+    !parts.some((part) => part.startsWith(".") || /^(templates?|private|drafts?)$/i.test(part));
+}
+
+export function isNotePath(file) {
+  return isPublicKnowledgePath(file) && /\.md$/i.test(file) &&
+    !/^(readme|agents|claude)\.md$/i.test(file.split("/").at(-1));
 }
 
 const yes = (value) => value === true || /^(true|yes)$/i.test(String(value));
@@ -51,6 +56,7 @@ export function parseNoteMetadata(source) {
 }
 
 export async function buildNotes(files, assets = []) {
+  assets = assets.filter((file) => isPublicKnowledgePath(file) && /\.(png|jpe?g|gif|webp|avif)$/i.test(file));
   const notes = files.filter((file) => isNotePath(file.path)).flatMap((file) => {
     // Parse every candidate before filtering. Invalid YAML must fail the sync.
     const { data, content } = parseNoteMetadata(file.content.replace(/%%[\s\S]*?%%/g, ""));
@@ -92,9 +98,11 @@ export async function buildNotes(files, assets = []) {
     const attachments = new Set();
     function imageFor(target) {
       const key = target.replace(/^\/?knowledge\//i, "").toLowerCase();
+      if (key.includes("\\") || key.startsWith("/") ||
+        key.split("/").some((part) => (part.startsWith(".") && part !== "..") || /^(templates?|private|drafts?)$/i.test(part))) return null;
       const relative = path.posix.join(path.posix.dirname(note.relative), key);
       const matches = assets.filter((file) => file.toLowerCase() === `knowledge/${relative}` || file.toLowerCase() === `knowledge/${key}`);
-      const candidates = matches.length ? matches : assets.filter((file) => file.toLowerCase().endsWith(`/${key}`));
+      const candidates = matches.length ? matches : key.split("/").includes("..") ? [] : assets.filter((file) => file.toLowerCase().endsWith(`/${key}`));
       if (candidates.length !== 1) return null;
       attachments.add(candidates[0]);
       return assetUrl(candidates[0]);

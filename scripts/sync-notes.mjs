@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildNotes, isNotePath, assetUrl } from "./lib/notes.mjs";
+import { buildNotes, isNotePath, isPublicKnowledgePath, assetUrl } from "./lib/notes.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "src/content/notes.generated.json");
@@ -59,7 +59,7 @@ async function sync() {
   for (let index = 0; index < candidates.length; index += 6) {
     sources.push(...await Promise.all(candidates.slice(index, index + 6).map(async (file) => ({ path: file.path, content: (await read(file)).toString("utf8") }))));
   }
-  const images = files.filter((file) => file.path.startsWith("knowledge/") && /\.(png|jpe?g|gif|webp|avif)$/i.test(file.path));
+  const images = files.filter((file) => isPublicKnowledgePath(file.path) && /\.(png|jpe?g|gif|webp|avif)$/i.test(file.path));
   const notes = await buildNotes(sources, images.map((file) => file.path));
   const required = new Set(notes.flatMap((note) => note.attachments));
   // Fetch every required image before replacing the previous snapshot.

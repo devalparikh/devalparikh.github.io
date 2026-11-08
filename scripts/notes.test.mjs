@@ -119,3 +119,21 @@ test("YAML aliases, dates, lists, strings and body survive safe parsing", async 
   await assert.rejects(buildNotes([file("Invalid", "---\nprivate: !!js/function function() {}\n---\nBody")]), /Invalid YAML/);
   await assert.rejects(buildNotes([file("Unclosed", "---\nprivate: true")]), /Unclosed/);
 });
+
+
+test("attachments reuse private, draft, template and hidden path exclusions", async () => {
+  for (const folder of ["private", "Private", "draft", "drafts", "template", "templates", ".hidden"]) {
+    for (const target of ["diagram.png", `${folder}/diagram.png`, `/knowledge/${folder}/diagram.png`]) {
+      const [note] = await buildNotes([file("Public", `![[${target}]] ![image](${target})`)], [`knowledge/${folder}/diagram.png`]);
+      assert.deepEqual(note.attachments, []);
+      assert.doesNotMatch(note.html, /<img/);
+    }
+  }
+});
+
+test("retains public images, rejects collisions and traversal, and handles explicit paths", async () => {
+  const assets = ["knowledge/private/diagram.png", "knowledge/images/diagram.png", "knowledge/a/shared.png", "knowledge/b/shared.png", "outside/leak.png", "knowledge/../leak.png", "knowledge/link/../leak.png"];
+  const [note] = await buildNotes([file("folder/Public", "![[diagram.png]] ![public](../images/diagram.png) ![[a/shared.png]] ![[shared.png]] ![[../../outside/leak.png]] ![[private/diagram.png]]")], assets);
+  assert.deepEqual(note.attachments, ["knowledge/images/diagram.png", "knowledge/a/shared.png"]);
+  assert.equal((note.html.match(/<img/g) ?? []).length, 3);
+});
