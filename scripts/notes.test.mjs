@@ -75,7 +75,7 @@ test("a complete resync removes deleted and newly private notes", async () => {
 });
 
 test("invalid metadata fails instead of exposing unfiltered content", async () => {
-  await assert.rejects(buildNotes([file("Broken", "---\nprivate: [broken\n---\nbody")]), /unexpected|end|flow/i);
+  await assert.rejects(buildNotes([file("Broken", "---\nprivate: [broken\n---\nbody")]), /Invalid YAML/);
 });
 
 test("uses the Obsidian filename when the first heading is a section or embed", async () => {
@@ -94,4 +94,28 @@ test("table of contents matches sanitized heading IDs and keeps the vault hierar
   ]);
   for (const heading of note.toc) assert.ok(note.html.includes(`id="${heading.id}"`));
   assert.doesNotMatch(JSON.stringify(note.toc), /Private|Not a heading/);
+});
+
+
+test("rejects executable frontmatter before private filtering without executing it", async () => {
+  for (const language of ["javascript", "js", "JavaScript", "json", "coffee", "constructor", "__proto__", " yaml javascript"]) {
+    for (const prefix of ["", "\uFEFF"]) {
+      globalThis.__notesCanary = 0;
+      await assert.rejects(buildNotes([file("Canary", `${prefix}---${language}\n(globalThis.__notesCanary++, {private:true})\n---\nSynthetic body`)]), /Only YAML/);
+      assert.equal(globalThis.__notesCanary, 0);
+    }
+  }
+  delete globalThis.__notesCanary;
+});
+
+test("YAML aliases, dates, lists, strings and body survive safe parsing", async () => {
+  for (const header of ["---", "---yaml", "---yml", "--- yaml", "---yaml  "]) {
+    const [note] = await buildNotes([file("Fixture", `${header}\r\ntitle: Example\r\ntags: &tags [one, two]\r\naliases: *tags\r\nupdated: 2026-01-02\r\nprivate: false\r\nsummary: |\r\n  Multiple lines\r\n---\r\n# Example\n**Body** and \`code\``)]);
+    assert.equal(note.title, "Example");
+    assert.deepEqual(note.tags, ["one", "two"]);
+    assert.equal(note.updated, "2026-01-02");
+    assert.match(note.html, /<strong>Body<\/strong> and <code>code<\/code>/);
+  }
+  await assert.rejects(buildNotes([file("Invalid", "---\nprivate: !!js/function function() {}\n---\nBody")]), /Invalid YAML/);
+  await assert.rejects(buildNotes([file("Unclosed", "---\nprivate: true")]), /Unclosed/);
 });

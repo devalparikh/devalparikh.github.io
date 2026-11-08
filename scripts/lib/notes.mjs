@@ -29,10 +29,31 @@ function dateOf(value) {
 
 export const assetUrl = (file) => `/img/notes/${createHash("sha256").update(file).digest("hex").slice(0, 20)}${path.posix.extname(file).toLowerCase()}`;
 
+// Engine selection is untrusted input. Validate and remove the language marker
+// before gray-matter can dispatch to any engine (including its JS evaluator).
+export function parseNoteMetadata(source) {
+  const input = source.replace(/^\uFEFF/, "");
+  if (!input.startsWith("---") || input.startsWith("----")) return { data: {}, content: input };
+  const opening = /^---[ \t]*(?:yaml|yml)?[ \t]*\r?\n/.exec(input);
+  if (!opening) throw new Error("Only YAML note frontmatter is supported");
+  const body = input.slice(opening[0].length);
+  if (!/^---[ \t]*\r?$/m.test(body)) throw new Error("Unclosed YAML note frontmatter");
+  try {
+    const parsed = matter("---\n" + body, { language: "yaml" });
+    if (!parsed.data || typeof parsed.data !== "object" || Array.isArray(parsed.data)) {
+      throw new Error("Metadata must be a mapping");
+    }
+    return parsed;
+  } catch {
+    // Parser diagnostics may contain private source text.
+    throw new Error("Invalid YAML note metadata");
+  }
+}
+
 export async function buildNotes(files, assets = []) {
   const notes = files.filter((file) => isNotePath(file.path)).flatMap((file) => {
     // Parse every candidate before filtering. Invalid YAML must fail the sync.
-    const { data, content } = matter(file.content.replace(/%%[\s\S]*?%%/g, ""));
+    const { data, content } = parseNoteMetadata(file.content.replace(/%%[\s\S]*?%%/g, ""));
     if (yes(data.private) || yes(data.draft) || no(data.publish) || no(data.published) ||
       /^(private|draft)$/i.test(String(data.status ?? "")) || !content.trim()) return [];
     const relative = file.path.slice("knowledge/".length).replace(/\.md$/i, "");
