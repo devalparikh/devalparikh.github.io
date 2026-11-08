@@ -1,6 +1,6 @@
 import path from "node:path";
 import { createHash } from "node:crypto";
-import matter from "gray-matter";
+import { load as loadYaml } from "js-yaml";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
@@ -34,21 +34,27 @@ function dateOf(value) {
 
 export const assetUrl = (file) => `/img/notes/${createHash("sha256").update(file).digest("hex").slice(0, 20)}${path.posix.extname(file).toLowerCase()}`;
 
-// Engine selection is untrusted input. Validate and remove the language marker
-// before gray-matter can dispatch to any engine (including its JS evaluator).
+// Extract metadata ourselves: a delimiter prefix can be a valid YAML key.
+// Only the complete closing line ends metadata; no engine dispatch is involved.
 export function parseNoteMetadata(source) {
   const input = source.replace(/^\uFEFF/, "");
   if (!input.startsWith("---") || input.startsWith("----")) return { data: {}, content: input };
   const opening = /^---[ \t]*(?:yaml|yml)?[ \t]*\r?\n/.exec(input);
   if (!opening) throw new Error("Only YAML note frontmatter is supported");
   const body = input.slice(opening[0].length);
-  if (!/^---[ \t]*\r?$/m.test(body)) throw new Error("Unclosed YAML note frontmatter");
+  // Use LF/CRLF line boundaries and absolute EOF, not JS multiline `$`, which
+  // also accepts bare CR and Unicode line separators inside a YAML line.
+  const closing = /(?:^|\n)---[ \t]*(?:\r?\n|(?![\s\S]))/.exec(body);
+  if (!closing) throw new Error("Unclosed YAML note frontmatter");
+  const metadataEnd = closing.index + (body[closing.index] === "\n" ? 1 : 0);
   try {
-    const parsed = matter("---\n" + body, { language: "yaml" });
-    if (!parsed.data || typeof parsed.data !== "object" || Array.isArray(parsed.data)) {
+    // js-yaml v4's default schema supports dates/aliases, but no executable tags.
+    const loaded = loadYaml(body.slice(0, metadataEnd));
+    const data = loaded === undefined ? {} : loaded;
+    if (!data || typeof data !== "object" || Array.isArray(data) || data instanceof Date) {
       throw new Error("Metadata must be a mapping");
     }
-    return parsed;
+    return { data, content: body.slice(closing.index + closing[0].length) };
   } catch {
     // Parser diagnostics may contain private source text.
     throw new Error("Invalid YAML note metadata");
