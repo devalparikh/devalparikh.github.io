@@ -179,6 +179,10 @@ Older video URLs in `image` remain supported.
 Compress launch clips to H.264 MP4 with fast-start metadata, 30fps and a
 maximum 960px edge; include a small WebP poster and explicit dimensions.
 The ClubLifty clip is 1.28MB with a 27KB poster; keep originals outside `public/`.
+AutoEval's clip is that project's own link preview (`frontend/share-card` in
+the auto-eval repo), re-encoded to 960px from `autoeval-share-v2.mp4` (297KB,
+one keyframe so the loop never pulses) with its first frame, the share image,
+as a 30KB poster. When that card is re-rendered, refresh both here.
 Notes links do not prefetch unopened articles; note images load lazily, and
 the full-text search index loads only when search opens.
 

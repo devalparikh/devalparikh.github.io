@@ -53,7 +53,8 @@ export interface Entry {
   /** Extra links surfaced inside the detail panel. */
   links?: EntryLink[];
   image?: string;
-  video?: { src: string; poster: string; width: number; height: number };
+  /** `label` names the clip for screen readers; it defaults to "launch video". */
+  video?: { src: string; poster: string; width: number; height: number; label?: string };
   sections?: EntrySection[];
   highlights?: string[];
 }

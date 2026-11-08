@@ -106,7 +106,7 @@ export function EntryDrawer({ entry, onClose }: EntryDrawerProps) {
               <EntryMedia
                 key={media}
                 src={media}
-                alt={`${entry.title} ${entry.video ? "launch video" : "preview"}`}
+                alt={`${entry.title} ${entry.video ? (entry.video.label ?? "launch video") : "preview"}`}
                 poster={entry.video?.poster}
                 width={entry.video?.width ?? preview?.width}
                 height={entry.video?.height ?? preview?.height}
