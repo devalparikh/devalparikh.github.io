@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildNotes, isNotePath } from "./lib/notes.mjs";
+import { buildNotes, isNotePath, parseNoteMetadata } from "./lib/notes.mjs";
 
 const file = (name, content) => ({ path: `knowledge/${name}.md`, content });
 
@@ -75,7 +75,7 @@ test("a complete resync removes deleted and newly private notes", async () => {
 });
 
 test("invalid metadata fails instead of exposing unfiltered content", async () => {
-  await assert.rejects(buildNotes([file("Broken", "---\nprivate: [broken\n---\nbody")]), /unexpected|end|flow/i);
+  await assert.rejects(buildNotes([file("Broken", "---\nprivate: [broken\n---\nbody")]), /Invalid YAML/);
 });
 
 test("uses the Obsidian filename when the first heading is a section or embed", async () => {
@@ -94,4 +94,86 @@ test("table of contents matches sanitized heading IDs and keeps the vault hierar
   ]);
   for (const heading of note.toc) assert.ok(note.html.includes(`id="${heading.id}"`));
   assert.doesNotMatch(JSON.stringify(note.toc), /Private|Not a heading/);
+});
+
+
+test("rejects executable frontmatter before private filtering without executing it", async () => {
+  for (const language of ["javascript", "js", "JavaScript", "json", "coffee", "constructor", "__proto__", " yaml javascript"]) {
+    for (const prefix of ["", "\uFEFF"]) {
+      globalThis.__notesCanary = 0;
+      await assert.rejects(buildNotes([file("Canary", `${prefix}---${language}\n(globalThis.__notesCanary++, {private:true})\n---\nSynthetic body`)]), /Only YAML/);
+      assert.equal(globalThis.__notesCanary, 0);
+    }
+  }
+  delete globalThis.__notesCanary;
+});
+
+test("YAML aliases, dates, lists, strings and body survive safe parsing", async () => {
+  for (const header of ["---", "---yaml", "---yml", "--- yaml", "---yaml  "]) {
+    const [note] = await buildNotes([file("Fixture", `${header}\r\ntitle: Example\r\ntags: &tags [one, two]\r\naliases: *tags\r\nupdated: 2026-01-02\r\nprivate: false\r\nsummary: |\r\n  Multiple lines\r\n---\r\n# Example\n**Body** and \`code\``)]);
+    assert.equal(note.title, "Example");
+    assert.deepEqual(note.tags, ["one", "two"]);
+    assert.equal(note.updated, "2026-01-02");
+    assert.match(note.html, /<strong>Body<\/strong> and <code>code<\/code>/);
+  }
+  await assert.rejects(buildNotes([file("Invalid", "---\nprivate: !!js/function function() {}\n---\nBody")]), /Invalid YAML/);
+  await assert.rejects(buildNotes([file("Unclosed", "---\nprivate: true")]), /Unclosed/);
+});
+
+
+test("attachments reuse private, draft, template and hidden path exclusions", async () => {
+  for (const folder of ["private", "Private", "draft", "drafts", "template", "templates", ".hidden"]) {
+    for (const target of ["diagram.png", `${folder}/diagram.png`, `/knowledge/${folder}/diagram.png`]) {
+      const [note] = await buildNotes([file("Public", `![[${target}]] ![image](${target})`)], [`knowledge/${folder}/diagram.png`]);
+      assert.deepEqual(note.attachments, []);
+      assert.doesNotMatch(note.html, /<img/);
+    }
+  }
+});
+
+test("retains public images, rejects collisions and traversal, and handles explicit paths", async () => {
+  const assets = ["knowledge/private/diagram.png", "knowledge/images/diagram.png", "knowledge/a/shared.png", "knowledge/b/shared.png", "outside/leak.png", "knowledge/../leak.png", "knowledge/link/../leak.png"];
+  const [note] = await buildNotes([file("folder/Public", "![[diagram.png]] ![public](../images/diagram.png) ![[a/shared.png]] ![[shared.png]] ![[../../outside/leak.png]] ![[private/diagram.png]]")], assets);
+  assert.deepEqual(note.attachments, ["knowledge/images/diagram.png", "knowledge/a/shared.png"]);
+  assert.equal((note.html.match(/<img/g) ?? []).length, 3);
+});
+
+
+test("delimiter-prefix YAML keys cannot hide later publication flags", async () => {
+  for (const opening of ["---", "---yaml", "---yml", "--- yaml", "--- yml"]) {
+    for (const newline of ["\n", "\r\n"]) {
+      for (const nearMiss of ["---custom: value", "----: value", "---#custom: value"]) {
+        const source = [opening, "title: Example", nearMiss, "private: true", "---", "Synthetic private body"].join(newline);
+        assert.equal(parseNoteMetadata(source).data.private, true);
+        assert.deepEqual(await buildNotes([file("Example", source)]), []);
+      }
+    }
+  }
+  for (const flag of ["draft: true", "publish: false", "published: false", "status: private", "status: draft"]) {
+    assert.deepEqual(await buildNotes([file("Example", `---\ntitle: Example\n---custom: value\n${flag}\n---\nSynthetic body`)]), []);
+  }
+});
+
+test("exact closing lines preserve all metadata and the unmodified body", () => {
+  for (const newline of ["\n", "\r\n"]) {
+    for (const close of ["---", "--- \t"]) {
+      const body = `First${newline}${newline}---custom: body text${newline}`;
+      const source = ["---yaml", "title: Example", "---custom: value", "private: false", close, body].join(newline);
+      const parsed = parseNoteMetadata(source);
+      assert.deepEqual(parsed.data, {title: "Example", "---custom": "value", private: false});
+      assert.equal(parsed.content, body);
+    }
+  }
+  assert.deepEqual(parseNoteMetadata("---\n---"), {data: {}, content: ""});
+  assert.equal(parseNoteMetadata("---\ntitle: Example\n---").data.title, "Example");
+});
+
+test("near-misses do not close metadata and malformed roots fail without source disclosure", () => {
+  for (const close of ["---custom: value", "----", "--- # comment", " ---", "---\rprivate: true", "---\u2028private: true"]) {
+    assert.throws(() => parseNoteMetadata(`---\ntitle: Example\n${close}`), /Unclosed YAML/);
+  }
+  for (const metadata of ["title: Example\n--- custom: value\nprivate: true", "private: [broken", "- private", "null", "scalar", "2026-01-02", "private: true\nprivate: false", "private: !!js/function function() {}"]) {
+    assert.throws(() => parseNoteMetadata(`---\n${metadata}\n---\nSynthetic body`), {message: "Invalid YAML note metadata"});
+  }
+  assert.throws(() => parseNoteMetadata("---\ntitle: Example\n---custom: [broken\nprivate: true\n---\nBody"), /Invalid YAML/);
 });

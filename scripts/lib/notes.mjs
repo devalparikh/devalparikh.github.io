@@ -1,6 +1,6 @@
 import path from "node:path";
 import { createHash } from "node:crypto";
-import matter from "gray-matter";
+import { load as loadYaml } from "js-yaml";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
@@ -10,11 +10,16 @@ import rehypeStringify from "rehype-stringify";
 import GithubSlugger, { slug } from "github-slugger";
 import { visit } from "unist-util-visit";
 
-export function isNotePath(file) {
+export function isPublicKnowledgePath(file) {
   const parts = file.split("/");
-  return parts[0] === "knowledge" && /\.md$/i.test(file) &&
-    !parts.some((part) => part.startsWith(".") || /^(templates?|private|drafts?)$/i.test(part)) &&
-    !/^(readme|agents|claude)\.md$/i.test(parts.at(-1));
+  return parts[0] === "knowledge" && !file.includes("\\") &&
+    parts.every((part) => part && part !== "..") &&
+    !parts.some((part) => part.startsWith(".") || /^(templates?|private|drafts?)$/i.test(part));
+}
+
+export function isNotePath(file) {
+  return isPublicKnowledgePath(file) && /\.md$/i.test(file) &&
+    !/^(readme|agents|claude)\.md$/i.test(file.split("/").at(-1));
 }
 
 const yes = (value) => value === true || /^(true|yes)$/i.test(String(value));
@@ -29,10 +34,38 @@ function dateOf(value) {
 
 export const assetUrl = (file) => `/img/notes/${createHash("sha256").update(file).digest("hex").slice(0, 20)}${path.posix.extname(file).toLowerCase()}`;
 
+// Extract metadata ourselves: a delimiter prefix can be a valid YAML key.
+// Only the complete closing line ends metadata; no engine dispatch is involved.
+export function parseNoteMetadata(source) {
+  const input = source.replace(/^\uFEFF/, "");
+  if (!input.startsWith("---") || input.startsWith("----")) return { data: {}, content: input };
+  const opening = /^---[ \t]*(?:yaml|yml)?[ \t]*\r?\n/.exec(input);
+  if (!opening) throw new Error("Only YAML note frontmatter is supported");
+  const body = input.slice(opening[0].length);
+  // Use LF/CRLF line boundaries and absolute EOF, not JS multiline `$`, which
+  // also accepts bare CR and Unicode line separators inside a YAML line.
+  const closing = /(?:^|\n)---[ \t]*(?:\r?\n|(?![\s\S]))/.exec(body);
+  if (!closing) throw new Error("Unclosed YAML note frontmatter");
+  const metadataEnd = closing.index + (body[closing.index] === "\n" ? 1 : 0);
+  try {
+    // js-yaml v4's default schema supports dates/aliases, but no executable tags.
+    const loaded = loadYaml(body.slice(0, metadataEnd));
+    const data = loaded === undefined ? {} : loaded;
+    if (!data || typeof data !== "object" || Array.isArray(data) || data instanceof Date) {
+      throw new Error("Metadata must be a mapping");
+    }
+    return { data, content: body.slice(closing.index + closing[0].length) };
+  } catch {
+    // Parser diagnostics may contain private source text.
+    throw new Error("Invalid YAML note metadata");
+  }
+}
+
 export async function buildNotes(files, assets = []) {
+  assets = assets.filter((file) => isPublicKnowledgePath(file) && /\.(png|jpe?g|gif|webp|avif)$/i.test(file));
   const notes = files.filter((file) => isNotePath(file.path)).flatMap((file) => {
     // Parse every candidate before filtering. Invalid YAML must fail the sync.
-    const { data, content } = matter(file.content.replace(/%%[\s\S]*?%%/g, ""));
+    const { data, content } = parseNoteMetadata(file.content.replace(/%%[\s\S]*?%%/g, ""));
     if (yes(data.private) || yes(data.draft) || no(data.publish) || no(data.published) ||
       /^(private|draft)$/i.test(String(data.status ?? "")) || !content.trim()) return [];
     const relative = file.path.slice("knowledge/".length).replace(/\.md$/i, "");
@@ -71,9 +104,11 @@ export async function buildNotes(files, assets = []) {
     const attachments = new Set();
     function imageFor(target) {
       const key = target.replace(/^\/?knowledge\//i, "").toLowerCase();
+      if (key.includes("\\") || key.startsWith("/") ||
+        key.split("/").some((part) => (part.startsWith(".") && part !== "..") || /^(templates?|private|drafts?)$/i.test(part))) return null;
       const relative = path.posix.join(path.posix.dirname(note.relative), key);
       const matches = assets.filter((file) => file.toLowerCase() === `knowledge/${relative}` || file.toLowerCase() === `knowledge/${key}`);
-      const candidates = matches.length ? matches : assets.filter((file) => file.toLowerCase().endsWith(`/${key}`));
+      const candidates = matches.length ? matches : key.split("/").includes("..") ? [] : assets.filter((file) => file.toLowerCase().endsWith(`/${key}`));
       if (candidates.length !== 1) return null;
       attachments.add(candidates[0]);
       return assetUrl(candidates[0]);
