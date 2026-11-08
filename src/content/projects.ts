@@ -17,7 +17,14 @@ export const projects: Collection = {
       summary: "Building an open-source workspace to trace, version, and evaluate AI agents.",
       categories: ["fullstack", "ml"],
       href: "https://github.com/devalparikh/auto-eval",
-      image: "/img/autoeval.webp",
+      // AutoEval's own link preview, rendered in that repo by share-card/render.mjs
+      video: {
+        src: "/video/autoeval-share.mp4",
+        poster: "/img/autoeval-poster.webp",
+        width: 960,
+        height: 504,
+        label: "preview: a failed trace becomes a test case and graph v8 tops the benchmark",
+      },
       sections: [
         {
           heading: "About",
