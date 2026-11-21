@@ -1,6 +1,6 @@
 import * as T from "three";
 import { printTexture, type Surface } from "./print";
-import { bridgeArch, frond, gable, hull, ridge } from "./contours";
+import { spruceWhorl, inkCreases, arcade, mansard, bridgeArch, frond, gable, hull, ridge } from "./contours";
 
 // Static details share geometry and instance buffers. Moving parts have their
 // own local group, so an entire skiff or tree moves as one object.
@@ -8,21 +8,20 @@ export function model() {
   const root = new T.Group();
   let origin = root;
   const shapes = {
-    octagon: new T.CylinderGeometry(0.5, 0.5, 1, 8),
-    octagonalRoof: new T.ConeGeometry(0.5, 1, 8),
-    cupola: new T.LatheGeometry(
+    octagon: inkCreases(new T.CylinderGeometry(0.5, 0.5, 1, 8)),
+    octagonalRoof: inkCreases(new T.ConeGeometry(0.5, 1, 8)),
+    cupola: inkCreases(new T.LatheGeometry(
       [[0.5, 0], [0.46, 0.28], [0.37, 0.56], [0.23, 0.82], [0.08, 1]].map(([x, y]) => new T.Vector2(x, y)),
       8,
-    ),
-    obelisk: new T.CylinderGeometry(0.25, 0.37, 1, 4).rotateY(Math.PI / 4),
-    shield: new T.LatheGeometry(
-      [[0.5, 0], [0.42, 0.17], [0.3, 0.43], [0.2, 0.72], [0.12, 0.91], [0.04, 1], [0, 1]]
-        .map(([x, y]) => new T.Vector2(x, y)), 24,
-    ),
+    )),
+    obelisk: inkCreases(new T.CylinderGeometry(0.25, 0.37, 1, 4).rotateY(Math.PI / 4)),
+    spruce: spruceWhorl(),
     basalt: new T.DodecahedronGeometry(0.53),
+    arcade: inkCreases(arcade()),
+    mansard: inkCreases(mansard()),
     hull: hull(),
-    bridge: bridgeArch(),
-    gable: gable(),
+    bridge: inkCreases(bridgeArch()),
+    gable: inkCreases(gable()),
     rim: new T.TorusGeometry(0.46, 0.042, 5, 22),
     ridge: ridge(false),
     summit: ridge(true),
@@ -33,13 +32,14 @@ export function model() {
     round: new T.SphereGeometry(0.5, 14, 10),
     drum: new T.CylinderGeometry(0.5, 0.5, 1, 16),
     cone: new T.ConeGeometry(0.5, 1, 12),
-    spire: new T.ConeGeometry(Math.SQRT1_2, 1, 4).rotateY(Math.PI / 4),
+    spire: inkCreases(new T.ConeGeometry(Math.SQRT1_2, 1, 4).rotateY(Math.PI / 4)),
   };
   const wash = { value: 1 };
-  function illustratedMaterial(ruled: boolean, surface?: Surface) {
+  function illustratedMaterial(ruled: boolean, surface?: Surface, creases = false) {
     const material = new T.MeshLambertMaterial();
     if (surface) material.map = printTexture(surface);
-    material.customProgramCacheKey = () => (ruled ? "ruled-paper" : "painted-paper");
+    const projectUV = Boolean(surface && surface !== "foliage");
+    material.customProgramCacheKey = () => `${ruled}-${projectUV}-${creases}`;
     material.onBeforeCompile = (shader) => {
       Object.assign(shader.uniforms, { wash });
       const varyings = "varying vec3 localPoint; varying vec3 faceNormal;\n";
@@ -53,7 +53,7 @@ export function model() {
 
       `,
         );
-      if (surface && surface !== "foliage") {
+      if (projectUV) {
         shader.vertexShader = shader.vertexShader.replace(
           "#include <uv_vertex>",
           `
@@ -64,22 +64,30 @@ export function model() {
         `,
         );
       }
+      if (creases) {
+        shader.vertexShader = "attribute vec3 crease; varying vec3 inkEdge;\n" +
+          shader.vertexShader.replace("#include <begin_vertex>", "#include <begin_vertex>\ninkEdge = crease;");
+        shader.fragmentShader = "varying vec3 inkEdge;\n" + shader.fragmentShader;
+      }
       const lines = ruled
         ? `
         vec3 dist = (0.5 - abs(localPoint)) / max(fwidth(localPoint), vec3(0.0001)) + abs(faceNormal) * 1000.0;
         float nearest = min(dist.x, min(dist.y, dist.z));
         vec3 footprint = fwidth(localPoint);
         float width = 1.0 / max(max(footprint.x, footprint.y), max(footprint.z, 0.0001));
-        stroke = max(stroke, (1.0 - smoothstep(0.0, 1.50, nearest)) * smoothstep(2.0, 8.0, width));
+        stroke = max(stroke, (1.0 - smoothstep(0.0, 1.15, nearest)) * smoothstep(2.0, 8.0, width));
       `
-        : "";
+        : creases ? `
+        vec3 edgePx = inkEdge / max(fwidth(inkEdge), vec3(0.0001));
+        stroke = max(stroke, 0.84 * (1.0 - smoothstep(0.12, 1.22, min(edgePx.x, min(edgePx.y, edgePx.z)))));
+        ` : "";
       shader.fragmentShader =
         varyings +
         "uniform float wash;\n" +
         shader.fragmentShader.replace(
           "#include <opaque_fragment>",
           `
-          outgoingLight = mix(outgoingLight, diffuseColor.rgb, wash * 0.69);
+          outgoingLight = mix(outgoingLight, diffuseColor.rgb, wash * 0.56);
           float stroke = 0.58 * (1.0 - smoothstep(0.02, 0.22, abs(normal.z)));
           ${lines}
           outgoingLight = mix(outgoingLight, vec3(0.046, 0.041, 0.032), stroke * 0.98);
@@ -91,8 +99,23 @@ export function model() {
   }
   const paint = illustratedMaterial(false),
     ruled = illustratedMaterial(true);
+  const thinPaint = illustratedMaterial(false);
+  thinPaint.side = T.DoubleSide;
+  const contourPaint = illustratedMaterial(false, undefined, true);
+  const groundPaint = illustratedMaterial(false);
+  groundPaint.vertexColors = true;
+  const landforms: T.BufferGeometry[] = [];
+  function ground(geometry: T.BufferGeometry) {
+    landforms.push(geometry);
+    const mesh = new T.Mesh(geometry, groundPaint);
+    mesh.castShadow = mesh.receiveShadow = true;
+    origin.add(mesh);
+  }
   const leafPaint = illustratedMaterial(false, "foliage");
-  const papers = new Map<Surface, T.MeshLambertMaterial>();
+  const papers: T.MeshLambertMaterial[] = [];
+  const finishes = new Map<string, T.Material>([
+    ["box", ruled], ["leaf", leafPaint], ["hull", thinPaint], ["frond", thinPaint],
+  ]);
   const lit = new T.MeshStandardMaterial({ color: "#8eafb0", emissive: "#ffae4c", emissiveIntensity: 0 });
   const glazing = new T.MeshStandardMaterial({
     color: "#b8d9cf",
@@ -140,8 +163,11 @@ export function model() {
     rz = 0,
   ) {
     const geometry = shape in shapes ? shapes[shape as keyof typeof shapes] : shapes.box;
-    if (!(shape in shapes) && !papers.has(shape as Surface))
-      papers.set(shape as Surface, illustratedMaterial(true, shape as Surface));
+    if (!(shape in shapes) && !finishes.has(shape)) {
+      const material = illustratedMaterial(true, shape as Surface);
+      papers.push(material);
+      finishes.set(shape, material);
+    }
     let batch = batches.get(parent);
     if (!batch) batches.set(parent, (batch = new Map()));
     const glow = color === "glass";
@@ -251,8 +277,7 @@ export function model() {
               ? lit
               : p.glazed
                 ? glazing
-                : (papers.get(key as Surface) ??
-                  (key === "leaf" ? leafPaint : key === "box" ? ruled : paint)),
+                : (finishes.get(key) ?? (p.geometry.hasAttribute("crease") ? contourPaint : paint)),
             counts.get(key)!,
           );
           mesh.frustumCulled = false;
@@ -287,6 +312,10 @@ export function model() {
     });
     leafPaint.map?.dispose();
     leafPaint.dispose();
+    landforms.forEach(g => g.dispose());
+    groundPaint.dispose();
+    contourPaint.dispose();
+    thinPaint.dispose();
     ruled.dispose();
     paint.dispose();
     lit.dispose();
@@ -295,6 +324,7 @@ export function model() {
   return {
     wash,
     root,
+    ground,
     place,
     sync,
     group,

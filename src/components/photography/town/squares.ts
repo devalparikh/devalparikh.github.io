@@ -1,3 +1,4 @@
+import { hillside } from "./landscape";
 import { model } from "./model";
 import { streets } from "./streets";
 
@@ -64,8 +65,8 @@ export function buildTown() {
   // Georgetown shop row and the towpath café.
   block(-1, 0, "#e3d6c3");
   house(-2.45, -0.95, 2.22, 3.3, "#c87967", "#a24b43", "COFFEE", "gable");
-  house(-0.13, -1.05, 2.18, 4.15, "#b9b5c6", "#617d88", "BOOKS");
-  house(2.15, -0.95, 2.13, 3.5, "#d9bd70", "#70917a", "BAKERY", "gable");
+  house(-0.13, -1.05, 2.18, 4.15, "#b9b5c6", "#536c70", "BOOKS", "oriel");
+  house(2.15, -0.95, 2.13, 3.5, "#d9bd70", "#70917a", "BAKERY", "mansard");
   table(-2.5, 1.85, "#bf5445");
   table(-0.5, 2.05, "#dfae54");
   patron(-2.5, 1.85, -1, "#7c97a9", 1);
@@ -78,6 +79,19 @@ export function buildTown() {
   n.shop(-3.7, -4.39, 2.55, 2.63, "#d9b389", slate, "PRINTS");
   n.shop(-0.98, -4.36, 2.7, 3.05, "#a5b8b2", brick, "BINDERY");
   n.shop(2.13, -4.35, 3.16, 2.47, "#e3c5a0", "#527f7c", "STUDIO");
+  // The bookshop rolls a two-tier display out under the reading-room bay.
+  const bookcart = group(-0.28, 0.1, 0.66);
+  for (const dx of [-0.45, 0.45]) {
+    form("rim", dx, 0.12, 0.14, 0.21, 0.21, 0.15, slate, bookcart);
+    form("planks", dx, 0.46, 0, 0.06, 0.77, 0.34, wood, bookcart);
+  }
+  for (let shelf = 0; shelf < 2; shelf++) {
+    const y = 0.24 + 0.37 * shelf;
+    form("planks", 0, y, 0, 0.98, 0.062, 0.34, wood, bookcart);
+    for (let i = 0; i < 8; i++)
+      form("box", -0.35 + i * 0.097, y + 0.15, 0.01, 0.074, 0.23 + 0.06 * Math.sin(i), 0.22,
+        [slate, brick, cream, "#65877a"][(i + shelf) % 4], bookcart, 0, 0, 0.05 * Math.cos(i));
+  }
   n.stall(4.35, -0.45, "prints", "#548477");
   n.cycle(-3.86, 2.7, -0.25);
   georgetownLock(m);
@@ -197,12 +211,18 @@ export function buildTown() {
   // Venice, a Florentine market, and the hillside vineyards.
   block(1, -1, water);
   form("box", 0, 0.17, -1.95, 10.62, 0.29, 3.75, "#d6c5a3");
-  house(-2.45, -1.62, 2.18, 3.1, "#dca172", "#b85d48", "FORNO", "gable", 0.31);
-  house(-0.28, -1.63, 1.95, 3.66, "#d6c88b", "#728b78", "CAFFÈ", "cornice", 0.31);
-  house(1.84, -1.61, 2.06, 3.02, "#c7a39c", "#ad6550", "OSTERIA", "gable", 0.31);
+  house(-2.45, -1.62, 2.18, 3.1, "#dca172", "#b85d48", "FORNO", "palazzo", 0.31);
+  house(-0.28, -1.63, 1.95, 3.66, "#d6c88b", "#728b78", "CAFFÈ", "palazzo", 0.31);
+  house(1.84, -1.61, 2.06, 3.02, "#c7a39c", "#ad6550", "OSTERIA", "palazzo", 0.31);
   for (let i = 0; i < 9; i++) {
     const x = -3.44 + i * 0.85;
-    form("drum", x, 0.29, 0.29, 0.12, 0.65, 0.12, wood);
+    const high = i % 3 === 0;
+    form("drum", x, high ? 0.62 : 0.29, 0.29, 0.12, high ? 1.21 : 0.65, 0.12, high ? cream : wood);
+    if (high) {
+      for (const y of [0.44, 0.7, 0.96])
+        form("drum", x, y, 0.29, 0.126, 0.12, 0.126, "#a95948");
+      form("cone", x, 1.28, 0.29, 0.16, 0.17, 0.16, "#a95948");
+    }
   }
   {
     const gondola = group(0, 0.12, 1.97);
@@ -250,14 +270,21 @@ export function buildTown() {
     bz = 1.28,
     length = 6.04;
   form("bridge", bx, 0.17, bz, 1.65, 1.15, length, "#dabb9a");
+  const bridgeTop = (t: number) => 0.53 + 3.02 * t * (1 - t);
   for (let i = 0; i <= 26; i++) {
     const u = i / 26,
       z = bz + (u - 0.5) * length;
-    const top = (t: number) => 0.53 + 3.02 * t * (1 - t);
-    form("setts", bx, top(u), z, 1.72, 0.11, 0.235, cream);
+    form("setts", bx, bridgeTop(u), z, 1.72, 0.11, 0.235, cream);
   }
+  for (const side of [-1, 1])
+    for (let step = 0; step < 2; step++)
+      form("setts", bx, 0.365 + step * 0.086, bz + side * (length / 2 + 0.32 - step * 0.17),
+        1.72, 0.13, 0.21, cream);
   rialtoShops(m, bx, bz);
-  person(bx, bz - 0.18, bx, bz + 0.29, "#bb6e4e", "photographer", 5, 1.33);
+  person(bx, bz - 2.8, bx, bz + 2.8, "#bb6e4e", "photographer", 3, 0, t => {
+    const u = 0.045 + 0.91 * t;
+    return [bx, bridgeTop(u) + 0.055, bz + length * (u - 0.5)];
+  });
   n.quay(0, 4.62);
   boat(-3.94, 1.78, cream);
   n.barrel(-3.94, 4.62, 0.3);
@@ -308,38 +335,59 @@ export function buildTown() {
   n.visitors(1.17, 4.52);
 
   block(0, -2, moss);
+  // The crest levels out into a farmyard. Contour rows bow around the
+  // shoulder, leaving a continuous gravel lane for the harvest crew.
+  const farm = hillside(m, (x, z) =>
+    Math.min(1, Math.max(0, (3.55 - z) / 6.8)) * (2.12 + 0.28 * Math.cos(x * 0.63)),
+    "#a6b378");
+  const farmRoad = (z: number) => 2.63 + 0.91 * Math.sin(z * 0.89);
+  const farmWalk = farm.lane(farmRoad, -4.12, 5.31, 0.92, "#ddc7a0");
+  farm.lane(() => -3.53, -2.73, farmRoad(-3.53), 0.58, "#ddc7a0", "x");
+  person(0, 0, 0, 0, "#a75c43", "gardener", 3, 0, t => farmWalk(0.13 + 0.78 * t));
   for (let i = 0; i < 5; i++) {
-    const z = -2.89 + i * 1.25,
-      h = 0.16 + (4 - i) * 0.19;
-    form("box", -0.85, h / 2, z, 5.55, h, 1.22, "#a7b47d");
-    form("masonry", -0.85, h * 0.46, z + 0.6, 5.56, h * 0.87, 0.12, "#baaa8b");
-    beam([-3.35, h + 0.59, z], [1.68, h + 0.59, z], 0.045, wood);
-    for (let j = 0; j < 9; j++) {
-      const x = -3.27 + j * 0.59;
-      for (const dx of [-0.19, 0.13])
-        form("leaf", x + dx, h + 0.43, z + 0.22, 0.14, 0.23, 0.14, "#775e75");
-      form("drum", x, h + 0.32, z, 0.06, 0.64, 0.06, wood);
-      form("leaf", x, h + 0.59, z, 0.75, 0.6, 0.57, j % 2 ? "#789759" : "#8ca167");
+    const rowZ = (x: number) => -2.64 + i * 1.21 + 0.32 * Math.cos(0.64 * x + 0.18 * i);
+    for (let j = 0; j < 10; j++) {
+      const x = -3.91 + j * 0.58, z = rowZ(x), h = farm.height(x, z);
+      form("drum", x, h + 0.39, z, 0.057, 0.78, 0.057, wood);
+      if (j === 9) continue;
+      const end = x + 0.58, ez = rowZ(end);
+      if (i === 1 || i === 3) {
+        for (let k = 0; k < 2; k++) {
+          const sx = x + k * 0.29, sz = rowZ(sx) + 0.37;
+          form("basalt", sx, farm.height(sx, sz) + 0.065, sz, 0.4, 0.21 + 0.045 * Math.sin(j),
+            0.24, j % 3 ? "#af9f81" : "#a39378", lot, 0, j * 0.3);
+        }
+      }
+      beam([x, h + 0.68, z], [end, farm.height(end, ez) + 0.68, ez], 0.026, slate);
+      for (let k = 0; k < 3; k++) {
+        const dx = x + k * 0.18, dz = rowZ(dx), y = farm.height(dx, dz);
+        form("leaf", dx, y + 0.61 + 0.06 * Math.sin(j+k), dz, 0.46, 0.44, 0.47,
+          ["#789159", "#939e5d", "#718951"][(k+j+i)%3], lot, 0.14, j + k);
+        if (k === 1) form("leaf", dx, y + 0.44, dz + 0.17, 0.11, 0.22, 0.12, "#805e73");
+      }
     }
   }
-  for (let i = 0; i < 7; i++) {
-    const z = -3.2 + i * 0.95;
-    form("drum", 3.46, 0.62, z, 0.11, 1.08, 0.11, wood);
-    form("leaf", 3.46, 1.71, z, 0.61, 2.68, 0.6, i % 2 ? "#58785e" : "#6f8962");
+  for (let i = 0; i < 4; i++) {
+    const z = -3.02 + i * 1.41, x = farmRoad(z) - 0.67, h = farm.height(x, z);
+    form("drum", x, h + 0.42, z, 0.1, 0.86, 0.1, wood);
+    form("leaf", x, h + 1.55, z, 0.56, 2.04 + Math.sin(i) * 0.34, 0.56,
+      i % 2 ? "#58785e" : "#71885e");
   }
-  person(2.15, -1.95, 2.15, 2.3, "#9c6750", "gardener", 7);
-
-  n.chalet(-2.93, -4.37, "CANTINA");
+  const cellarY = farm.height(-2.73, -3.82);
+  form("masonry", -2.73, cellarY / 2, -3.98, 2.58, cellarY, 1.69, "#bba184");
+  house(-2.73, -3.98, 2.57, 1.7, "#d6b689", "#aa624d", "CANTINA", "gable", cellarY).scale.z = 0.74;
+  const yard = group(0, farm.height(0.17, -4.1), 0);
+  form("setts", 0.37, -0.06, -4.07, 2.37, 0.14, 1.2, "#cfb792", yard);
   // The harvest yard has a basket press, its screw and a long turning bar.
-  form("drum", 0.17, 0.58, -4.1, 0.96, 0.97, 0.96, wood);
-  for (const y of [0.28, 0.82]) form("drum", 0.17, y, -4.1, 1, 0.083, 1, slate);
-  for (const x of [-0.54, 0.88]) form("planks", x, 0.91, -4.1, 0.15, 1.74, 0.19, wood);
-  form("planks", 0.17, 1.75, -4.1, 1.61, 0.18, 0.23, wood);
-  form("drum", 0.17, 1.57, -4.1, 0.12, 0.95, 0.12, slate);
-  beam([-0.44, 1.93, -4.17], [0.78, 1.93, -4.03], 0.09, slate);
+  form("drum", 0.17, 0.58, -4.1, 0.96, 0.97, 0.96, wood, yard);
+  for (const y of [0.28, 0.82]) form("drum", 0.17, y, -4.1, 1, 0.083, 1, slate, yard);
+  for (const x of [-0.54, 0.88]) form("planks", x, 0.91, -4.1, 0.15, 1.74, 0.19, wood, yard);
+  form("planks", 0.17, 1.75, -4.1, 1.61, 0.18, 0.23, wood, yard);
+  form("drum", 0.17, 1.57, -4.1, 0.12, 0.95, 0.12, slate, yard);
+  beam([-0.44, 1.93, -4.17], [0.78, 1.93, -4.03], 0.09, slate, yard);
   for (const x of [-3.9, -3.31, -2.7]) n.barrel(x, 3.97);
   n.stall(0, 3.86, "fruit", "#ae8249");
-  n.bench(3.47, 3.94);
+  n.bench(4.31, 3.61, Math.PI / 2);
 
   // The Kona shore opens onto its own marina and Makalei putting green.
   block(-2, 1, water);
@@ -424,9 +472,23 @@ export function buildTown() {
   block(2, -2, "#9cb298");
   mountain(-1.05, -0.92, 4.72, 4.43, true);
   mountain(1.35, -1.67, 3.88, 3.63, true);
-  for (let i = 0; i < 7; i++)
-    tree(-2.99 + i * 0.95, 0.88 + random() * 1.55, 1.77 + random() * 0.66, "#688779", "pine");
-  person(-2.7, 2.93, 2.57, 2.85, "#d79f50", "hiker", 6);
+  const alp = hillside(m, (x, z) =>
+    (1.08 + 0.52 * Math.sin(0.59 * x - 0.36 * z)) * Math.exp(-0.22 * (z - 0.63) ** 2),
+    "#9aaf84");
+  const trailX = (z: number) => 1.03 + 1.09 * Math.sin(z * 1.02) + 3.91 / (1 + Math.exp(2.7 * z));
+  const traverse = alp.lane(trailX, -1.48, 5.31, 0.58, "#d5c4a0");
+  const trailHead = group(trailX(-1.48), alp.height(trailX(-1.48), -1.48), -1.48);
+  for (let i = 0; i < 4; i++)
+    form("basalt", 0.04 * Math.sin(i), 0.09 + i * 0.13, 0, 0.58 - i * 0.11,
+      0.22 - i * 0.028, 0.54 - i * 0.093, i % 2 ? "#99998b" : "#858879", trailHead, 0, i);
+  form("drum", 0.31, 0.71, 0, 0.068, 1.42, 0.068, wood, trailHead);
+  form("box", 0.51, 1.28, 0, 0.67, 0.14, 0.045, "#eaaa42", trailHead);
+  form("box", 0.18, 1.09, 0, 0.56, 0.13, 0.046, "#eaaa42", trailHead, 0, 0.68);
+  for (let i = 0; i < 7; i++) {
+    const x = -3.91 + i * 0.55, z = 0.87 + random() * 1.18;
+    tree(x, z, 1.77 + random() * 0.66, "#688779", "pine", alp.height(x,z));
+  }
+  person(0, 0, 0, 0, "#b97838", "hiker", 3, 0, t => traverse(0.03 + t * 0.94));
   // A cableway above the footpath, with an inclined haul rope and a glazed cabin.
   for (const side of [-1, 1]) {
     const x = side * 4.39,
@@ -446,7 +508,7 @@ export function buildTown() {
     cabin.position.y = 3.18 + 0.221 * cabin.position.x;
   });
   n.chalet(-2.83, 4.18, "ALP");
-  n.bench(2.18, 4.2);
+  n.bench(3.26, 4.2);
 
   block(2, -1, "#cabc9d");
   house(-1.64, -1.39, 2.65, 1.97, "#b89168", "#aa5947", "BAHN", "gable");
@@ -555,8 +617,6 @@ export function buildTown() {
       ["BISTRO", "FLEURS", "CAFÉ"][i],
       "mansard",
     );
-    form("spire", x, h + 0.62, -1.47, 2.48, 1.24, 2.52, slate);
-    for (const dx of [-0.57, 0.57]) form("box", x + dx, h + 0.53, -0.56, 0.34, 0.42, 0.4, cream);
   }
   for (const x of [-2.42, 0, 2.42]) table(x, 1.57, x === 0 ? "#d5a448" : "#bd5e50");
   patron(-2.42, 1.57, -1, "#9e6b91", 2);

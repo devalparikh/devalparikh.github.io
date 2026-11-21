@@ -21,28 +21,51 @@ export function georgetownLock({ form, beam, sign }: Model) {
     for (const dz of [-1, 0, 1]) form("box", x, 0.76, z + dz, 0.06, 0.58, 0.06, bronze);
     form("box", x, 1.03, z, 0.07, 0.08, 2.11, bronze);
   }
+  // Ground paddles and handwheels on the gate leaves.
+  for (const x of [-2.55, 2.1]) {
+    form("box", x + 0.08, 0.44, z + 0.52, 0.13, 0.63, 0.19, "#646457");
+    form("rim", x + 0.08, 0.83, z + 0.52, 0.32, 0.32, 0.29, bronze);
+    for (const angle of [0, Math.PI / 3, 2 * Math.PI / 3])
+      form("box", x + 0.08, 0.83, z + 0.52, 0.026, 0.27, 0.026, bronze, undefined, 0, 0, angle);
+  }
   sign("LOCK 3", -1.7, 0.49, 4.87, 0.88, 0.32, bronze);
 }
 
-export function lincolnMemorial({ form }: Model) {
+export function lincolnMemorial({ form, beam }: Model) {
   const z = -3.85;
   for (let i = 0; i < 5; i++)
     form("box", 0, 0.14 + i * 0.095, z + 0.32 - i * 0.08, 4.35 - i * 0.1, 0.12, 2.51 - i * 0.16, ivory);
-  form("masonry", 0, 1.21, z - 0.43, 2.86, 1.32, 0.34, sandstone);
+  form("masonry", 0, 1.21, z - 0.43, 2.86, 1.32, 0.34, "#ac9e89");
+  for (const x of [-0.96, 0, 0.96]) {
+    form("box", x, 1.23, z - 0.24, 0.7, 1.24, 0.045, "#817a6c");
+    form("box", x, 1.24, z - 0.21, 0.54, 1.06, 0.043, "#655f57");
+  }
   // The central seated figure is visible through the east colonnade.
   form("box", 0, 0.76, z, 0.52, 0.42, 0.47, ivory);
   form("box", 0, 1.06, z - 0.08, 0.39, 0.5, 0.29, ivory);
   form("round", 0, 1.41, z - 0.08, 0.24, 0.29, 0.23, ivory);
   for (const side of [-1, 1]) {
     form("box", side * 0.13, 0.79, z + 0.25, 0.17, 0.42, 0.27, ivory);
-    for (let i = 0; i < 8; i++)
-      form("drum", -1.66 + i * 0.475, 1.28, z + side * 0.78, 0.2, 1.43, 0.2, ivory);
+    form("box", side * 0.24, 0.89, z + 0.05, 0.12, 0.43, 0.39, ivory);
+    beam([side * 0.16, 1.21, z - 0.07], [side * 0.23, 1.09, z + 0.17], 0.12, ivory);
+    for (let i = 0; i < 8; i++) {
+      const x = -1.66 + i * 0.475, cz = z + side * 0.78;
+      form("drum", x, 1.28, cz, 0.2, 1.43, 0.2, ivory);
+      form("drum", x, 1.94, cz, 0.27, 0.12, 0.27, ivory);
+      form("box", x, 1.99, cz, 0.28, 0.07, 0.28, ivory);
+      for (let flute = 0; flute < 7; flute++) {
+        const a = flute * Math.PI * 2 / 7;
+        form("drum", x + 0.091 * Math.cos(a), 1.26, cz + 0.091 * Math.sin(a), 0.019, 1.2, 0.019, "#c8bfae");
+      }
+    }
     for (const dz of [-0.27, 0.27])
       form("drum", side * 1.66, 1.28, z + dz, 0.2, 1.43, 0.2, ivory);
   }
   form("masonry", 0, 2.07, z, 3.81, 0.26, 1.94, ivory);
   form("box", 0, 2.27, z, 3.96, 0.14, 2.04, ivory);
-  form("box", 0, 2.46, z, 3.38, 0.28, 1.59, sandstone);
+  form("box", 0, 2.46, z, 3.38, 0.28, 1.59, "#e1d4bd");
+  for (let i = 0; i < 18; i++)
+    form("box", -1.74 + i * 0.205, 2.09, z + 0.98, 0.077, 0.17, 0.047, "#d0c3ae");
 }
 
 export function bartholdiFountain({ form }: Model) {
@@ -143,11 +166,13 @@ export function rialtoShops({ form, group }: Model, x: number, z: number) {
         const dz = bank * (0.43 + i * 0.47);
         const y = 1.29 - 0.083 * dz * dz;
         form("masonry", 0, y + 0.38, dz, 0.49, 0.81, 0.48, ivory, row);
-        form("box", side * 0.25, y + 0.34, dz, 0.04, 0.58, 0.32, "#74877a", row);
+        form("box", side * 0.25, y + 0.34, dz, 0.04, 0.58, 0.32, "#526a63", row);
+        form("arcade", side * 0.284, y + 0.04, dz, 0.49, 0.72, 0.085, ivory, row, 0, Math.PI/2);
         form("slate", 0, y + 0.83, dz, 0.63, 0.12, 0.51, "#a66e58", row, bank * 0.21);
       }
-      form("box", 0, 1.83, bank * 0.42, 0.5, 1.26, 0.18, ivory, row);
+
     }
+    form("arcade", 0, 1.28, 0, 1.12, 1.25, 0.5, ivory, row, 0, Math.PI/2);
     form("box", 0, 2.48, 0, 0.54, 0.15, 1.03, ivory, row);
     form("gable", 0, 2.69, 0, 0.62, 0.3, 1.16, ivory, row);
   }
