@@ -746,7 +746,7 @@
   width: 100%;
   height: 100dvh;
 }
-.town-view, .town-view canvas, .town-poster {
+.town-view, .town-view canvas, .town-print, .town-poster {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -764,6 +764,19 @@
 [data-theme="inkember"] .town-view::after { mix-blend-mode: soft-light; }
 .town-poster { background: center / cover url("/img/town/morning.webp"); }
 [data-theme="inkember"] .town-poster { background-image: url("/img/town/night.webp"); }
+.town-hero[data-expanded="true"] .town-poster {
+  margin: auto;
+  width: min(100%, calc(100dvh * 1308 / 454));
+  height: auto;
+  aspect-ratio: 1308 / 454;
+  background: center / contain no-repeat url("/img/town/overview-morning.webp");
+}
+[data-theme="inkember"] .town-hero[data-expanded="true"] .town-poster {
+  background-image: url("/img/town/overview-night.webp");
+}
+.town-hero[data-expanded="true"] .town-print { cursor: grab; touch-action: none; }
+.town-hero[data-expanded="true"] .town-print:active { cursor: grabbing; }
+.town-print:focus-visible { outline: 2px dashed currentColor; outline-offset: -5px; }
 .town-view canvas { cursor: grab; }
 .town-hero[data-expanded="true"] canvas { touch-action: none !important; }
 .town-view canvas:active { cursor: grabbing; }
@@ -778,7 +791,10 @@
   pointer-events: none;
   font: 450 clamp(1.7rem, 3.6vw, 3.6rem)/1 var(--font-fraunces), Georgia, serif;
   letter-spacing: -0.065em;
-  text-shadow: 0 1px 4px var(--town-paper), 0 0 12px var(--town-paper);
+  padding: 0.09em 0.27em 0.17em;
+  background: var(--town-paper);
+  border: 1px solid color-mix(in srgb, currentColor 42%, transparent);
+  box-shadow: 0.065em 0.065em 0 var(--town-paper);
 }
 .town-heading em { font-family: Georgia, serif; }
 .town-hero[data-expanded="true"] .town-heading { display: none; }

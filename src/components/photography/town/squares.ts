@@ -1,7 +1,9 @@
 import { model } from "./model";
 import { streets } from "./streets";
 
-const pitch = 9;
+import { neighborhood } from "./neighborhood";
+
+export const pitch = 12;
 const cream = "#f5ebd4",
   slate = "#506777",
   water = "#98c8df",
@@ -12,30 +14,31 @@ const cream = "#f5ebd4",
 export function buildTown() {
   const m = model();
   const { form, group, beam, random } = m;
-  const { house, tree, lamp, table, patron, boat, person } = streets(m);
+  const street = streets(m);
+  const { house, tree, lamp, table, patron, boat, person } = street;
+  const n = neighborhood(m, street);
+  const footprints: [number, number][] = [];
   let lot = m.root;
   function block(col: number, row: number, surface: string) {
+    footprints.push([col * pitch, row * pitch]);
     lot = m.place(col * pitch, row * pitch);
-    form("box", 0, -0.22, 0, 9, 0.24, 9, "#e2dbd0");
-    form("box", 0, -0.07, 0, 7.8, 0.22, 7.8, cream);
-    form("box", 0, 0.045, 0, 7.7, 0.04, 7.7, surface);
-    // Broken center stripes, crossing stripes, and worn marks in the paving.
-    for (const n of [-3, 0, 3]) {
-      form("box", n, -0.09, 4.47, 0.87, 0.014, 0.045, "#f5df9d");
-      form("box", 4.47, -0.09, n, 0.045, 0.014, 0.87, "#f5df9d");
+    form("box", 0, -0.22, 0, pitch, 0.24, pitch, "#ded8cb");
+    form("box", 0, -0.07, 0, 10.78, 0.24, 10.78, cream);
+    const ground =
+      surface === water
+        ? "lagoon"
+        : [moss, "#b1c38d", "#9cb298", "#aac180"].includes(surface)
+          ? "meadow"
+          : "setts";
+    form(ground, 0, 0.045, 0, 10.66, 0.045, 10.66, surface);
+    for (const n of [-4, -2, 0, 2, 4]) {
+      form("box", n, -0.09, 5.98, 0.79, 0.014, 0.046, "#f6e3ac");
+      form("box", 5.98, -0.09, n, 0.046, 0.014, 0.79, "#f6e3ac");
     }
-    for (let i = 0; i < 5; i++) form("box", 3.98 + i * 0.19, -0.08, 3.4, 0.09, 0.02, 0.59, "#f2ead5");
-    for (let i = 0; i < 110; i++)
-      form(
-        "box",
-        (random() - 0.5) * 7.5,
-        0.072,
-        (random() - 0.5) * 7.5,
-        0.06 + random() * 0.17,
-        0.009,
-        0.018,
-        surface === water ? "#d4e2dc" : "#afaa89",
-      );
+    for (let i = 0; i < 5; i++) {
+      form("box", 5.52 + i * 0.19, -0.08, 4.87, 0.09, 0.02, 0.61, "#f7f1e2");
+      form("box", 4.87, -0.08, 5.52 + i * 0.19, 0.61, 0.02, 0.09, "#f7f1e2");
+    }
   }
   function flowerbed(x: number, z: number, w: number, d: number) {
     form("box", x, 0.18, z, w, 0.19, d, cream);
@@ -86,6 +89,14 @@ export function buildTown() {
   person(-2.5, 0.65, -1, 1.65, cream, "waiter", 1);
   person(2.6, 1.55, 0.94, 2.86, "#ac5351", "baker", 6);
 
+  n.shop(-3.7, -4.39, 2.55, 2.63, "#d9b389", slate, "PRINTS");
+  n.shop(-0.98, -4.36, 2.7, 3.05, "#a5b8b2", brick, "BINDERY");
+  n.shop(2.13, -4.35, 3.16, 2.47, "#e3c5a0", "#527f7c", "STUDIO");
+  n.stall(4.35, -0.45, "prints", "#548477");
+  n.cycle(-3.86, 2.7, -0.25);
+  n.bench(2.12, 4.29);
+  n.visitors(-2.61, 3.77);
+
   // The reflecting pool is a separate block from both Georgetown and the glasshouse.
   block(0, 0, moss);
   form("box", 0, 0.1, 0, 2.8, 0.07, 7.44, cream);
@@ -97,6 +108,12 @@ export function buildTown() {
     for (let i = 0; i < 4; i++)
       tree(side * 2.85, -2.86 + i * 1.83, 1.7 + (i % 2) * 0.28, i % 2 ? "#97b47e" : "#cfad9e");
   person(-1.15, 2.9, -1.15, -0.8, "#b26246", "photographer", 5);
+
+  n.arbor(0, -4.54);
+  n.bench(-4.37, 0, Math.PI / 2);
+  n.bench(4.37, 0, -Math.PI / 2);
+  n.kiosk(-3.64, 4.25, "POST");
+  n.visitors(0.17, 4.36);
 
   block(-1, -1, "#b1c38d");
   {
@@ -138,6 +155,16 @@ export function buildTown() {
     person(-1.12, 1.1, -1.45, 2.75, "#738d70", "gardener", 4);
   }
 
+  n.shop(-2.94, -4.36, 3.46, 1.63, "#d3bc94", "#738b74", "NURSERY");
+  for (const x of [0.76, 2.66, 4.12]) {
+    form("planks", x, 0.31, -4.45, 1.26, 0.48, 1.17, wood);
+    form("box", x, 0.63, -4.45, 1.33, 0.09, 1.27, "#a9c9bd", lot, 0.16);
+    for (const dx of [-0.59, 0, 0.59]) form("box", x + dx, 0.69, -4.45, 0.04, 0.03, 1.24, cream, lot, 0.16);
+  }
+  n.stall(-3.7, 4, "flowers", moss);
+  n.arbor(2.29, 4.32);
+  n.visitors(-1.89, 4.2);
+
   // A Paris garden carousel gives the intersection its own moving landmark.
   block(0, -1, "#dcd5b7");
   const ride = group(-0.8, 0.08, -0.8);
@@ -174,9 +201,16 @@ export function buildTown() {
   person(-2.56, 1.36, 0.91, 1.46, "#697f99", "photographer", 2);
   person(1.95, 1.57, 2.07, -0.8, "#ad675c", "gardener", 6);
 
+  n.shop(-2.43, -4.41, 3.03, 2.41, "#aebfc0", "#657d89", "ATELIER");
+  n.stall(1.42, -4.18, "prints", "#7195a1");
+  n.stall(3.62, -4.16, "flowers", brick);
+  n.bench(-3.7, 3.98);
+  n.cycle(3.47, 2.97);
+  n.visitors(-0.37, 4.08);
+
   // Venice, a Florentine market, and the hillside vineyards.
   block(1, -1, water);
-  form("box", 0, 0.17, -1.95, 7.6, 0.29, 3.75, "#d6c5a3");
+  form("box", 0, 0.17, -1.95, 10.62, 0.29, 3.75, "#d6c5a3");
   house(-2.45, -1.62, 2.18, 3.1, "#dca172", "#b85d48", "FORNO", "gable", 0.31);
   house(-0.28, -1.63, 1.95, 3.66, "#d6c88b", "#728b78", "CAFFÈ", "cornice", 0.31);
   house(1.84, -1.61, 2.06, 3.02, "#c7a39c", "#ad6550", "OSTERIA", "gable", 0.31);
@@ -187,7 +221,24 @@ export function buildTown() {
   {
     const gondola = group(0, 0.12, 1.97);
     gondola.userData.moving = true;
-    form("leaf", 0, 0.13, 0, 3.18, 0.36, 0.72, "#38494a", gondola);
+    form("hull", 0, 0.1, 0, 3.18, 0.43, 0.76, "#283c42", gondola);
+    form("planks", 0, 0.17, 0, 1.92, 0.09, 0.43, wood, gondola);
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < 12; i++) {
+        const point = (j: number) => {
+          const u = j / 6 - 1;
+          return [u * 1.59, 0.1 + 0.43 * (0.36 + 0.7 * u ** 4), side * 0.38 * (1 - u * u)];
+        };
+        beam(point(i), point(i + 1), 0.034, "#c9a26a", gondola);
+      }
+    }
+    for (const x of [-0.24, 0.52]) {
+      form("box", x, 0.29, 0, 0.33, 0.13, 0.53, "#9a5045", gondola);
+      form("box", x - 0.14, 0.43, 0, 0.095, 0.28, 0.52, "#aa6554", gondola);
+    }
+    form("round", 0.49, 0.58, 0, 0.24, 0.36, 0.27, "#708c96", gondola);
+    form("round", 0.49, 0.85, 0, 0.2, 0.22, 0.2, "#b48364", gondola);
+    form("drum", 0.49, 0.96, 0, 0.28, 0.063, 0.29, cream, gondola);
     for (const side of [-1, 1]) beam([side * 1.12, 0.13, 0], [side * 1.48, 0.41, 0], 0.08, slate, gondola);
     form("box", -0.87, 0.31, 0, 0.18, 0.34, 0.17, slate, gondola);
     form("box", -0.87, 0.62, 0, 0.24, 0.29, 0.17, cream, gondola);
@@ -204,6 +255,33 @@ export function buildTown() {
     });
   }
   person(-2.97, -0.15, 1.9, -0.15, "#9573a1", "photographer", 6, 0.32);
+  form("setts", 0, 0.22, -4.23, 10.62, 0.38, 2.15, "#d8c9ac");
+  for (const [i, tint] of ["#cb9580", "#e4c579", "#b8bbb2", "#bb9d96"].entries())
+    n.shop(-3.94 + i * 2.52, -4.44, 2.34, 2.65 + (i % 3) * 0.57, tint, i % 2 ? "#698579" : brick, "");
+  n.laundry(-3.27);
+  // A stepped stone crossing joins the back streets to the waterside promenade.
+  const bx = 4.48,
+    bz = 1.28,
+    length = 6.04;
+  form("bridge", bx, 0.17, bz, 1.04, 1.15, length, "#dabb9a");
+  for (let i = 0; i <= 26; i++) {
+    const u = i / 26,
+      z = bz + (u - 0.5) * length;
+    const top = (t: number) => 0.53 + 3.02 * t * (1 - t);
+    form("setts", bx, top(u), z, 1.12, 0.11, 0.235, cream);
+    for (const dx of [-0.51, 0.51]) {
+      if (i % 2 === 0) form("drum", bx + dx, top(u) + 0.32, z, 0.06, 0.62, 0.06, slate);
+      if (i < 26)
+        beam([bx + dx, top(u) + 0.62, z], [bx + dx, top(u + 1 / 26) + 0.62, z + length / 26], 0.055, slate);
+    }
+  }
+  person(bx, bz - 0.18, bx, bz + 0.29, "#bb6e4e", "photographer", 5, 1.33);
+  n.quay(0, 4.62);
+  boat(-3.94, 1.78, cream);
+  n.barrel(-3.94, 4.62, 0.3);
+  n.barrel(-3.41, 4.58, 0.3);
+  person(-1.4, 4.5, 2.34, 4.5, "#b97d60", "hiker", 8, 0.31);
+
   block(1, -2, "#e4daca");
   dome(-0.98, -1.62, 3.5, 1.43, "#bc6450");
   form("box", 1.54, 2.04, -2.04, 0.82, 4.04, 0.82, "#d5ba94");
@@ -255,6 +333,14 @@ export function buildTown() {
   person(0.3, -0.18, -2.25, 0.12, "#9da368", "baker", 7);
   person(1.94, 2.63, 2.61, 2.11, "#b76955", "photographer", 1);
   person(-2.5, 2.55, 2.45, 2.35, "#5d8193", "baker", 4);
+  n.shop(-3.24, -4.43, 3.17, 2.78, "#d9b48c", brick, "FORNO");
+  n.shop(0.17, -4.42, 3.44, 2.51, "#cebcb1", "#74877a", "CARTA");
+  n.stall(-3.8, 3.7, "fruit", brick);
+  n.stall(-1.58, 3.68, "flowers", moss);
+  n.stall(0.65, 3.7, "prints", slate);
+  n.barrel(3.4, 1.6);
+  n.visitors(1.17, 4.52);
+
   block(0, -2, moss);
   for (let i = 0; i < 5; i++) {
     const z = -2.89 + i * 1.25,
@@ -270,6 +356,12 @@ export function buildTown() {
   for (const z of [-2.7, -0.7, 1.6]) tree(2.96, z, 2.9, "#65815c", "pine");
   person(2.15, -1.95, 2.15, 2.3, "#9c6750", "gardener", 7);
 
+  n.chalet(-2.93, -4.37, "CANTINA");
+  n.arbor(1.1, -4.4);
+  for (const x of [-3.9, -3.31, -2.7]) n.barrel(x, 3.97);
+  n.stall(0, 3.86, "fruit", "#ae8249");
+  n.bench(3.47, 3.94);
+
   // The Kona shore opens onto its own marina and Makalei putting green.
   block(-2, 1, water);
   form("box", -2.35, 0.16, 0, 2.9, 0.25, 7.6, "#e1c693");
@@ -280,6 +372,14 @@ export function buildTown() {
   tree(-2.75, 2.8, 2.98, "#619061", "palm");
   person(-1.92, -2.57, -0.19, -2.57, "#668f9c", "photographer", 8, 0.3);
   person(-2.87, -0.73, -2.6, 1.69, "#bf785e", "hiker", 2, 0.29);
+  form("meadow", -4.56, 0.15, 0, 1.52, 0.25, 10.6, "#d6c692");
+  n.quay(0, -4.61);
+  n.kiosk(-2.97, -4.39, "TACKLE");
+  for (const x of [0.6, 1.21, 1.88]) n.barrel(x, -4.67, 0.32);
+  boat(3.53, -1.75, cream);
+  boat(3.68, 1.33, "#c79753");
+  tree(-4.55, 0.6, 3.3, "#71926b", "palm", 0.27);
+
   block(-2, 0, moss);
   mountain(-0.39, -1.5, 3.37, 5.64, false);
   form("box", 0, 0.09, 2.62, 7.62, 0.08, 2.4, "#e6ce9c");
@@ -289,6 +389,13 @@ export function buildTown() {
   for (const x of [-2.92, 2.66]) tree(x, 0.41, 3.12, "#65885b", "palm");
   house(2.27, -1.98, 1.57, 1.4, "#d7b886", "#729695", "", "gable");
   person(-2.3, 2.57, 1.69, 2.57, "#b76454", "photographer", 4, 0.13);
+  n.shop(-2.8, -4.35, 3.1, 1.6, "#e0bd8d", "#7c9c92", "OUTRIGGER");
+  n.kiosk(2.83, -4.35, "SURF");
+  form("lagoon", 0, 0.16, 4.5, 10.61, 0.04, 1.62, water);
+  for (const x of [-4.43, -3.97, -3.51])
+    form("leaf", x, 0.61, 1.06, 0.34, 1.47, 0.12, x === -3.97 ? cream : brick, lot, -0.28, 0, 0.16);
+  n.cycle(3.77, 1.46);
+
   block(-2, 2, moss);
   for (const side of [-1, 1]) {
     form("round", side * 1.47, 0.16, side * 1.32, 3.98, 0.25, 2.92, "#b7ce83");
@@ -326,6 +433,11 @@ export function buildTown() {
   person(-1.9, -1.18, -0.72, -1.21, "#dfaa62", "golfer", 6, 0.28);
   person(1.1, 1.89, 2.24, 1.56, "#6a8d9c", "golfer", 2, 0.26);
 
+  n.chalet(-2.8, -4.35, "CLUBHOUSE");
+  n.arbor(1.23, -4.28);
+  n.bench(-3.87, 2.24, Math.PI / 2);
+  n.visitors(-1.83, 4.06);
+
   // Three Swiss blocks: lake railway, alpine ridge and chalet village.
   block(2, -2, "#9cb298");
   mountain(-1.05, -0.92, 4.72, 4.43, true);
@@ -333,6 +445,27 @@ export function buildTown() {
   for (let i = 0; i < 7; i++)
     tree(-2.99 + i * 0.95, 0.88 + random() * 1.55, 1.77 + random() * 0.66, "#688779", "pine");
   person(-2.7, 2.93, 2.57, 2.85, "#d79f50", "hiker", 6);
+  // A cableway above the footpath, with an inclined haul rope and a glazed cabin.
+  for (const side of [-1, 1]) {
+    const x = side * 4.39,
+      y = side > 0 ? 4.15 : 2.21;
+    form("box", x, y / 2, 2.3, 0.13, y, 0.18, slate);
+    form("box", x, y, 2.3, 0.19, 0.13, 0.89, slate);
+  }
+  for (const z of [1.96, 2.64]) beam([-4.39, 2.21, z], [4.39, 4.15, z], 0.039, slate);
+  const cabin = group(0, 3.18, 2.64);
+  cabin.userData.moving = true;
+  form("box", 0, -0.19, 0, 0.06, 0.38, 0.065, slate, cabin);
+  form("box", 0, -0.72, 0, 0.89, 0.76, 0.6, brick, cabin);
+  for (const x of [-0.21, 0.21]) form("box", x, -0.59, 0, 0.35, 0.32, 0.62, "glass", cabin);
+  form("box", 0, -0.32, 0, 0.97, 0.1, 0.7, cream, cabin);
+  m.choreographies.push((t) => {
+    cabin.position.x = 3.88 * Math.sin(t * 0.18);
+    cabin.position.y = 3.18 + 0.221 * cabin.position.x;
+  });
+  n.chalet(-2.83, 4.18, "ALP");
+  n.bench(2.18, 4.2);
+
   block(2, -1, "#cabc9d");
   house(-1.64, -1.39, 2.65, 1.97, "#b89168", "#aa5947", "BAHN", "gable");
   tree(2.74, -2.15, 2.91, "#69816b", "pine");
@@ -347,6 +480,18 @@ export function buildTown() {
   m.choreographies.push((t) => (tram.position.x = 2.37 * Math.sin(t * 0.19)));
 
   person(-2.49, 0.43, 0.97, 0.45, "#b76344", "hiker", 3);
+  n.chalet(-2.96, -4.37, "POST");
+  n.chalet(0.12, -4.36, "GASTHOF");
+  n.signal(4.58, 0.87);
+  n.signal(-4.71, 1.89);
+  for (const x of [-4.75, -4.3, -3.86, 3.86, 4.3, 4.75]) form("box", x, 0.12, 1.37, 0.13, 0.09, 0.8, wood);
+  for (const z of [1.15, 1.62])
+    for (const x of [-4.56, 4.56]) form("box", x, 0.21, z, 1.45, 0.08, 0.07, slate);
+  n.bench(0, 3.71);
+  n.cycle(2.38, 3.6);
+  n.kiosk(-3.77, 3.57, "BILLETS");
+  n.visitors(-1.62, 2.81);
+
   block(2, 0, moss);
   house(-1.61, -1.15, 2.56, 2.51, "#ad8766", "#945643", "CHALET", "gable");
   house(1.55, -1.96, 2.08, 2.11, "#c8a378", "#8f6353", "", "gable");
@@ -354,6 +499,11 @@ export function buildTown() {
   tree(-3.29, 2.2, 2.16, "#70856e", "pine");
   flowerbed(0.27, 1.75, 1.81, 0.86);
   person(-1.4, 0.45, 0.47, 2.44, "#607e90", "gardener", 3);
+
+  n.chalet(-2.74, -4.43, "LAITERIE");
+  n.chalet(0.12, -4.42, "");
+  n.arbor(-1.18, 4.25);
+  n.cycle(3.9, 2.7);
 
   // Paris: ironwork, boulevard cafés, then the booksellers on the Seine.
   block(1, 0, "#aac180");
@@ -387,6 +537,12 @@ export function buildTown() {
     }
     person(-0.29, 2.92, 0.42, 1.56, "#9c6054", "photographer", 7);
   }
+  n.arbor(-2.58, -4.41);
+  n.kiosk(2.69, -4.32, "JARDIN");
+  n.stall(-3.76, 4.02, "prints", "#6b92a1");
+  n.bench(2.88, 4.13);
+  n.visitors(-1.8, 3.92);
+
   block(0, 1, "#e6d7c7");
   for (let i = 0; i < 3; i++) {
     const x = -2.4 + i * 2.37,
@@ -412,6 +568,12 @@ export function buildTown() {
   lamp(3.35, 2.94);
   person(-1.52, 0.35, -1.41, 1.86, cream, "waiter", 2);
   person(2.44, 2.86, -0.78, 2.86, "#bf874a", "photographer", 7);
+  n.shop(-2.96, -4.41, 3.32, 3.43, "#b4bfc2", slate, "CHAMBRES");
+  n.shop(0.72, -4.39, 3.54, 3.03, "#e2c2ab", slate, "PENSION");
+  n.stall(4.33, -1.08, "flowers", "#678f78");
+  n.cycle(-3.36, 3.89);
+  n.visitors(-1.2, 4.03);
+
   block(-1, 1, water);
   form("box", 0, 0.15, -1.44, 7.64, 0.26, 4.76, "#c9b99c");
   for (let i = 0; i < 5; i++) {
@@ -425,6 +587,14 @@ export function buildTown() {
   tree(2.83, -2.53, 2.37);
   boat(0.16, 2.31, "#e4b376").rotation.y = 1.45;
   person(-2.22, -0.28, 1.52, -0.28, "#7b93a1", "photographer", 4, 0.29);
+
+  form("setts", 0, 0.16, -4.53, 10.55, 0.24, 1.6, "#cdc0ab");
+  n.shop(-3.46, -4.44, 2.83, 2.33, "#e5cead", slate, "ESTAMPE");
+  n.shop(-0.43, -4.44, 2.88, 2.84, "#b6bdad", brick, "RELIURE");
+  n.shop(2.66, -4.43, 3.02, 2.41, "#d7b0a2", slate, "PRESSE");
+  n.quay(0, 4.62);
+  boat(3.84, 2.32, cream);
+  person(-2.91, 4.46, 1.9, 4.46, "#7e9879", "photographer", 3, 0.31);
 
   // Street traffic travels across district boundaries on the shared roads.
   m.place(0, 0);
@@ -443,7 +613,7 @@ export function buildTown() {
       const angle = (side * Math.PI) / 2,
         along = lap - side,
         radius = 0.48,
-        half = 4.2;
+        half = pitch / 2 - 0.28;
       const turn = (Math.max(0, (along - 0.9) / 0.1) * Math.PI) / 2;
       const u =
         along < 0.9 ? ((along / 0.9) * 2 - 1) * (half - radius) : half - radius + Math.sin(turn) * radius;
@@ -456,9 +626,9 @@ export function buildTown() {
       g.rotation.y = angle + turn;
     });
   }
-  car(-9, 0, 0.45, "#b75e4d");
-  car(9, -9, 2.2, "#d5aa52");
-  car(0, -18, 3.3, "#6499a6");
+  car(-pitch, 0, 0.45, "#b75e4d");
+  car(pitch, -pitch, 2.2, "#d5aa52");
+  car(0, -2 * pitch, 3.3, "#6499a6");
   m.finish();
-  return m;
+  return { ...m, footprints };
 }

@@ -19,50 +19,27 @@ export function streets(m: Model) {
   ) {
     const g = group(x, base, z);
     const d = 2.25;
-    form("box", 0, h / 2, 0, w, h, d, wall, g);
+    form("masonry", 0, h / 2, 0, w, h, d, wall, g);
     form("box", 0, 0.11, 0, w + 0.14, 0.22, d + 0.12, chalk, g);
     form("box", 0, h - 0.1, 0, w + 0.17, 0.19, d + 0.18, chalk, g);
     if (kind === "gable") {
       for (const side of [-1, 1]) {
-        form("box", 0, h + 0.28, side * 0.62, w + 0.34, 0.13, 1.52, roof, g, side * 0.43);
-        for (let i = 0; i < 9; i++)
-          form("box", ((i - 4) * w) / 9, h + 0.36, side * 0.62, 0.035, 0.06, 1.51, "#765348", g, side * 0.43);
+        form("slate", 0, h + 0.28, side * 0.62, w + 0.34, 0.13, 1.52, roof, g, side * 0.43);
+      }
+      // Triangular end wall between the roof slopes, with a ridge tile above.
+      form("gable", 0, h + 0.25, 0, w, 0.54, 2.25, wall, g);
+      form("drum", 0, h + 0.605, 0, 0.1, w + 0.29, 0.1, roof, g, 0, 0, Math.PI / 2);
+      if (w > 2.3) {
+        form("box", -w * 0.2, h + 0.41, 0.58, 0.44, 0.42, 0.42, wall, g);
+        form("box", -w * 0.2, h + 0.44, 0.8, 0.31, 0.25, 0.04, "glass", g);
+        form("box", -w * 0.2, h + 0.65, 0.58, 0.55, 0.07, 0.56, roof, g, 0.13);
       }
     } else {
       form("box", 0, h + 0.1, 0, w + 0.24, 0.2, d + 0.24, roof, g);
-      form("box", 0, h + 0.23, 0, w - 0.25, 0.15, d - 0.2, roof, g);
+      form("planks", 0, h + 0.23, 0, w - 0.25, 0.15, d - 0.2, roof, g);
     }
     form("box", w * 0.26, h + 0.56, -0.55, 0.35, 0.85, 0.36, wall, g);
     form("box", w * 0.26, h + 0.99, -0.55, 0.43, 0.11, 0.44, chalk, g);
-    // Herringbone patches, downspouts, shutters and roof flashing break up
-    // the larger painted surfaces at the scale of a shop window.
-    for (let row = 0; row < Math.floor(h * 4); row++) {
-      for (let j = 0; j < 3; j++) {
-        const xx = (random() - 0.5) * (w - 0.32);
-        form(
-          "box",
-          xx,
-          0.27 + row * 0.22,
-          1.132,
-          0.13 + random() * 0.15,
-          0.045,
-          0.018,
-          j % 2 ? "#bc967b" : "#d2ab87",
-          g,
-        );
-        form(
-          "box",
-          w / 2 + 0.008,
-          0.27 + row * 0.22,
-          (random() - 0.5) * 1.95,
-          0.018,
-          0.043,
-          0.21,
-          "#b59377",
-          g,
-        );
-      }
-    }
     form("drum", w / 2 - 0.08, h * 0.49, 1.19, 0.065, h * 0.96, 0.065, "#7c7867", g);
     if (kind === "cornice") {
       form("box", -0.22, h + 0.29, -0.33, 0.69, 0.08, 0.65, "#304749", g);
@@ -77,6 +54,10 @@ export function streets(m: Model) {
         form("box", xx, y, 1.2, 0.34, 0.54, 0.04, "glass", g);
         form("box", xx, y, 1.23, 0.38, 0.045, 0.04, chalk, g);
         form("box", xx, y - 0.37, 1.18, 0.55, 0.075, 0.16, chalk, g);
+        form("box", xx, y, 1.227, 0.028, 0.54, 0.038, chalk, g);
+        if (kind === "gable" && i % 2 === 0) {
+          for (const dx of [-0.29, 0.29]) form("planks", xx + dx, y, 1.17, 0.12, 0.61, 0.043, roof, g);
+        }
         if (kind === "mansard") {
           form("box", xx, y - 0.18, 1.4, 0.59, 0.055, 0.29, iron, g);
           form("box", xx, y + 0.07, 1.52, 0.6, 0.04, 0.04, iron, g);
@@ -107,6 +88,9 @@ export function streets(m: Model) {
     }
     form("box", 0, 0.68, 1.14, w * 0.82, 1.06, 0.07, iron, g);
     for (const side of [-1, 1]) form("box", side * w * 0.25, 0.77, 1.19, w * 0.27, 0.71, 0.08, "glass", g);
+    form("box", 0, 0.52, 1.2, 0.35, 0.91, 0.07, wood, g);
+    form("box", 0, 0.68, 1.248, 0.25, 0.39, 0.028, "glass", g);
+    form("round", 0.106, 0.43, 1.266, 0.043, 0.043, 0.035, chalk, g);
     if (name) {
       sign(name, 0, 1.38, 1.19, w * 0.92, 0.33, iron, g);
       for (let i = 0; i < 11; i++) {
@@ -236,6 +220,7 @@ export function streets(m: Model) {
     const g = group(x, base, z),
       body = group(0, 0, 0, g);
     g.userData.moving = true;
+    g.scale.setScalar(0.84);
     const skin = phase % 2 ? "#9f6348" : "#dba382";
     form("round", 0, 0.5, 0, 0.32, 0.46, 0.23, shirt, body);
     form("round", 0, 0.81, 0, 0.25, 0.29, 0.25, skin, body);

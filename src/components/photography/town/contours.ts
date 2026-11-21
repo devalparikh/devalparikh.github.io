@@ -46,3 +46,57 @@ export function frond() {
   }
   return surface(vertices, triangles);
 }
+
+// A stone footbridge along Z, with a clear barrel vault under its crown.
+export function bridgeArch() {
+  const profile = new T.Shape();
+  profile.moveTo(-0.5, 0);
+  profile.lineTo(-0.34, 0);
+  profile.bezierCurveTo(-0.31, 0.93, 0.31, 0.93, 0.34, 0);
+  profile.lineTo(0.5, 0);
+  profile.lineTo(0.5, 0.29);
+  profile.quadraticCurveTo(0, 1.58, -0.5, 0.29);
+  profile.closePath();
+  return new T.ExtrudeGeometry(profile, { depth: 1, bevelEnabled: false, curveSegments: 20 })
+    .translate(0, 0, -0.5)
+    .rotateY(Math.PI / 2);
+}
+
+export function gable() {
+  const end = new T.Shape();
+  end.moveTo(-0.5, -0.5);
+  end.lineTo(0, 0.5);
+  end.lineTo(0.5, -0.5);
+  end.closePath();
+  return new T.ExtrudeGeometry(end, { depth: 1, bevelEnabled: false })
+    .translate(0, 0, -0.5)
+    .rotateY(Math.PI / 2);
+}
+
+// Open double-ended hull, wider at the gunwales. The bow and stern turn
+// upward above the waterline, leaving the seats visible from the street.
+export function hull() {
+  const vertices: number[] = [],
+    triangles: number[] = [];
+  for (let i = 0; i <= 24; i++) {
+    const u = i / 12 - 1,
+      halfBeam = 0.5 * (1 - u * u);
+    const sheer = 0.36 + 0.7 * Math.pow(Math.abs(u), 4);
+    for (const [width, y] of [
+      [-1, sheer],
+      [-0.72, 0.1],
+      [0, -0.12],
+      [0.72, 0.1],
+      [1, sheer],
+    ]) {
+      vertices.push(u * 0.5, y, width * halfBeam);
+    }
+    if (i === 0) continue;
+    const base = (i - 1) * 5;
+    for (let j = 0; j < 4; j++) {
+      const a = base + j;
+      triangles.push(a, a + 5, a + 1, a + 1, a + 5, a + 6);
+    }
+  }
+  return surface(vertices, triangles);
+}

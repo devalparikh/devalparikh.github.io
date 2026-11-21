@@ -1,5 +1,6 @@
 import * as T from "three";
-import { frond, ridge } from "./contours";
+import { printTexture, type Surface } from "./print";
+import { bridgeArch, frond, gable, hull, ridge } from "./contours";
 
 // Static details share geometry and instance buffers. Moving parts have their
 // own local group, so an entire skiff or tree moves as one object.
@@ -7,6 +8,10 @@ export function model() {
   const root = new T.Group();
   let origin = root;
   const shapes = {
+    hull: hull(),
+    bridge: bridgeArch(),
+    gable: gable(),
+    rim: new T.TorusGeometry(0.46, 0.042, 5, 22),
     ridge: ridge(false),
     summit: ridge(true),
     frond: frond(),
@@ -18,16 +23,14 @@ export function model() {
     cone: new T.ConeGeometry(0.5, 1, 12),
     spire: new T.ConeGeometry(Math.SQRT1_2, 1, 4).rotateY(Math.PI / 4),
   };
-  const wash = { value: 1 },
-    development = { value: 4 };
-  // Spread the first color wash out from the central block. Architectural
-  // edges remain visible on the unpainted paper during the opening seconds.
-  function illustratedMaterial(ruled: boolean) {
+  const wash = { value: 1 };
+  function illustratedMaterial(ruled: boolean, surface?: Surface) {
     const material = new T.MeshLambertMaterial();
+    if (surface) material.map = printTexture(surface);
     material.customProgramCacheKey = () => (ruled ? "ruled-paper" : "painted-paper");
     material.onBeforeCompile = (shader) => {
-      Object.assign(shader.uniforms, { wash, development });
-      const varyings = "varying vec3 localPoint; varying vec3 faceNormal; varying vec2 street;\n";
+      Object.assign(shader.uniforms, { wash });
+      const varyings = "varying vec3 localPoint; varying vec3 faceNormal;\n";
       shader.vertexShader =
         varyings +
         shader.vertexShader.replace(
@@ -35,31 +38,39 @@ export function model() {
           `
         #include <begin_vertex>
         localPoint = position; faceNormal = normal;
-        street = (instanceMatrix * vec4(position, 1.0)).xz;
+
       `,
         );
+      if (surface && surface !== "foliage") {
+        shader.vertexShader = shader.vertexShader.replace(
+          "#include <uv_vertex>",
+          `
+          #include <uv_vertex>
+          vec3 dimensions = vec3(length(instanceMatrix[0].xyz), length(instanceMatrix[1].xyz), length(instanceMatrix[2].xyz));
+          vec3 page = position * dimensions;
+          vMapUv = (abs(normal.y) > 0.5 ? page.xz : abs(normal.x) > 0.5 ? page.zy : page.xy) * 0.5;
+        `,
+        );
+      }
       const lines = ruled
         ? `
         vec3 dist = (0.5 - abs(localPoint)) / max(fwidth(localPoint), vec3(0.0001)) + abs(faceNormal) * 1000.0;
         float nearest = min(dist.x, min(dist.y, dist.z));
         vec3 footprint = fwidth(localPoint);
         float width = 1.0 / max(max(footprint.x, footprint.y), max(footprint.z, 0.0001));
-        stroke = max(stroke, (1.0 - smoothstep(0.0, 1.12, nearest)) * smoothstep(2.0, 8.0, width));
+        stroke = max(stroke, (1.0 - smoothstep(0.0, 1.50, nearest)) * smoothstep(2.0, 8.0, width));
       `
         : "";
       shader.fragmentShader =
         varyings +
-        "uniform float wash; uniform float development;\n" +
+        "uniform float wash;\n" +
         shader.fragmentShader.replace(
           "#include <opaque_fragment>",
           `
-          float delay = length(floor(street / 9.0 + 0.5)) * 0.68;
-          float fill = smoothstep(delay - 0.4, delay + 0.65, development + 0.17 * sin(street.y));
-          vec3 paper = mix(vec3(0.027, 0.048, 0.07), vec3(0.9, 0.862, 0.74), wash);
-          outgoingLight = mix(paper, mix(outgoingLight, diffuseColor.rgb, wash * 0.57), fill);
+          outgoingLight = mix(outgoingLight, diffuseColor.rgb, wash * 0.69);
           float stroke = 0.58 * (1.0 - smoothstep(0.02, 0.22, abs(normal.z)));
           ${lines}
-          outgoingLight = mix(outgoingLight, vec3(0.046, 0.041, 0.032), stroke * 0.88);
+          outgoingLight = mix(outgoingLight, vec3(0.046, 0.041, 0.032), stroke * 0.98);
           #include <opaque_fragment>
         `,
         );
@@ -68,6 +79,8 @@ export function model() {
   }
   const paint = illustratedMaterial(false),
     ruled = illustratedMaterial(true);
+  const leafPaint = illustratedMaterial(false, "foliage");
+  const papers = new Map<Surface, T.MeshLambertMaterial>();
   const lit = new T.MeshStandardMaterial({ color: "#8eafb0", emissive: "#ffae4c", emissiveIntensity: 0 });
   const glazing = new T.MeshStandardMaterial({
     color: "#b8d9cf",
@@ -101,7 +114,7 @@ export function model() {
     return g;
   }
   function form(
-    shape: keyof typeof shapes,
+    shape: keyof typeof shapes | Surface,
     x: number,
     y: number,
     z: number,
@@ -114,14 +127,16 @@ export function model() {
     ry = 0,
     rz = 0,
   ) {
+    const geometry = shape in shapes ? shapes[shape as keyof typeof shapes] : shapes.box;
+    if (!(shape in shapes) && !papers.has(shape as Surface))
+      papers.set(shape as Surface, illustratedMaterial(true, shape as Surface));
     let batch = batches.get(parent);
     if (!batch) batches.set(parent, (batch = new Map()));
     const glow = color === "glass";
     const glazed = color === "glazing";
     const key = shape + (glow ? "-lit" : glazed ? "-glazed" : "");
     let parts = batch.get(key);
-    if (!parts)
-      batch.set(key, (parts = { geometry: shapes[shape], glow, glazed, transforms: [], colors: [] }));
+    if (!parts) batch.set(key, (parts = { geometry, glow, glazed, transforms: [], colors: [] }));
     temp.position.set(x, y, z);
     temp.scale.set(w, h, d);
     temp.rotation.set(rx, ry, rz);
@@ -220,7 +235,12 @@ export function model() {
         if (!mesh) {
           mesh = new T.InstancedMesh(
             p.geometry,
-            p.glow ? lit : p.glazed ? glazing : key === "box" ? ruled : paint,
+            p.glow
+              ? lit
+              : p.glazed
+                ? glazing
+                : (papers.get(key as Surface) ??
+                  (key === "leaf" ? leafPaint : key === "box" ? ruled : paint)),
             counts.get(key)!,
           );
           mesh.frustumCulled = false;
@@ -249,13 +269,18 @@ export function model() {
     Object.values(shapes).forEach((g) => g.dispose());
     textures.forEach((t) => t.dispose());
     signs.forEach((m) => m.dispose());
+    papers.forEach((material) => {
+      material.map?.dispose();
+      material.dispose();
+    });
+    leafPaint.map?.dispose();
+    leafPaint.dispose();
     ruled.dispose();
     paint.dispose();
     lit.dispose();
     glazing.dispose();
   }
   return {
-    development,
     wash,
     root,
     place,

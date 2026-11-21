@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { mountTown } from "./town/viewport";
+import { TownPoster } from "./town/TownPoster";
 import { ExpandIcon } from "./PreviewIcons";
 
 export function StudioHero() {
@@ -70,6 +71,9 @@ export function StudioHero() {
     };
   }, [fallback]);
   const full = expanded || fallback;
+  useEffect(() => {
+    engine.current?.setExpanded(full);
+  }, [full, ready]);
   async function toggle() {
     if (fallback) return setFallback(false);
     if (document.fullscreenElement === frame.current) return document.exitFullscreen();
@@ -85,13 +89,7 @@ export function StudioHero() {
         Studio <em>Deval</em>
       </h1>
       <div className="town-view">
-        {!ready && (
-          <div
-            className="town-poster"
-            role="img"
-            aria-label="Illustrated travel neighborhoods around a shared network of streets"
-          />
-        )}
+        {!ready && <TownPoster expanded={full} />}
         <canvas
           ref={canvas}
           tabIndex={ready ? 0 : -1}
