@@ -2,8 +2,8 @@
    Studio Deval - the photography page
 
    This page has its own vibe, apart from the career pages: Helvetica set
-   large and uppercase, a free-floating nav capsule, a hover trail of
-   polaroids, and the photographs in a macOS Preview window. The theme
+   large and uppercase, a free-floating nav capsule, a living miniature
+   town, and the photographs in a macOS Preview window. The theme
    tokens are the same ones `globals.css` declares, so light and dark carry
    over untouched. Everything here is scoped under `.studio` or to classes
    only this page renders.
@@ -101,115 +101,6 @@
    Hero
    ========================================================================== */
 
-.studio-hero {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100svh - 3.5rem);
-  padding: 1.75rem var(--studio-margin) 1.1rem;
-  overflow: clip;
-  text-transform: uppercase;
-}
-
-/* The bracketed label: brackets pinned to the ends, words in the middle. */
-.studio-label {
-  display: flex;
-  justify-content: space-between;
-  width: min(75%, 22rem);
-  margin-inline: auto;
-  font-size: 0.78rem;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  white-space: pre;
-}
-
-.studio-label::before {
-  content: "[";
-}
-
-.studio-label::after {
-  content: "]";
-}
-
-@media (min-width: 768px) {
-  .studio-label {
-    width: min(26%, 24rem);
-    font-size: clamp(0.78rem, 1.1vw, 1rem);
-  }
-}
-
-.studio-title {
-  position: relative;
-  z-index: 0;
-  margin-top: 1.5rem;
-  font-size: min(23vw, 18rem);
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 0.8;
-  text-align: center;
-}
-
-@media (min-width: 768px) {
-  .studio-title {
-    margin-top: 2rem;
-    /* Wide, but never so tall that a short laptop screen loses the foot. */
-    font-size: min(16.6vw, 27svh);
-  }
-}
-
-/* Each word is the mask its letters rise out of. */
-.studio-title-word {
-  display: block;
-  overflow: hidden;
-  padding-top: 0.06em;
-}
-
-@keyframes studioLetterRise {
-  from {
-    transform: translateY(105%);
-  }
-  to {
-    transform: none;
-  }
-}
-
-.studio-letter {
-  display: inline-block;
-  animation: studioLetterRise 1100ms var(--ease-out-quint) both;
-  animation-delay: calc(var(--letter-delay, 0ms) + 100ms);
-}
-
-.studio-hero-foot {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .studio-hero-foot {
-    flex-direction: row;
-    align-items: flex-end;
-  }
-}
-
-.studio-intro {
-  max-width: 24ch;
-  font-size: clamp(1.05rem, 2vw, 1.75rem);
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-
-.studio-intro strong {
-  font-weight: 700;
-}
-
 .studio-pills {
   display: flex;
   flex-wrap: wrap;
@@ -249,38 +140,6 @@
 .studio-pill:hover::before,
 .studio-pill:focus-visible::before {
   transform: none;
-}
-
-.studio-scroll-cue {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .studio-scroll-cue {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    margin-top: 1.25rem;
-    font-size: 0.78rem;
-    letter-spacing: -0.01em;
-  }
-
-  .studio-scroll-cue::before {
-    content: "[ ";
-    white-space: pre;
-  }
-
-  .studio-scroll-cue::after {
-    content: " ]";
-    white-space: pre;
-  }
-
-  .studio-scroll-rule {
-    width: 2.85em;
-    margin-inline: 0.5em;
-    border-bottom: 1px solid currentColor;
-  }
 }
 
 /* ==========================================================================
@@ -342,67 +201,6 @@
   max-width: 76rem;
   margin-inline: auto;
   padding: 2.5rem var(--studio-margin) 0;
-}
-
-/* ==========================================================================
-   Banner - "STUDIO DEVAL" on a loop behind the Preview window
-
-   A full-bleed strip, the way Karo runs its capsule banner, set big and bold
-   with only a slight gap between repeats.
-   It crosses behind the top edge of the window, so the upper half of the
-   letters shows above it and the sides show past it on wide screens. Two
-   identical runs slide left by exactly one run's width, so the loop is
-   seamless.
-   ========================================================================== */
-
-.studio-stage {
-  --banner-size: clamp(4.25rem, 13vw, 12rem);
-  position: relative;
-  isolation: isolate;
-  /* Tied to the banner's size, so about two thirds of the lettering clears
-     the top of the window at every width. */
-  padding-top: calc(var(--banner-size) * 0.72);
-}
-
-.studio-banner {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  z-index: -1;
-  width: 100vw;
-  overflow: hidden;
-  padding-block: 0.08em 0.02em;
-  background-color: var(--color-base-200);
-  font-size: var(--banner-size);
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 0.92;
-  text-transform: uppercase;
-  white-space: nowrap;
-  translate: -50% 0;
-  user-select: none;
-}
-
-@keyframes bannerLoop {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.studio-banner-track {
-  display: flex;
-  width: max-content;
-  animation: bannerLoop 46s linear infinite;
-}
-
-.studio-banner-run {
-  display: flex;
-}
-
-/* Padding on both sides of every repeat, so the gap at the seam between the
-   two runs matches the gap everywhere else. */
-.studio-banner-run span {
-  padding-inline: 0.12em;
 }
 
 .studio-anchor {
@@ -894,64 +692,340 @@
    Gear
    ========================================================================== */
 
+
 .studio-gear {
-  margin-top: 5rem;
-  text-transform: uppercase;
-}
-
-.studio-gear .studio-label {
-  margin-inline: 0;
-  scroll-margin-top: 5.5rem;
-}
-
-.studio-gear ul {
-  margin-top: 1.25rem;
+  margin: 3.5rem auto 0;
+  max-width: 70rem;
   border-top: 1px solid var(--rule);
+  padding-top: 1rem;
 }
-
+.studio-gear h2 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  scroll-margin-top: 5rem;
+}
+.studio-gear ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2.5rem;
+  margin-top: 0.8rem;
+}
 .studio-gear li {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.2rem 1.5rem;
-  align-items: baseline;
-  padding: 0.95rem 0;
-  border-bottom: 1px solid var(--rule);
+  align-content: start;
+  gap: 0.18rem;
 }
-
-@media (min-width: 640px) {
-  .studio-gear li {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
-  }
-}
-
 .studio-gear-camera {
-  font-size: clamp(1.15rem, 2.6vw, 2rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
+  font-weight: 600;
 }
-
 .studio-gear-lenses {
-  grid-row: 2;
   color: var(--color-neutral-content);
-  font-size: 0.78rem;
+  font-size: 0.84rem;
 }
 
-.studio-gear-count {
-  grid-row: 1;
-  grid-column: 2;
-  color: var(--color-neutral-content);
-  font-size: 0.78rem;
-  font-variant-numeric: tabular-nums;
+/* The square sits on an uninterrupted field of warm paper / midnight blue. */
+.town-hero {
+  --ink: #332f25;
+  --dim: #625b4c;
+  --line: #99907761;
+  --paper: #fbf6e8;
+  --scene:
+    radial-gradient(ellipse at 66% 35%, #fff4d9, transparent 66%),
+    linear-gradient(123deg, #efe4cb, #f2e7cf 60%, #dbcdb3);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: clamp(34rem, 79svh, 57rem);
+  margin: 0 clamp(0.55rem, 1.6vw, 1.7rem);
+  border-radius: 1.15rem;
+  color: var(--ink);
+  background: var(--scene);
+  border: 1px solid var(--line);
 }
-
-@media (min-width: 640px) {
-  .studio-gear-lenses {
-    grid-row: auto;
+[data-theme="inkember"] .town-hero {
+  --ink: #f6ead4;
+  --dim: #c6c1b8;
+  --line: #bcb7aa49;
+  --paper: #232f40;
+  --scene:
+    radial-gradient(ellipse at 65% 45%, #314056, transparent 70%),
+    linear-gradient(122deg, #1d2535, #182233 64%, #141e30);
+}
+.town-hero[data-expanded="true"] {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  width: 100%;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.town-view {
+  position: absolute;
+  inset: 0 0 4.5rem 23%;
+}
+.town-view canvas,
+.town-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+[data-theme="inkember"] .town-poster {
+  background-image: var(--night-poster);
+}
+.town-poster {
+  background-image: var(--day-poster);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.town-view canvas {
+  cursor: grab;
+  touch-action: none;
+}
+.town-view canvas[aria-hidden="true"] {
+  pointer-events: none;
+}
+.town-view canvas:active {
+  cursor: grabbing;
+}
+.town-view canvas:focus-visible {
+  outline: 2px dashed var(--dim);
+  outline-offset: -6px;
+}
+.town-heading,
+.town-caption,
+.town-expand,
+.town-zoom {
+  position: absolute;
+  z-index: 1;
+}
+.town-heading {
+  left: clamp(1.4rem, 4vw, 5rem);
+  top: clamp(2.5rem, 6vw, 5.8rem);
+  pointer-events: none;
+}
+.town-kicker {
+  display: flex;
+  gap: 0.7em;
+  align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+.town-kicker i {
+  width: 1.6rem;
+  height: 1px;
+  background: currentColor;
+}
+.town-heading h1 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(4.7rem, 8.6vw, 9rem);
+  line-height: 0.87;
+  letter-spacing: -0.075em;
+  margin: 1.05rem 0 1.6rem;
+  font-weight: 420;
+}
+.town-heading h1 em {
+  display: block;
+  font-family: Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.085em;
+}
+.town-links {
+  pointer-events: auto;
+}
+.town-links .studio-pills {
+  gap: 0.8rem;
+}
+.town-links .studio-pill {
+  border: none;
+  border-radius: 0;
+  padding: 0.2rem 0;
+  color: var(--dim);
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+  text-decoration-color: var(--line);
+  font-size: 0.85rem;
+}
+.town-links .studio-pill::before {
+  display: none;
+}
+.town-links .studio-pill:hover {
+  color: var(--ink);
+  text-decoration-color: currentColor;
+}
+.town-tool {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper);
+  cursor: pointer;
+}
+.town-tool:hover,
+.town-places button:hover {
+  color: var(--ink);
+  border-color: currentColor;
+}
+.town-tool svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+.town-expand {
+  top: 1.15rem;
+  right: 1.15rem;
+}
+.town-caption {
+  bottom: 6.35rem;
+  left: clamp(1.4rem, 4vw, 5rem);
+  pointer-events: none;
+}
+.town-caption h2 {
+  font:
+    500 clamp(1.35rem, 2.6vw, 2.4rem)/1.2 var(--font-fraunces),
+    Georgia,
+    serif;
+  letter-spacing: -0.05em;
+}
+.town-caption p {
+  font-size: 0.85rem;
+  color: var(--dim);
+  margin-top: 0.22rem;
+}
+.town-zoom {
+  display: flex;
+  right: 1.15rem;
+  bottom: 6.2rem;
+  border: 1px solid var(--line);
+  border-radius: 2rem;
+  overflow: hidden;
+  background: var(--paper);
+}
+.town-zoom .town-tool {
+  border: 0;
+  background: transparent;
+  font-size: 1.18rem;
+}
+.town-places {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 62%, transparent);
+}
+.town-places button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.62rem;
+  flex: 1;
+  min-height: 4.7rem;
+  position: relative;
+  cursor: pointer;
+  color: var(--dim);
+  font-size: 0.92rem;
+}
+.town-places button + button::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  height: 1.3rem;
+  width: 1px;
+  background: var(--line);
+}
+.town-places svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.town-places button[aria-pressed="true"] {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 75%, transparent);
+  font-weight: 650;
+}
+.town-places button[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 2.5rem;
+  height: 3px;
+  background: currentColor;
+}
+.town-hero[data-expanded="true"] .town-heading {
+  display: none;
+}
+.town-hero[data-expanded="true"] .town-view {
+  left: 0;
+}
+@media (max-width: 720px) {
+  .town-hero {
+    height: clamp(30rem, 70svh, 40rem);
   }
-
-  .studio-gear-count {
-    grid-row: auto;
-    grid-column: auto;
+  .town-heading {
+    top: 1.45rem;
+    left: 1.2rem;
+  }
+  .town-heading h1 {
+    font-size: clamp(2.8rem, 10.3vw, 4.6rem);
+    margin: 0.55rem 0 0.6rem;
+  }
+  .town-heading h1 em {
+    display: inline;
+  }
+  .town-view {
+    inset: 5.5rem -0.2rem 7rem;
+  }
+  .town-caption {
+    left: 1.15rem;
+    bottom: 5.1rem;
+  }
+  .town-caption p {
+    font-size: 0.75rem;
+  }
+  .town-zoom {
+    bottom: 5rem;
+    right: 0.7rem;
+  }
+  .town-places button {
+    flex-direction: column;
+    gap: 0.28rem;
+    min-height: 4rem;
+    font-size: clamp(0.63rem, 2.45vw, 0.85rem);
+  }
+  .town-places svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+  .town-expand {
+    top: 0.85rem;
+    right: 0.85rem;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .town-hero[data-expanded="true"] .town-view {
+    animation: town-open 0.36s ease-out;
+  }
+  .town-hero[data-expanded="false"] .town-view {
+    animation: town-close 0.36s ease-out;
+  }
+  @keyframes town-open {
+    from {
+      opacity: 0.4;
+      transform: scale(0.96);
+    }
+  }
+  @keyframes town-close {
+    from {
+      opacity: 0.4;
+      transform: scale(1.035);
+    }
   }
 }
