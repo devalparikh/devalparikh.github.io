@@ -8,6 +8,18 @@ export function model() {
   const root = new T.Group();
   let origin = root;
   const shapes = {
+    octagon: new T.CylinderGeometry(0.5, 0.5, 1, 8),
+    octagonalRoof: new T.ConeGeometry(0.5, 1, 8),
+    cupola: new T.LatheGeometry(
+      [[0.5, 0], [0.46, 0.28], [0.37, 0.56], [0.23, 0.82], [0.08, 1]].map(([x, y]) => new T.Vector2(x, y)),
+      8,
+    ),
+    obelisk: new T.CylinderGeometry(0.25, 0.37, 1, 4).rotateY(Math.PI / 4),
+    shield: new T.LatheGeometry(
+      [[0.5, 0], [0.42, 0.17], [0.3, 0.43], [0.2, 0.72], [0.12, 0.91], [0.04, 1], [0, 1]]
+        .map(([x, y]) => new T.Vector2(x, y)), 24,
+    ),
+    basalt: new T.DodecahedronGeometry(0.53),
     hull: hull(),
     bridge: bridgeArch(),
     gable: gable(),

@@ -35,13 +35,19 @@ export function mountTown(canvas: HTMLCanvasElement) {
   const closeUps = [
     [-pitch, 0.25],
     [pitch, -pitch],
-    [pitch, -2 * pitch + 1],
+    [pitch - 0.6, -2 * pitch - 1.8, 2.19],
     [0, pitch - 0.4],
     [-pitch, -pitch],
     [0, -pitch],
+    [0, 0],
+    [-pitch * 2, 0],
+    [-pitch, pitch * 2],
+    [-pitch * 2, pitch * 2],
+    [0, -pitch * 2],
+    [pitch * 2, -pitch * 2],
   ];
-  const [x, z] = closeUps[Math.floor(Math.random() * closeUps.length)];
-  const center = new T.Vector3(x, 1.12, z);
+  const [x, z, focusHeight = 1.12] = closeUps[Math.floor(Math.random() * closeUps.length)];
+  const center = new T.Vector3(x, focusHeight, z);
   let touring = true,
     expanded = false;
   const saved = { position: camera.position.clone(), target: center.clone(), zoom: 1, touring: true };
