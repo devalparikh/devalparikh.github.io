@@ -724,33 +724,20 @@
   font-size: 0.84rem;
 }
 
-/* The square sits on an uninterrupted field of warm paper / midnight blue. */
+/* Paper extends between the blocks and out to the edges of the map. */
 .town-hero {
-  --ink: #332f25;
-  --dim: #625b4c;
-  --line: #99907761;
-  --paper: #fbf6e8;
-  --scene:
-    radial-gradient(ellipse at 66% 35%, #fff4d9, transparent 66%),
-    linear-gradient(123deg, #efe4cb, #f2e7cf 60%, #dbcdb3);
+  --town-paper: #f4efdf;
+  --town-ink: #332e27;
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  height: clamp(34rem, 79svh, 57rem);
-  margin: 0 clamp(0.55rem, 1.6vw, 1.7rem);
-  border-radius: 1.15rem;
-  color: var(--ink);
-  background: var(--scene);
-  border: 1px solid var(--line);
+  height: clamp(24rem, 64svh, 42rem);
+  background: var(--town-paper);
+  color: var(--town-ink);
 }
 [data-theme="inkember"] .town-hero {
-  --ink: #f6ead4;
-  --dim: #c6c1b8;
-  --line: #bcb7aa49;
-  --paper: #232f40;
-  --scene:
-    radial-gradient(ellipse at 65% 45%, #314056, transparent 70%),
-    linear-gradient(122deg, #1d2535, #182233 64%, #141e30);
+  --town-paper: #192634;
+  --town-ink: #f5dfb0;
 }
 .town-hero[data-expanded="true"] {
   position: fixed;
@@ -758,274 +745,59 @@
   z-index: 200;
   width: 100%;
   height: 100dvh;
-  max-height: none;
-  margin: 0;
-  border: 0;
-  border-radius: 0;
 }
-.town-view {
-  position: absolute;
-  inset: 0 0 4.5rem 23%;
-}
-.town-view canvas,
-.town-poster {
+.town-view, .town-view canvas, .town-poster {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
-[data-theme="inkember"] .town-poster {
-  background-image: var(--night-poster);
-}
-.town-poster {
-  background-image: var(--day-poster);
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-.town-view canvas {
-  cursor: grab;
-  touch-action: none;
-}
-.town-view canvas[aria-hidden="true"] {
+.town-view::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   pointer-events: none;
+  background: url("/img/town/paper.webp") repeat;
+  opacity: .065;
+  mix-blend-mode: multiply;
 }
-.town-view canvas:active {
-  cursor: grabbing;
+[data-theme="inkember"] .town-view::after { mix-blend-mode: soft-light; }
+.town-poster { background: center / cover url("/img/town/morning.webp"); }
+[data-theme="inkember"] .town-poster { background-image: url("/img/town/night.webp"); }
+.town-view canvas { cursor: grab; }
+.town-hero[data-expanded="true"] canvas { touch-action: none !important; }
+.town-view canvas:active { cursor: grabbing; }
+.town-view canvas[aria-hidden="true"] { pointer-events: none; }
+.town-view canvas:focus-visible { outline: 2px dashed currentColor; outline-offset: -5px; }
+.town-heading {
+  position: absolute;
+  top: clamp(1rem, 2.5vw, 2.6rem);
+  left: clamp(1rem, 3vw, 3rem);
+  z-index: 1;
+  margin: 0;
+  pointer-events: none;
+  font: 450 clamp(1.7rem, 3.6vw, 3.6rem)/1 var(--font-fraunces), Georgia, serif;
+  letter-spacing: -0.065em;
+  text-shadow: 0 1px 4px var(--town-paper), 0 0 12px var(--town-paper);
 }
-.town-view canvas:focus-visible {
-  outline: 2px dashed var(--dim);
-  outline-offset: -6px;
-}
-.town-heading,
-.town-caption,
-.town-expand,
-.town-zoom {
+.town-heading em { font-family: Georgia, serif; }
+.town-hero[data-expanded="true"] .town-heading { display: none; }
+.town-expand {
   position: absolute;
   z-index: 1;
-}
-.town-heading {
-  left: clamp(1.4rem, 4vw, 5rem);
-  top: clamp(2.5rem, 6vw, 5.8rem);
-  pointer-events: none;
-}
-.town-kicker {
-  display: flex;
-  gap: 0.7em;
-  align-items: center;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 0.72rem;
-  font-weight: 650;
-}
-.town-kicker i {
-  width: 1.6rem;
-  height: 1px;
-  background: currentColor;
-}
-.town-heading h1 {
-  font-family: var(--font-fraunces), Georgia, serif;
-  font-size: clamp(4.7rem, 8.6vw, 9rem);
-  line-height: 0.87;
-  letter-spacing: -0.075em;
-  margin: 1.05rem 0 1.6rem;
-  font-weight: 420;
-}
-.town-heading h1 em {
-  display: block;
-  font-family: Georgia, serif;
-  font-weight: 400;
-  letter-spacing: -0.085em;
-}
-.town-links {
-  pointer-events: auto;
-}
-.town-links .studio-pills {
-  gap: 0.8rem;
-}
-.town-links .studio-pill {
-  border: none;
-  border-radius: 0;
-  padding: 0.2rem 0;
-  color: var(--dim);
-  text-decoration: underline;
-  text-underline-offset: 0.3em;
-  text-decoration-color: var(--line);
-  font-size: 0.85rem;
-}
-.town-links .studio-pill::before {
-  display: none;
-}
-.town-links .studio-pill:hover {
-  color: var(--ink);
-  text-decoration-color: currentColor;
-}
-.town-tool {
+  top: 1rem;
+  right: 1rem;
   display: grid;
   place-items: center;
-  width: 2.8rem;
-  height: 2.8rem;
-  border: 1px solid var(--line);
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid color-mix(in srgb, currentColor 36%, transparent);
   border-radius: 50%;
-  background: var(--paper);
+  background: var(--town-paper);
   cursor: pointer;
 }
-.town-tool:hover,
-.town-places button:hover {
-  color: var(--ink);
-  border-color: currentColor;
-}
-.town-tool svg {
-  width: 1.15rem;
-  height: 1.15rem;
-}
-.town-expand {
-  top: 1.15rem;
-  right: 1.15rem;
-}
-.town-caption {
-  bottom: 6.35rem;
-  left: clamp(1.4rem, 4vw, 5rem);
-  pointer-events: none;
-}
-.town-caption h2 {
-  font:
-    500 clamp(1.35rem, 2.6vw, 2.4rem)/1.2 var(--font-fraunces),
-    Georgia,
-    serif;
-  letter-spacing: -0.05em;
-}
-.town-caption p {
-  font-size: 0.85rem;
-  color: var(--dim);
-  margin-top: 0.22rem;
-}
-.town-zoom {
-  display: flex;
-  right: 1.15rem;
-  bottom: 6.2rem;
-  border: 1px solid var(--line);
-  border-radius: 2rem;
-  overflow: hidden;
-  background: var(--paper);
-}
-.town-zoom .town-tool {
-  border: 0;
-  background: transparent;
-  font-size: 1.18rem;
-}
-.town-places {
-  position: absolute;
-  inset: auto 0 0;
-  display: flex;
-  justify-content: center;
-  border-top: 1px solid var(--line);
-  background: color-mix(in srgb, var(--paper) 62%, transparent);
-}
-.town-places button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.62rem;
-  flex: 1;
-  min-height: 4.7rem;
-  position: relative;
-  cursor: pointer;
-  color: var(--dim);
-  font-size: 0.92rem;
-}
-.town-places button + button::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  height: 1.3rem;
-  width: 1px;
-  background: var(--line);
-}
-.town-places svg {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-.town-places button[aria-pressed="true"] {
-  color: var(--ink);
-  background: color-mix(in srgb, var(--paper) 75%, transparent);
-  font-weight: 650;
-}
-.town-places button[aria-pressed="true"]::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  width: 2.5rem;
-  height: 3px;
-  background: currentColor;
-}
-.town-hero[data-expanded="true"] .town-heading {
-  display: none;
-}
-.town-hero[data-expanded="true"] .town-view {
-  left: 0;
-}
+.town-expand:hover { border-color: currentColor; }
+.town-expand svg { width: 1.15rem; height: 1.15rem; }
 @media (max-width: 720px) {
-  .town-hero {
-    height: clamp(30rem, 70svh, 40rem);
-  }
-  .town-heading {
-    top: 1.45rem;
-    left: 1.2rem;
-  }
-  .town-heading h1 {
-    font-size: clamp(2.8rem, 10.3vw, 4.6rem);
-    margin: 0.55rem 0 0.6rem;
-  }
-  .town-heading h1 em {
-    display: inline;
-  }
-  .town-view {
-    inset: 5.5rem -0.2rem 7rem;
-  }
-  .town-caption {
-    left: 1.15rem;
-    bottom: 5.1rem;
-  }
-  .town-caption p {
-    font-size: 0.75rem;
-  }
-  .town-zoom {
-    bottom: 5rem;
-    right: 0.7rem;
-  }
-  .town-places button {
-    flex-direction: column;
-    gap: 0.28rem;
-    min-height: 4rem;
-    font-size: clamp(0.63rem, 2.45vw, 0.85rem);
-  }
-  .town-places svg {
-    width: 1.35rem;
-    height: 1.35rem;
-  }
-  .town-expand {
-    top: 0.85rem;
-    right: 0.85rem;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .town-hero[data-expanded="true"] .town-view {
-    animation: town-open 0.36s ease-out;
-  }
-  .town-hero[data-expanded="false"] .town-view {
-    animation: town-close 0.36s ease-out;
-  }
-  @keyframes town-open {
-    from {
-      opacity: 0.4;
-      transform: scale(0.96);
-    }
-  }
-  @keyframes town-close {
-    from {
-      opacity: 0.4;
-      transform: scale(1.035);
-    }
-  }
+  .town-hero { height: clamp(22rem, 56svh, 31rem); }
 }
