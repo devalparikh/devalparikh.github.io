@@ -43,7 +43,7 @@ export function hillside(m: Model, rise: Grade, turf: string, groundColor?: (x: 
     center: (along: number) => number,
     from: number,
     to: number,
-    width: number,
+    width: number | ((along: number) => number),
     color: string,
     axis: "x" | "z" = "z",
   ) {
@@ -53,7 +53,10 @@ export function hillside(m: Model, rise: Grade, turf: string, groundColor?: (x: 
       const z = axis === "z" ? along : center(along) - offset;
       return [x, laneHeight(x, z), z];
     };
-    patch(6, 80, (u, v) => point(v, (u - 0.5) * width), color);
+    patch(6, 80, (u, v) => {
+      const span = typeof width === "number" ? width : width(from + v * (to - from));
+      return point(v, (u - 0.5) * span);
+    }, color);
     return (v: number) => point(v);
   }
   return { height, lane, laneHeight };

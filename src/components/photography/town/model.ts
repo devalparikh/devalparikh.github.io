@@ -28,6 +28,7 @@ export function model() {
     ridge: ridge(false),
     summit: ridge(true),
     frond: frond(),
+    parasolPanel: new T.ConeGeometry(0.5, 1, 2, 1, true, 0, Math.PI / 4),
     canopyPanel: new T.ConeGeometry(0.5, 1, 1, 1, true, 0, Math.PI / 6),
     box: new T.BoxGeometry(1, 1, 1),
     leaf: new T.IcosahedronGeometry(0.53, 1),
@@ -132,7 +133,7 @@ export function model() {
   const papers: T.MeshLambertMaterial[] = [];
   const finishes = new Map<string, T.Material>([
     ["teslaTrim", carTrim], ["carreraTrim", carTrim], ["ferrariTrim", carTrim], ["jeepTrim", carTrim],
-    ["box", ruled], ["leaf", leafPaint], ["hull", thinPaint], ["frond", thinPaint],
+    ["box", ruled], ["leaf", leafPaint], ["hull", thinPaint], ["frond", thinPaint], ["parasolPanel", thinPaint],
   ]);
   const lit = new T.MeshStandardMaterial({ color: "#8eafb0", emissive: "#ffae4c", emissiveIntensity: 0 });
   const glazing = new T.MeshStandardMaterial({

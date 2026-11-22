@@ -1,27 +1,38 @@
+import type { Group } from "three";
+import { ease, travel } from "./motion";
+import { easel } from "./activities";
 import { companionDog } from "./pets";
 import type { Model } from "./model";
 
 const ink = "#354449", leather = "#78533e", linen = "#f1debd";
-type Occupation = "gardener" | "waiter" | "photographer" | "golfer" | "baker" | "hiker";
+export type Performance = (time: number) => {
+  x: number; y: number; z: number; facing: number;
+  step: number; sitting?: number; reach?: number;
+};
+type Occupation = "gardener" | "waiter" | "photographer" | "golfer" | "baker" | "hiker"
+  | "beachcomber" | "surfer" | "reader" | "driver" | "shopper" | "commuter" | "artist" | "picnicker";
 
 export function residents(m: Model) {
   const { form, group, beam } = m;
   return function person(
     x: number, z: number, endX: number, endZ: number, shirt: string,
     occupation: Occupation, phase: number, base = 0.068,
-    { route, groundHeight, portraitPartner = false }: {
+    { route, groundHeight, portraitPartner = false, perform, parent }: {
       route?: (distance: number) => [number, number, number];
       groundHeight?: (x: number, z: number) => number;
       portraitPartner?: boolean;
+      perform?: Performance;
+      parent?: Group;
     } = {},
   ) {
-    const g = group(x, base, z);
+    const g = group(x, base, z, parent);
     g.userData.moving = true;
     g.scale.setScalar(0.79 + (phase % 4) * 0.029);
     g.scale.x *= 0.92 + (phase % 3) * 0.074;
     const dog = portraitPartner && occupation === "hiker" ? companionDog(m, g) : undefined;
     const skin = ["#bd8060", "#956446", "#d9a584", "#af765b"][phase % 4];
     const hair = ["#493930", "#684737", "#39383a", "#8e6348"][phase % 4];
+    const barefoot = occupation === "surfer" || occupation === "reader" || occupation === "beachcomber";
     const trousers = occupation === "gardener" ? "#4d6556" : phase % 2 ? "#495669" : ink;
     const hips = group(0, 0.405, 0, g);
     const chest = group(0, 0, 0, hips);
@@ -61,8 +72,8 @@ export function residents(m: Model) {
       const shin = group(0, -0.19, 0, thigh);
       const foot = group(0, -0.19, 0, shin);
       form("round", 0, -0.085, 0, 0.126, 0.25, 0.139, trousers, thigh);
-      form("drum", 0, -0.086, 0, 0.106, 0.205, 0.111, trousers, shin);
-      form("round", 0, 0, 0.029, 0.13, 0.088, 0.20, leather, foot);
+      form("drum", 0, -0.086, 0, 0.106, 0.205, 0.111, barefoot ? skin : trousers, shin);
+      form("round", 0, 0, 0.029, 0.13, 0.088, 0.20, barefoot ? skin : leather, foot);
       return { thigh, shin, foot, reach: 0, ankle: 0 };
     });
     // The hands share a shoulder-height pivot when holding the camera.
@@ -80,6 +91,100 @@ export function residents(m: Model) {
       beam(elbow, palm, 0.079, skin, arm);
       form("round", side*.183,-.121,.029,.11,.053,.108,occupation === "waiter" ? linen : shirt,arm);
       form("round", palm[0], palm[1], palm[2], 0.088, 0.087, 0.096, skin, arm);
+    }
+    if (occupation === "artist") {
+      easel(m, g);
+      g.rotation.y = Math.atan2(endX - x, endZ - z);
+      // Smock, a thumb palette in the left hand and a long flat brush in the right.
+      form("box", 0, 0.078, 0.119, 0.265, 0.31, 0.026, "#a7b7a1", chest);
+      form("round", -0.157, -0.27, 0.105, 0.26, 0.031, 0.21, "#cea571", left);
+      for (const [i, color] of ["#ac5547", "#e9bc62", "#7298a6"].entries())
+        form("round", -0.245 + i * 0.062, -0.248, 0.126, 0.043, 0.02, 0.046, color, left);
+      beam([0.13, -0.16, 0.17], [0.34, 0.018, 0.294], 0.021, leather, right);
+      beam([0.34, 0.018, 0.294], [0.372, 0.05, 0.315], 0.026, "#698c87", right);
+      legs[0].thigh.position.z = -0.066;
+      legs[1].thigh.position.z = 0.07;
+      hips.position.y = 0.423;
+      m.choreographies.push(t => {
+        const stroke = Math.sin(t * 1.8);
+        rightShoulder.rotation.z = 0.17 * stroke;
+        rightShoulder.position.z = -0.037 * Math.max(0, Math.cos(t * 0.68));
+        head.rotation.y = 0.43 + 0.15 * stroke;
+        head.rotation.x = 0.08 * Math.cos(t * 0.68);
+      });
+      return;
+    }
+    if (occupation === "surfer") {
+      // The stance runs across the board. Knees absorb the roll while the arms counterbalance.
+      for (const [i, leg] of legs.entries()) {
+        leg.thigh.rotation.order = "ZXY";
+        leg.thigh.rotation.z = i ? 0.38 : -0.38;
+        leg.foot.rotation.z = -leg.thigh.rotation.z;
+      }
+      m.choreographies.push(t => {
+        const carve = Math.sin(t * 0.57 + 0.19 * Math.sin(t * 0.87));
+        const bend = 0.51 + 0.18 * carve;
+        hips.position.y = 0.044 + 0.38 * Math.cos(bend) * Math.cos(0.38);
+        for (const { thigh, shin, foot } of legs) {
+          thigh.rotation.x = -bend;
+          shin.rotation.x = 2 * bend;
+          foot.rotation.x = -bend;
+        }
+        chest.rotation.z = 0.18 * carve;
+        head.rotation.y = 0.83 - 0.13 * carve;
+        leftShoulder.rotation.z = -1.04 - 0.26 * carve;
+        rightShoulder.rotation.z = 1.12 - 0.3 * carve;
+      });
+      return;
+    }
+    if (occupation === "picnicker" || occupation === "reader") {
+      const sipping = phase % 2 === 0;
+      g.rotation.y = Math.atan2(endX - x, endZ - z);
+      hips.position.y = 0.091;
+      for (const [i, { thigh, shin, foot }] of legs.entries()) {
+        thigh.rotation.y = (i ? 1 : -1) * (sipping ? 0.53 : 0.28);
+        thigh.rotation.x = i ? -1.95 : -1.68;
+        shin.rotation.x = i ? 1.0 : 0.47;
+        foot.rotation.x = -thigh.rotation.x - shin.rotation.x;
+      }
+      if (occupation === "reader") {
+        for (const side of [-1, 1])
+          form("box", 0.105 + side * 0.054, -0.085, 0.21, 0.11, 0.023, 0.16, linen, right, -0.25, 0, side * 0.18);
+      } else if (sipping) {
+        form("drum", 0.162, -0.08, 0.214, 0.098, 0.106, 0.098, "#548788", right);
+        form("drum", 0.162, -0.024, 0.214, 0.077, 0.008, 0.077, leather, right);
+      } else {
+        form("round", 0.162, -0.087, 0.21, 0.133, 0.09, 0.17, "#d4a15d", right);
+        form("round", 0.162, -0.088, 0.21, 0.138, 0.022, 0.176, "#68805e", right);
+      }
+      m.choreographies.push(t => {
+        const gesture = (1 + Math.sin(t * 0.79 + phase)) / 2;
+        rightShoulder.rotation.x = occupation === "reader" ? -0.45 - 0.09 * gesture : -(sipping ? 1.09 : 0.46) * gesture;
+        head.rotation.y = 0.19 * Math.sin(t * 0.71 + phase);
+        chest.rotation.x = 0.075 + 0.09 * gesture;
+        head.rotation.x = occupation === "reader" ? 0.31 * gesture : (sipping ? -0.13 : 0.17) * gesture;
+      });
+      return;
+    }
+    if (occupation === "beachcomber") {
+      form("drum", -0.15, -0.435, 0.069, 0.19, 0.155, 0.19, "#70a39d", left);
+      for (const dx of [-0.083, 0.083])
+        beam([-0.15 + dx, -0.36, 0.069], [-0.15, -0.275, 0.069], 0.017, linen, left);
+    }
+    if (occupation === "driver") {
+      form("round", 0, 0.2, 0, 0.24, 0.12, 0.23, "#e1d5b6", head);
+      form("round", 0, 0.174, 0.082, 0.22, 0.029, 0.23, "#688579", head);
+    }
+    if (occupation === "shopper") {
+      for (const dz of [-0.06, 0.06])
+        beam([-0.15, -0.28, 0.069], [-0.18, -0.39, 0.069 + dz], 0.021, leather, left);
+      form("box", -0.18, -0.46, 0.069, 0.16, 0.2, 0.23, "#b59c67", left);
+      form("round", -0.18, -0.34, 0.11, 0.065, 0.23, 0.075, "#c88c4e", left, -0.32);
+    }
+    if (occupation === "commuter") {
+      beam([-0.116, 0.31, 0.078], [0.15, 0.014, 0.103], 0.031, leather, chest);
+      form("planks", 0.144, -0.003, 0.065, 0.137, 0.177, 0.194, "#956b4e", chest);
+      form("box", 0.162, -0.099, 0.223, 0.15, 0.017, 0.203, linen, right, -0.28);
     }
     const cameraBody = camera ? group(0, -0.086, 0.187, arms) : undefined;
     if (cameraBody) {
@@ -137,8 +242,28 @@ export function residents(m: Model) {
       for (const dx of [-0.10, 0.10])
         beam([dx, 0.306, 0.05], [dx, 0.121, 0.105], 0.037, leather, chest);
     }
-    const speeds = { gardener: 0.56, waiter: 0.98, photographer: 0.65, golfer: 0.47, baker: 0.82, hiker: 0.74 };
-    const pace = portraitPartner ? speeds.photographer : speeds[occupation];
+    if (perform) {
+      m.choreographies.push(t => {
+        const { x, y, z, facing, step, sitting = 0, reach = 0 } = perform(t);
+        g.position.set(x, y, z);
+        g.rotation.y = facing;
+        hips.position.y = 0.422 - 0.31 * sitting - 0.015 * step * step;
+        for (const [i, { thigh, shin, foot }] of legs.entries()) {
+          const swing = step * (i ? 1 : -1);
+          thigh.rotation.x = -1.53 * sitting - 0.43 * swing;
+          shin.rotation.x = 1.48 * sitting + 0.49 * Math.max(0, -swing);
+          foot.rotation.x = -thigh.rotation.x - shin.rotation.x;
+        }
+        leftShoulder.rotation.x = 0.23 * step - 0.53 * sitting;
+        rightShoulder.rotation.x = -0.18 * step - 0.8 * reach - 0.37 * sitting;
+        chest.rotation.x = 0.12 * reach;
+        head.rotation.y = 0.12 * Math.sin(1.13 * t + phase);
+      });
+      return;
+    }
+    const speeds = { gardener: 0.56, waiter: 0.98, photographer: 0.65, golfer: 0.47, baker: 0.82, hiker: 0.74, shopper: 0.71, commuter: 0.87, driver: 0.72, beachcomber: 0.55 };
+    const variation = Math.sin(17.3 * x + 7.1 * z + phase);
+    const pace = portraitPartner ? speeds.photographer : speeds[occupation] * (1 + 0.16 * variation);
     let travelTime = 3.7;
     let length = Math.hypot(endX - x, endZ - z);
     if (route) {
@@ -151,22 +276,22 @@ export function residents(m: Model) {
       }
       travelTime = Math.max(travelTime, length / 0.92);
     }
-    const halfLap = travelTime + 2.3;
+    const halfLap = travelTime + 2.3 + (portraitPartner ? 0 : 0.68 * variation);
     const stepCount = Math.max(2, Math.round(length / (0.49 * g.scale.z)));
     const swing = length / (4 * stepCount * g.scale.z);
     const heading = Math.atan2(endX - x, endZ - z);
     m.choreographies.push((t) => {
-      const cycle = (t * pace + (portraitPartner ? 4.5 : phase)) % (2 * halfLap);
+      const cycle = (t * pace + (portraitPartner ? 4.5 : phase + (1 + variation) * halfLap)) % (2 * halfLap);
       const outbound = cycle < halfLap;
       const legTime = cycle % halfLap;
-      const progress = Math.min(1, legTime / travelTime);
+      const progress = travel(legTime / travelTime);
       const distance = outbound ? progress : 1 - progress;
       const walking = progress < 1;
       const stepAngle = progress * stepCount * Math.PI * 2;
       const stride = Math.sin(stepAngle);
       let grade = 0;
       // Stop at the counter, flower bed or tee before turning for the return.
-      const turn = Math.max(0, (legTime - halfLap + 0.6) / 0.6);
+      const turn = ease((legTime - halfLap + 0.8) / 0.8);
       let bearing = heading;
       if (route) {
         const [px, py, pz] = route(distance);
@@ -176,10 +301,12 @@ export function residents(m: Model) {
         grade = ((ny - py) * Math.sign(step) * (outbound ? 1 : -1)) / (Math.hypot(nx - px, nz - pz) || 1);
         g.position.set(px, py, pz);
       } else {
-        g.position.set(x + (endX - x) * distance, base, z + (endZ - z) * distance);
+        const drift = portraitPartner ? 0 : 0.043 * variation * Math.sin(Math.PI * distance) ** 2;
+        g.position.set(x + (endX - x) * distance + Math.cos(heading) * drift,
+          base, z + (endZ - z) * distance - Math.sin(heading) * drift);
       }
       g.rotation.y = bearing + (Number(!outbound) + turn) * Math.PI;
-      const gesture = walking ? 0 : Math.sin(Math.PI * Math.min(1, (legTime - travelTime) / 1.7));
+      const gesture = walking ? 0 : Math.sin(Math.PI * ease((legTime - travelTime) / (halfLap - travelTime - 0.4)));
       dog?.(t, stride, gesture);
       const pose = portraitPartner && outbound ? gesture : 0;
       const lean = occupation === "gardener" ? 0.58 * gesture : 0.08 * gesture;
@@ -217,6 +344,19 @@ export function residents(m: Model) {
       rightShoulder.rotation.x = camera ? 0 : stride * 0.15;
       arms.rotation.x = camera ? -1.16 * gesture : 0;
       if (cameraBody) cameraBody.rotation.x = -arms.rotation.x - chest.rotation.x;
+      if (occupation === "beachcomber") {
+        chest.rotation.x += 0.49 * gesture;
+        head.rotation.x += 0.24 * gesture;
+        rightShoulder.rotation.x -= 0.29 * gesture;
+      }
+      if (occupation === "commuter") {
+        rightShoulder.rotation.x -= 0.67 * gesture;
+        head.rotation.x += 0.34 * gesture;
+      }
+      if (occupation === "shopper") {
+        leftShoulder.rotation.x *= 0.28;
+        rightShoulder.position.z = 0.062 * gesture;
+      }
       if (occupation === "golfer") arms.rotation.y = 1.02 * gesture * Math.sin(legTime * 3);
       if (occupation === "gardener") rightShoulder.rotation.x -= gesture * (0.18 + 0.17 * Math.sin(t * 2));
       if (occupation === "waiter" || occupation === "baker") {

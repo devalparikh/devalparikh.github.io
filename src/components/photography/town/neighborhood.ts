@@ -68,7 +68,7 @@ export function neighborhood(m: Model, street: ReturnType<typeof streets>) {
       form("box", u, 1.74, 0.51, 0.25, 0.13, 0.035, c, g);
     }
     person(x - 0.33, z - 0.63, x + 0.48, z - 0.65, color, wares === "flowers" ? "gardener" : "baker", 2);
-    person(x + 0.67, z + 0.61, x + 0.13, z + 0.58, "#898da3", "photographer", 5);
+    person(x + 0.67, z + 0.61, x + 0.13, z + 0.58, color, "shopper", wares === "flowers" ? 6 : wares === "fruit" ? 9 : 3);
     for (let i = 0; i < 3; i++) {
       const u = (i - 1) * 0.48;
       if (wares === "flowers") {
@@ -142,9 +142,10 @@ export function neighborhood(m: Model, street: ReturnType<typeof streets>) {
     arbor,
     laundry,
     chalet,
-    visitors(x: number, z: number) {
-      person(x, z, x + 1.42, z + 0.17, "#73879b", "photographer", 2);
-      person(x + 1.78, z + 0.32, x + 2.88, z + 0.27, "#c27858", "hiker", 7);
+    pedestrian(x: number, z: number) {
+      const phase = Math.round(Math.abs(x * 13 + z * 7));
+      person(x, z, x + 1.42, z + 0.17, ["#73879b", "#ae7059", "#7b8869"][phase % 3],
+        phase % 2 ? "commuter" : "shopper", phase);
     },
     quay(x: number, z: number) {
       form("planks", x, 0.18, z, 10.54, 0.23, 1.23, "#d6bc93");

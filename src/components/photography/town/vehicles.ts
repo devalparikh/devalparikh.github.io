@@ -14,9 +14,19 @@ export function vehicle({ group, form }: Model, kind: Vehicle, x: number, y: num
     glass = "#415763",
     silver = "#c9c5b7";
   form("box", 0, 0.32, 0, 1.72, 0.33, 0.78, color, g);
-  form("box", -0.1, 0.62, 0, 1.24, 0.34, 0.72, glass, g);
+  // Leave a recess behind the hinged curbside door so the passenger
+  // can cross the sill and settle behind the glazing.
+  form("box", -0.1, 0.62, 0.29, 1.24, 0.34, 0.14, glass, g);
+  form("box", 0.23, 0.62, -0.035, 0.58, 0.34, 0.65, glass, g);
+  form("box", -0.68, 0.62, -0.035, 0.08, 0.34, 0.65, glass, g);
+  const door = group(-0.06, 0, -0.36, g);
+  door.name = "estateDoor";
+  door.userData.moving = true;
+  form("box", -0.29, 0.44, -0.035, 0.58, 0.19, 0.042, color, door);
+  form("box", -0.29, 0.64, 0, 0.58, 0.29, 0.046, glass, door);
+  form("box", -0.49, 0.49, -0.061, 0.095, 0.025, 0.024, silver, door);
   form("box", -0.1, 0.82, 0, 1.31, 0.1, 0.8, color, g);
-  for (const dx of [-0.74, -0.22, 0.5]) form("box", dx, 0.63, 0, 0.055, 0.36, 0.74, color, g);
+  for (const dx of [-0.74, -0.06, 0.5]) form("box", dx, 0.63, 0, 0.055, 0.36, 0.74, color, g);
   for (const side of [-1, 1]) {
     for (const dx of [-0.61, 0.61]) {
       form("drum", dx, 0.175, side * 0.394, 0.35, 0.117, 0.35, tire, g, Math.PI / 2);

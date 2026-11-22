@@ -1,3 +1,4 @@
+import { ease } from "./motion";
 import { hillside } from "./landscape";
 import type { Model } from "./model";
 import type { streets } from "./streets";
@@ -112,8 +113,8 @@ export function konaCoast(m: Model, { tree, person }: Street) {
   for (const x of [-3.22, 2.77]) tree(x, 1, 2.65, "#6d8f69", "palm");
   // An outrigger rides at anchor off the launch. Two bent iako join
   // the slim float to the hull; paddles rest across the thwarts.
-  const canoe = group(-0.52, 0.16, 3.8);
-  canoe.rotation.y = -0.17;
+  const canoe = group(-2.86, 0.16, 4.08);
+  canoe.rotation.y = 0.13;
   canoe.userData.moving = true;
   form("hull", 0, 0, 0, 3.52, 0.37, 0.49, "#a34f3b", canoe);
   form("hull", 0.06, 0, 0.84, 2.04, 0.17, 0.16, "#b59765", canoe);
@@ -140,7 +141,65 @@ export function konaCoast(m: Model, { tree, person }: Street) {
         0.38, 0.37, 0.34, i % 4 ? "#82975e" : "#cf8c74");
     }
   }
-  person(-1.94, 2.03, 1.46, 2.25, "#b76454", "photographer", 4, 0.27);
+  konaBeach(m, person);
+}
+
+function konaBeach(m: Model, person: Street["person"]) {
+  const { form, beam, group } = m;
+  const sandTop = (x: number, z: number) => 0.12 + 0.155 *
+    Math.sqrt(Math.max(0, 1 - (x / 4.84) ** 2 - ((z - 1.61) / 1.58) ** 2));
+  for (const [i, x] of [-1.71, 1.72].entries()) {
+    const z = 1.83 + i * 0.18, h = sandTop(x, z);
+    const pole = group(x, h, z);
+    form("drum", 0, 0.52, 0, 0.038, 1.04, 0.038, "#af8962", pole);
+    const shade = group(0, 1.02, 0, pole);
+    shade.userData.moving = true;
+    for (let k = 0; k < 8; k++) {
+      const a = k * Math.PI / 4;
+      form("parasolPanel", 0, 0.07, 0, 1.39, 0.31, 1.39,
+        k % 2 ? "#f6e2ba" : i ? "#739f9a" : "#c57760", shade, 0, a);
+      beam([0, 0.218, 0], [0.69 * Math.sin(a), -0.085, 0.69 * Math.cos(a)], 0.017, "#c8ac80", shade);
+    }
+    form("round", 0, 0.226, 0, 0.086, 0.067, 0.086, "#9b7a59", shade);
+    m.choreographies.push(t => {
+      const breeze = Math.sin(t * 0.79 - i * 0.55) + 0.31 * Math.sin(t * 1.63 + i);
+      shade.rotation.z = 0.048 + 0.052 * breeze;
+      shade.rotation.x = 0.031 * Math.sin(t * 0.62 + i * 0.43);
+    });
+  }
+  const rug = group(1.08, sandTop(1.08, 2.17), 2.17);
+  rug.rotation.x = 0.043;
+  form("box", 0, 0.009, 0, 0.76, 0.018, 1.13, "#cf976e", rug);
+  for (const dz of [-0.48, -0.41, 0.41, 0.48])
+    form("box", 0, 0.02, dz, 0.75, 0.006, 0.029, "#f4dfb5", rug);
+  person(1.08, 1.97, 0.72, 3.2, "#839bb0", "reader", 2, sandTop(1.08, 1.97) + 0.018);
+  person(0, 0, 0, 0, "#c77e64", "beachcomber", 4, 0, {
+    route(t) {
+      const x = -2.22 + 2.62 * t, z = 2.48 + 0.28 * Math.sin(t * 2.5);
+      return [x, sandTop(x, z), z];
+    }, groundHeight: sandTop,
+  });
+
+  const board = group(0, 0, 0);
+  board.userData.moving = true;
+  form("round", 0, 0, 0, 1.20, 0.086, 0.33, "#e5c184", board);
+  form("round", 0.02, 0.036, 0, 0.85, 0.019, 0.041, "#ae7155", board);
+  person(0, 0, 0, 0, "#507f82", "surfer", 6, 0.044, { parent: board });
+  const lip = group(0, 0, 0);
+  lip.userData.moving = true;
+  for (let i = -4; i <= 4; i++) {
+    const taper = 1 - 0.035 * i * i;
+    form("round", i * 0.17, 0, 0.025 * i * i, 0.44, 0.16 * taper, 0.37, "#91bbb9", lip);
+    form("round", i * 0.17, 0.073 * taper, 0.025 * i * i - 0.065, 0.26, 0.043, 0.093, "#e0e9d6", lip);
+  }
+  m.choreographies.push(t => {
+    const a = t * 0.43 + 0.13 * Math.sin(t * 0.72);
+    const swell = Math.sin(a + 0.21);
+    board.position.set(0.97 + 1.37 * Math.sin(a), 0.175 + 0.024 * swell, 4.32 + 0.32 * Math.cos(a));
+    board.rotation.set(0.14 * Math.sin(a + 0.4), Math.atan2(0.32 * Math.sin(a), 1.37 * Math.cos(a)),
+      0.034 * Math.cos(2 * a), "YXZ");
+    lip.position.set(board.position.x - 0.06, 0.106 + 0.021 * swell, board.position.z + 0.025);
+  });
 }
 
 // Parked on the path with the club heads projecting above the rear bag.
@@ -162,10 +221,44 @@ export function golfCart({ form, group, beam }: Model, x: number, z: number, hea
   }
   form("box", -0.04, 1.33, 0, 1.28, 0.11, 0.83, "#ede2ca", cart);
   form("drum", -0.65, 0.72, 0, 0.23, 0.63, 0.22, "#9d6150", cart, 0, 0, -0.13);
+  beam([0.31, 0.48, 0], [0.075, 0.82, 0], 0.034, "#576b65", cart);
+  form("rim", 0.075, 0.82, 0, 0.24, 0.24, 0.16, "#48585a", cart, 0, Math.PI / 2 - 0.42);
   for (const dz of [-0.06, 0.06]) {
     beam([-0.65, 0.9, dz], [-0.72, 1.24, dz], 0.032, "#58615f", cart);
     form("box", -0.68, 1.24, dz, 0.13, 0.059, 0.06, "#717674", cart);
   }
+  return cart;
+}
+
+// A short shuttle on the mown green's paved cart path. The golfer climbs in,
+// drives down to the tee, backs into the original space, then steps off.
+export function makaleiCart(m: Model, person: Street["person"]) {
+  const heading = Math.PI / 2 + 0.12;
+  const cart = golfCart(m, -3.75, 0.48, heading);
+  cart.userData.moving = true;
+  cart.position.y = 0.109;
+  const cos = Math.cos(heading), sin = Math.sin(heading);
+  m.choreographies.push(t => {
+    const phase = t % 23;
+    const drive = -1.05 + 2.42 * (ease((phase - 6) / 4.5) - ease((phase - 12) / 4.5));
+    cart.position.x = -3.75 + cos * drive;
+    cart.position.z = 0.48 - sin * drive;
+  });
+  person(0, 0, 0, 0, "#ab7952", "driver", 3, 0, {
+    perform(t) {
+      const phase = t % 23;
+      const board = ease((phase - 0.8) / 4.5) - ease((phase - 17.5) / 4.5);
+      const sit = ease((board - 0.60) / 0.4);
+      const side = 1.18 - 1.15 * board;
+      return {
+        x: cart.position.x - 0.22 * cos + side * sin,
+        z: cart.position.z + 0.22 * sin + side * cos,
+        y: 0.069 + 0.59 * sit + 0.1 * Math.sin(Math.PI * board),
+        facing: heading + Math.PI - Math.PI / 2 * sit,
+        step: Math.sin(5 * Math.PI * board) * (1 - sit), sitting: sit, reach: sit,
+      };
+    },
+  });
 }
 
 export function oceanCourse(m: Model, { tree, person }: Street) {
@@ -190,7 +283,38 @@ export function oceanCourse(m: Model, { tree, person }: Street) {
   m.choreographies.push(t => { spray.scale.y = 0.12 + 1.13 * ((1 + Math.cos(t * 1.2)) / 2) ** 4; });
   // A low, open lanai faces the green.
   form("planks", -1.1, 0.27, -3.44, 4.98, 0.39, 2.27, "#aa8b68");
-  form("planks", -1.1, 1.08, -3.9, 4.48, 1.52, 1.13, "#dfc79f");
+  // A recessed entrance through the club wall, with a clear threshold beneath the lanai.
+  form("planks", -1.63, 1.08, -3.9, 3.42, 1.52, 1.13, "#dfc79f");
+  form("planks", 0.94, 1.08, -3.9, 0.4, 1.52, 1.13, "#dfc79f");
+  form("planks", 0.41, 1.61, -3.9, 0.66, 0.46, 1.13, "#dfc79f");
+  form("box", 0.41, 0.93, -4.40, 0.66, 1.02, 0.09, "#504c41");
+  const door = group(0.085, 0.46, -3.32);
+  door.userData.moving = true;
+  form("planks", 0.32, 0.46, 0, 0.64, 0.92, 0.045, "#608173", door);
+  form("box", 0.32, 0.58, 0.028, 0.47, 0.44, 0.02, "#96ada9", door);
+  form("round", 0.55, 0.40, 0.044, 0.055, 0.055, 0.036, "#c9a777", door);
+  // Front steps carry the walker from the grass to the clubhouse floor.
+  for (let i = 0; i < 3; i++) {
+    const h = (i + 1) * 0.10;
+    form("planks", 0.41, 0.068 + h / 2, -1.84 - i * 0.19, 0.93, h, 0.19, "#b69571");
+  }
+  m.choreographies.push(t => {
+    const phase = t % 20;
+    door.rotation.y = -1.48 * (ease((phase - 3.2) / 1.2) - ease((phase - 7.7) / 1.3)
+      + ease((phase - 10) / 1.25) - ease((phase - 14.6) / 1.35));
+  });
+  person(0, 0, 0, 0, "#76869d", "shopper", 6, 0, {
+    perform(t) {
+      const phase = t % 20;
+      const distance = ease(phase / 7.6) - ease((phase - 11.2) / 6.7);
+      const z = -1.12 - 3.12 * distance;
+      return {
+        x: 0.41, z, y: 0.068 + 0.397 * ease((-1.74 - z) / 0.63),
+        facing: Math.PI * (1 + ease((phase - 8.4) / 1.4) - ease((phase - 18.3) / 1.4)),
+        step: Math.sin(distance * Math.PI * 14), reach: 0.6 * Math.sin(Math.PI * distance) ** 4,
+      };
+    },
+  });
   for (const x of [-3.35, -1.85, -0.35, 1.15]) form("box", x, 1.16, -2.51, 0.12, 1.7, 0.12, "#806f57");
   form("gable", -1.1, 2.28, -3.46, 5.36, 0.75, 2.71, "#73887d");
   sign("KONA COUNTRY CLUB", -1.1, 1.93, -2.2, 2.73, 0.34, "#536b5b");

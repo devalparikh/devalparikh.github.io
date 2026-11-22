@@ -1,3 +1,5 @@
+import { ease, travel } from "./motion";
+import { picnicBlanket } from "./activities";
 import { vehicle, type Vehicle } from "./vehicles";
 import { maunakea } from "./maunakea";
 import { shopCat } from "./pets";
@@ -6,10 +8,16 @@ import { model } from "./model";
 import { streets } from "./streets";
 
 import { eiffelTower, georgetownLock, lincolnMemorial, bartholdiFountain, piazzaDuomo, rialtoShops } from "./landmarks";
-import { golfCart, konaCoast, oceanCourse } from "./kona";
+import { makaleiCart, konaCoast, oceanCourse } from "./kona";
 import { neighborhood } from "./neighborhood";
 
-export const pitch = 12;
+const curbWidth = 10.78;
+const laneWidth = 1.31;
+const boulevardLane = 1.9;
+export const pitch = curbWidth + 2 * laneWidth;
+export const rowPitch = curbWidth + 2 * boulevardLane;
+const roadHeight = -0.1;
+const markingHeight = roadHeight + 0.0005;
 const cream = "#f5ebd4",
   slate = "#506777",
   water = "#98c8df",
@@ -26,10 +34,10 @@ export function buildTown() {
   const footprints: [number, number][] = [];
   let lot = m.root;
   function block(col: number, row: number, surface: string) {
-    footprints.push([col * pitch, row * pitch]);
-    lot = m.place(col * pitch, row * pitch);
-    form("box", 0, -0.22, 0, pitch, 0.24, pitch, "#ded8cb");
-    form("box", 0, -0.07, 0, 10.78, 0.24, 10.78, cream);
+    footprints.push([col * pitch, row * rowPitch]);
+    lot = m.place(col * pitch, row * rowPitch);
+    form("box", 0, roadHeight - 0.12, 0, pitch, 0.24, rowPitch, "#ded8cb");
+    form("box", 0, -0.07, 0, curbWidth, 0.24, curbWidth, cream);
     const ground =
       surface === water
         ? "lagoon"
@@ -38,12 +46,12 @@ export function buildTown() {
           : "setts";
     form(ground, 0, 0.045, 0, 10.66, 0.045, 10.66, surface);
     for (const n of [-4, -2, 0, 2, 4]) {
-      form("box", n, -0.09, 5.98, 0.79, 0.014, 0.046, "#f6e3ac");
-      form("box", 5.98, -0.09, n, 0.046, 0.014, 0.79, "#f6e3ac");
+      form("box", n, markingHeight, rowPitch / 2 - 0.024, 0.79, 0.001, 0.046, "#f6e3ac");
+      form("box", pitch / 2 - 0.024, markingHeight, n, 0.046, 0.001, 0.79, "#f6e3ac");
     }
     for (let i = 0; i < 5; i++) {
-      form("box", 5.52 + i * 0.19, -0.08, 4.87, 0.09, 0.02, 0.61, "#f7f1e2");
-      form("box", 4.87, -0.08, 5.52 + i * 0.19, 0.61, 0.02, 0.09, "#f7f1e2");
+      form("box", curbWidth / 2 + (i + 0.5) * laneWidth / 5, markingHeight, 4.87, 0.12, 0.001, 0.61, "#f7f1e2");
+      form("box", 4.87, markingHeight, curbWidth / 2 + (i + 0.5) * boulevardLane / 5, 0.61, 0.001, 0.17, "#f7f1e2");
     }
   }
   function flowerbed(x: number, z: number, w: number, d: number) {
@@ -100,7 +108,7 @@ export function buildTown() {
   n.stall(4.35, -0.45, "prints", "#548477");
   n.cycle(-3.86, 2.7, -0.25);
   georgetownLock(m);
-  n.visitors(-1.5, 2.83);
+  n.pedestrian(-1.5, 2.83);
 
   // The reflecting pool is a separate block from both Georgetown and the glasshouse.
   block(0, 0, moss);
@@ -118,7 +126,7 @@ export function buildTown() {
   n.bench(-4.37, 0, Math.PI / 2);
   n.bench(4.37, 0, -Math.PI / 2);
   n.kiosk(-3.64, 4.25, "POST");
-  n.visitors(0.17, 4.36);
+  n.pedestrian(0.17, 4.36);
 
   block(-1, -1, "#b1c38d");
   {
@@ -168,7 +176,7 @@ export function buildTown() {
   }
   n.stall(-3.7, 4, "flowers", moss);
   bartholdiFountain(m);
-  n.visitors(-1.89, 4.2);
+  n.pedestrian(-1.89, 4.2);
 
   // A Paris garden carousel gives the intersection its own moving landmark.
   block(0, -1, "#dcd5b7");
@@ -211,7 +219,7 @@ export function buildTown() {
   n.stall(3.62, -4.16, "flowers", brick);
   n.bench(-3.7, 3.98);
   n.cycle(3.47, 2.97);
-  n.visitors(-0.37, 4.08);
+  person(0.15, 4.03, -0.77, 3.62, "#657c91", "artist", 5);
 
   // Venice, a Florentine market, and the hillside vineyards.
   block(1, -1, water);
@@ -339,7 +347,7 @@ export function buildTown() {
   n.stall(-1.58, 3.68, "flowers", moss);
   n.stall(0.65, 3.7, "prints", slate);
   n.barrel(3.4, 1.6);
-  n.visitors(1.17, 4.52);
+  n.pedestrian(1.17, 4.52);
 
   block(0, -2, moss);
   // The crest levels out into a farmyard. Contour rows bow around the
@@ -444,7 +452,7 @@ export function buildTown() {
   // A strip of mown fairway runs between the greens and a paved cart path.
   form("round", 0, 0.115, 0.08, 3.32, 0.12, 7.82, "#a8bf7c", lot, 0, 0.6);
   form("setts", -3.75, 0.096, 0.48, 0.99, 0.033, 7.31, "#c4b79b", lot, 0, 0.12);
-  golfCart(m, -3.72, 0.42, 1.5);
+  makaleiCart(m, person);
   // A peacock picks its way along the wooded Makalei green.
   const peacock = group(-2.7, 0.23, 0.58);
   peacock.userData.moving = true;
@@ -473,8 +481,10 @@ export function buildTown() {
   person(1.1, 1.89, 2.24, 1.56, "#6a8d9c", "golfer", 2, 0.26);
 
   n.kiosk(3.45, 3.69, "MAKALEI");
-  n.bench(-3.87, 2.24, Math.PI / 2);
-  n.visitors(-1.83, 4.06);
+  n.bench(-4.65, 2.24, Math.PI / 2);
+  picnicBlanket(m, -0.75, 4.12);
+  person(-1.46, 4.11, -0.15, 4.38, "#638c86", "picnicker", 2, 0.092);
+  person(-0.04, 4.23, -1.46, 4.11, "#d19b52", "picnicker", 7, 0.092);
 
   block(-1, 2, moss);
   oceanCourse(m, street);
@@ -563,7 +573,7 @@ export function buildTown() {
   n.bench(0, 3.71);
   n.cycle(2.38, 3.6);
   n.kiosk(-3.77, 3.57, "BILLETS");
-  n.visitors(-1.62, 2.81);
+  n.pedestrian(-1.62, 2.81);
 
   block(2, 0, moss);
   house(-1.61, -1.15, 2.56, 2.51, "#ad8766", "#945643", "CHALET", "gable");
@@ -639,7 +649,7 @@ export function buildTown() {
   form("round", 0, 1.98, 0, 0.91, 0.43, 0.91, "#537361", column);
   form("cone", 0, 2.25, 0, 0.19, 0.31, 0.19, "#476859", column);
   n.cycle(-3.36, 3.89);
-  n.visitors(-1.2, 4.03);
+  n.pedestrian(-1.2, 4.03);
 
   block(-1, 1, water);
   form("box", 0, 0.15, -1.44, 7.64, 0.26, 4.76, "#c9b99c");
@@ -666,32 +676,74 @@ export function buildTown() {
   // Street traffic travels across district boundaries on the shared roads.
   m.place(0, 0);
   function car(x: number, z: number, phase: number, kind: Vehicle, color: string) {
-    const g = vehicle(m, kind, x, -0.09, z, color);
+    // Let the lowest tread facets meet the pavement over a small contact patch.
+    const g = vehicle(m, kind, x, roadHeight - 0.004, z, color);
     g.userData.moving = true;
+    // The vineyard estate pulls up opposite the footpath for a passenger.
+    const door = g.getObjectByName("estateDoor");
+    const boarding = Boolean(door);
+    const stopX = 1.82;
+    const stopZ = z + curbWidth / 2 + 0.61;
+    const radius = 1.18;
+    const halfX = (curbWidth + laneWidth) / 2, halfZ = (curbWidth + boulevardLane) / 2;
+    const southStraight = 2 * (halfX - radius);
+    const stopPhase = (stopX + southStraight / 2) / (southStraight + Math.PI * radius / 2);
+    const lapSeconds = 4 / 0.048;
+    // The passenger crosses the curb after the estate stops, settles into the rear seat,
+    // then steps back out on the next visit. Both use the same stop clock.
+    const stopClock = (t: number) => (t + 5) % (lapSeconds + 10);
     m.choreographies.push((t) => {
       // Four streets around one square, with rounded turns at the junctions.
-      const lap = (t * 0.048 + phase) % 4,
+      const clock = stopClock(t);
+      const lap = boarding ? (stopPhase + 4 * travel((clock - 10) / lapSeconds, 0.025)) % 4
+        : (t * 0.048 + phase) % 4,
         side = Math.floor(lap);
       const angle = (side * Math.PI) / 2,
         along = lap - side,
-        radius = 0.48,
-        half = pitch / 2 - 0.28;
-      const turn = (Math.max(0, (along - 0.9) / 0.1) * Math.PI) / 2;
-      const u =
-        along < 0.9 ? ((along / 0.9) * 2 - 1) * (half - radius) : half - radius + Math.sin(turn) * radius;
-      const v = half - radius + Math.cos(turn) * radius;
+        halfAlong = side % 2 ? halfZ : halfX,
+        halfAcross = side % 2 ? halfX : halfZ;
+      const straight = 2 * (halfAlong - radius);
+      const distance = along * (straight + Math.PI * radius / 2);
+      const turn = Math.max(0, distance - straight) / radius;
+      const u = Math.min(distance, straight) - straight / 2 + Math.sin(turn) * radius;
+      const pullIn = boarding && side === 0 ? 1 - ease(Math.abs(u - stopX) / 1.8) : 0;
+      const v = halfAcross - radius + Math.cos(turn) * radius - (halfZ + z - stopZ) * pullIn;
       g.position.set(
         x + u * Math.cos(angle) + v * Math.sin(angle),
-        -0.09,
+        g.position.y,
         z - u * Math.sin(angle) + v * Math.cos(angle),
       );
-      g.rotation.y = angle + turn;
+      const approach = Math.min(1, Math.abs(u - stopX) / 1.8);
+      const slope = (halfZ + z - stopZ) * Math.sign(u - stopX) * 6 * approach * (1 - approach) / 1.8;
+      g.rotation.y = angle + turn - (pullIn ? Math.atan(slope) : 0);
+      if (door) door.rotation.y = -1.24 * ease(clock / 1.4) * (1 - ease((clock - 7.5) / 1.5));
     });
+    if (door) {
+      person(0, 0, 0, 0, "#ba7353", "commuter", 5, 0, {
+        perform(t) {
+          const clock = stopClock(t);
+          const trip = Math.floor((t + 5) / (lapSeconds + 10));
+          const progress = trip % 2 ? 1 - ease((clock - 2) / 5) : ease((clock - 2) / 5);
+          const sit = ease((progress - 0.68) / 0.32);
+          const waiting = clock >= 10 && trip % 2 === 1;
+          const bearing = waiting ? 0 : g.rotation.y;
+          const side = -1.16 + 1.03 * progress;
+          return {
+            x: (waiting ? stopX : g.position.x) - 0.40 * Math.cos(bearing) + side * Math.sin(bearing),
+            z: (waiting ? stopZ : g.position.z) + 0.40 * Math.sin(bearing) + side * Math.cos(bearing),
+            y: 0.068 + 0.235 * sit - 0.16 * ease(progress / 0.38),
+            facing: Math.PI / 2 * sit + bearing,
+            step: Math.sin(progress * Math.PI * 5) * (1 - sit), sitting: sit,
+            reach: Math.sin(Math.PI * progress),
+          };
+        },
+      });
+    }
   }
   car(2 * pitch, 0, 1.45, "tesla", "#e3e3da");
   car(pitch, 0, 0.43, "ferrari", "#cc473c");
-  car(0, -2 * pitch, 3.3, "estate", "#6499a6");
-  car(0, pitch, 0.54, "carrera", "#809eab");
+  car(0, -2 * rowPitch, 3.3, "estate", "#6499a6");
+  car(0, rowPitch, 0.54, "carrera", "#809eab");
   car(-2 * pitch, 0, 0.57, "jeep", "#333a3c");
   m.finish();
   return { ...m, footprints };

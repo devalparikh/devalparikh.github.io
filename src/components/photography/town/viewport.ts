@@ -1,6 +1,6 @@
 import * as T from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { buildTown, pitch } from "./squares";
+import { buildTown, pitch, rowPitch } from "./squares";
 
 export function mountTown(canvas: HTMLCanvasElement) {
   const renderer = new T.WebGLRenderer({
@@ -34,18 +34,18 @@ export function mountTown(canvas: HTMLCanvasElement) {
   const angle = new T.Vector3(38, 34, 40);
   const closeUps = [
     [-pitch, 0.25],
-    [pitch, -pitch],
-    [pitch - 0.6, -2 * pitch - 1.8, 2.19],
-    [0, pitch - 0.4],
-    [-pitch, -pitch],
-    [0, -pitch],
+    [pitch, -rowPitch],
+    [pitch - 0.6, -2 * rowPitch - 1.8, 2.19],
+    [0, rowPitch - 0.4],
+    [-pitch, -rowPitch],
+    [0, -rowPitch],
     [0, 0],
     [-pitch * 2, -1.4, 2.6],
-    [-pitch * 2, -pitch, 2],
-    [-pitch, pitch * 2],
-    [-pitch * 2, pitch * 2],
-    [0, -pitch * 2],
-    [pitch * 2, -pitch * 2],
+    [-pitch * 2, -rowPitch, 2],
+    [-pitch, rowPitch * 2],
+    [-pitch * 2, rowPitch * 2],
+    [0, -rowPitch * 2],
+    [pitch * 2, -rowPitch * 2],
   ];
   const [x, z, focusHeight = 1.12] = closeUps[Math.floor(Math.random() * closeUps.length)];
   const center = new T.Vector3(x, focusHeight, z);
@@ -85,8 +85,8 @@ export function mountTown(canvas: HTMLCanvasElement) {
   const up = angle.clone().normalize().cross(right);
   const bounds = new T.Box2();
   for (const [x, z] of town.footprints) {
-    for (const dx of [-6, 6])
-      for (const dz of [-6, 6])
+    for (const dx of [-pitch / 2, pitch / 2])
+      for (const dz of [-rowPitch / 2, rowPitch / 2])
         for (const y of [0, 6]) {
           const point = new T.Vector3(x + dx, y, z + dz);
           bounds.expandByPoint(new T.Vector2(point.dot(right), point.dot(up)));
