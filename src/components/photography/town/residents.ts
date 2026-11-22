@@ -1,3 +1,4 @@
+import { companionDog } from "./pets";
 import type { Model } from "./model";
 
 const ink = "#354449", leather = "#78533e", linen = "#f1debd";
@@ -18,6 +19,7 @@ export function residents(m: Model) {
     g.userData.moving = true;
     g.scale.setScalar(0.79 + (phase % 4) * 0.029);
     g.scale.x *= 0.92 + (phase % 3) * 0.074;
+    const dog = portraitPartner && occupation === "hiker" ? companionDog(m, g) : undefined;
     const skin = ["#bd8060", "#956446", "#d9a584", "#af765b"][phase % 4];
     const hair = ["#493930", "#684737", "#39383a", "#8e6348"][phase % 4];
     const trousers = occupation === "gardener" ? "#4d6556" : phase % 2 ? "#495669" : ink;
@@ -34,10 +36,26 @@ export function residents(m: Model) {
     form("round", 0, 0.072, 0.107, 0.056, 0.065, 0.056, skin, head);
     for (const side of [-1, 1]) {
       form("round", side * 0.111, 0.078, -0.005, 0.045, 0.069, 0.046, skin, head);
-      form("round", side * 0.048, 0.101, 0.094, 0.021, 0.024, 0.018, ink, head);
+      form("round", side * 0.051, 0.095, 0.097, 0.043, 0.029, 0.024, linen, head, 0, side * 0.28);
     }
     if (phase % 3 === 1)
       form("round", 0.037, 0.091, -0.114, 0.14, 0.145, 0.14, hair, head);
+    // Brows, cheeks and a lower lip read from the street-facing three-quarter view.
+    for (const side of [-1, 1]) {
+      form("round", side * 0.052, 0.095, 0.11, 0.023, 0.027, 0.014, ink, head);
+      form("round", side * 0.051, 0.12, 0.103, 0.06, 0.016, 0.02, hair, head, 0, 0, -side * 0.12);
+      form("round", side * 0.073, 0.058, 0.077, 0.054, 0.031, 0.023, skin, head);
+      form("box",side*.071,.283,.106,.081,.064,.024,
+        occupation === "waiter" ? linen : shirt,chest,0,0,side*.57);
+    }
+    form("round", 0, 0.032, 0.103, 0.065, 0.014, 0.019, "#874e42", head);
+    if (occupation === "photographer" && phase % 2 === 0) {
+      for (const side of [-1,1]) {
+        form("rim",side*.052,.10,.105,.089,.077,.066,ink,head,0,side*.21);
+        beam([side*.09,.102,.10],[side*.117,.098,-.016],.012,ink,head);
+      }
+      beam([-.014,.10,.103],[.014,.10,.103],.014,ink,head);
+    }
     const legs = [-1, 1].map(side => {
       const thigh = group(side * 0.084, 0, 0, hips);
       const shin = group(0, -0.19, 0, thigh);
@@ -60,6 +78,7 @@ export function residents(m: Model) {
         : forwardHand ? [side * 0.162, -0.118, 0.193] : [side * 0.15, -0.281, 0.069];
       beam([side * 0.145, 0, 0], elbow, 0.106, shirt, arm);
       beam(elbow, palm, 0.079, skin, arm);
+      form("round", side*.183,-.121,.029,.11,.053,.108,occupation === "waiter" ? linen : shirt,arm);
       form("round", palm[0], palm[1], palm[2], 0.088, 0.087, 0.096, skin, arm);
     }
     const cameraBody = camera ? group(0, -0.086, 0.187, arms) : undefined;
@@ -79,9 +98,16 @@ export function residents(m: Model) {
       form("drum", 0.162, -0.089, 0.214, 0.34, 0.034, 0.34, ink, right);
       if (occupation === "baker") {
         form("round", 0, 0.206, -0.01, 0.27, 0.14, 0.25, linen, head);
+        form("drum",0,.193,-.009,.251,.078,.24,linen,head);
+        for (const dx of [-.077,0,.077])
+          form("round",dx,.249,-.015,.135,.138,.226,"#fff3d9",head);
+        form("box",.083,.092,.139,.085,.115,.015,"#d2bc98",chest);
         for (const dx of [-0.072, 0.069])
           form("round", 0.162 + dx, -0.042, 0.224, 0.093, 0.099, 0.259, "#c88f49", right);
+        for (const dx of [-.072,.069]) for (const dz of [-.062,0,.062])
+          form("round",.162+dx,-.001,.224+dz,.065,.015,.021,linen,right,0,.32);
       } else {
+        form("box", -.125,.078,.122,.076,.17,.035,"#b85f50",chest);
         form("box", 0, 0.287, 0.11, 0.098, 0.039, 0.028, ink, chest);
         form("drum", 0.162, -0.019, 0.214, 0.123, 0.108, 0.123, linen, right);
       }
@@ -95,6 +121,7 @@ export function residents(m: Model) {
       form("box", 0.22, -0.586, 0.35, 0.166, 0.05, 0.066, ink, right);
       if (gardening) {
         form("box", 0, 0.135, 0.112, 0.182, 0.228, 0.03, trousers, chest);
+        form("box",0,.16,.138,.114,.069,.023,"#78917b",chest);
         for (const dx of [-0.075, 0.075]) {
           beam([dx, 0.159, 0.13], [dx, 0.301, 0.073], 0.036, trousers, chest);
           form("box", 0.22 + dx, -0.613, 0.367, 0.025, 0.088, 0.033, ink, right);
@@ -153,6 +180,7 @@ export function residents(m: Model) {
       }
       g.rotation.y = bearing + (Number(!outbound) + turn) * Math.PI;
       const gesture = walking ? 0 : Math.sin(Math.PI * Math.min(1, (legTime - travelTime) / 1.7));
+      dog?.(t, stride, gesture);
       const pose = portraitPartner && outbound ? gesture : 0;
       const lean = occupation === "gardener" ? 0.58 * gesture : 0.08 * gesture;
       hips.position.y = 0.411 - 0.075 * lean - Math.abs(stride) * 0.012 - Math.min(0.08, Math.abs(grade) * 0.15);
@@ -192,11 +220,21 @@ export function residents(m: Model) {
       if (occupation === "golfer") arms.rotation.y = 1.02 * gesture * Math.sin(legTime * 3);
       if (occupation === "gardener") rightShoulder.rotation.x -= gesture * (0.18 + 0.17 * Math.sin(t * 2));
       if (occupation === "waiter" || occupation === "baker") {
+        // Bring the tray forward to offer it at the end of the walk.
+        rightShoulder.position.z = 0.085 * gesture;
+        rightShoulder.position.y = 0.032 * gesture;
+        head.rotation.x = 0.16 * gesture;
         rightShoulder.rotation.x = -chest.rotation.x;
         rightShoulder.rotation.z = -0.26 * gesture;
       }
+
       if (occupation === "hiker") {
-        rightShoulder.rotation.z = 2.13 * pose;
+        if (dog) {
+          rightShoulder.rotation.x = 0;
+          leftShoulder.rotation.z = -2.13 * pose;
+        } else {
+          rightShoulder.rotation.z = 2.13 * pose;
+        }
         chest.rotation.y = 0.42 * gesture;
       }
     });

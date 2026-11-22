@@ -1,3 +1,6 @@
+import { vehicle, type Vehicle } from "./vehicles";
+import { maunakea } from "./maunakea";
+import { shopCat } from "./pets";
 import { hillside } from "./landscape";
 import { model } from "./model";
 import { streets } from "./streets";
@@ -92,6 +95,8 @@ export function buildTown() {
       form("box", -0.35 + i * 0.097, y + 0.15, 0.01, 0.074, 0.23 + 0.06 * Math.sin(i), 0.22,
         [slate, brick, cream, "#65877a"][(i + shelf) % 4], bookcart, 0, 0, 0.05 * Math.cos(i));
   }
+  form("planks", 0.45, 0.31, 0.91, 0.59, 0.48, 0.48, wood);
+  shopCat(m, 0.45, 0.55, 0.91);
   n.stall(4.35, -0.45, "prints", "#548477");
   n.cycle(-3.86, 2.7, -0.25);
   georgetownLock(m);
@@ -413,6 +418,8 @@ export function buildTown() {
 
   block(-2, 0, moss);
   konaCoast(m, street);
+  block(-2, -1, "#b09480");
+  maunakea(m);
 
   block(-2, 2, moss);
   for (const side of [-1, 1]) {
@@ -658,14 +665,9 @@ export function buildTown() {
 
   // Street traffic travels across district boundaries on the shared roads.
   m.place(0, 0);
-  function car(x: number, z: number, phase: number, color: string) {
-    const g = group(x, -0.09, z);
+  function car(x: number, z: number, phase: number, kind: Vehicle, color: string) {
+    const g = vehicle(m, kind, x, -0.09, z, color);
     g.userData.moving = true;
-    form("box", 0, 0.29, 0, 1.18, 0.3, 0.56, color, g);
-    form("box", -0.07, 0.53, 0, 0.66, 0.25, 0.49, "glass", g);
-    form("box", -0.07, 0.69, 0, 0.71, 0.065, 0.52, color, g);
-    for (const xx of [-0.37, 0.36])
-      for (const zz of [-0.27, 0.27]) form("drum", xx, 0.18, zz, 0.28, 0.09, 0.28, slate, g, Math.PI / 2);
     m.choreographies.push((t) => {
       // Four streets around one square, with rounded turns at the junctions.
       const lap = (t * 0.048 + phase) % 4,
@@ -686,9 +688,11 @@ export function buildTown() {
       g.rotation.y = angle + turn;
     });
   }
-  car(-pitch, 0, 0.45, "#b75e4d");
-  car(pitch, -pitch, 2.2, "#d5aa52");
-  car(0, -2 * pitch, 3.3, "#6499a6");
+  car(2 * pitch, 0, 1.45, "tesla", "#e3e3da");
+  car(pitch, 0, 0.43, "ferrari", "#cc473c");
+  car(0, -2 * pitch, 3.3, "estate", "#6499a6");
+  car(0, pitch, 0.54, "carrera", "#809eab");
+  car(-2 * pitch, 0, 0.57, "jeep", "#333a3c");
   m.finish();
   return { ...m, footprints };
 }

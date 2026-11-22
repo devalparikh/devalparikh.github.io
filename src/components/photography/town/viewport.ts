@@ -40,7 +40,8 @@ export function mountTown(canvas: HTMLCanvasElement) {
     [-pitch, -pitch],
     [0, -pitch],
     [0, 0],
-    [-pitch * 2, 0],
+    [-pitch * 2, -1.4, 2.6],
+    [-pitch * 2, -pitch, 2],
     [-pitch, pitch * 2],
     [-pitch * 2, pitch * 2],
     [0, -pitch * 2],
@@ -140,11 +141,14 @@ export function mountTown(canvas: HTMLCanvasElement) {
     town.wash.value = 1 - darkness;
     town.lit.emissiveIntensity = 0.04 + darkness * 1.58;
     if (touring && !motion.matches) track(time);
+    town.waterTime.value = time;
     for (const animate of town.choreographies) animate(time);
     for (const [i, tree] of town.trees.entries()) {
       tree.getWorldPosition(treePosition);
       const near = Math.max(0, 1 - treePosition.distanceTo(hit) / 2.85);
-      tree.rotation.z = motion.matches ? 0 : Math.sin(time * 1.5 + i) * (0.014 + near * 0.1);
+      const gust = time * 1.28 - treePosition.x * 0.42 - treePosition.z * 0.26;
+      tree.rotation.z = motion.matches ? 0 : 0.047 * Math.sin(gust) + (0.012 + near * 0.1) * Math.sin(2.4 * gust + i);
+      tree.rotation.x = motion.matches ? 0 : 0.019 * Math.cos(gust * 0.7);
     }
     controls.update();
     town.sync();

@@ -24,8 +24,24 @@ export function konaCoast(m: Model, { tree, person }: Street) {
   const flank = hillside(m, (x, z) => {
     const rise = Math.max(0, Math.min(1, (1.45 - z) / 5.6));
     const shoulder = 3.35 + 0.52 * Math.cos(x * 0.68 + z * 0.2) + 0.38 * Math.sin(x * 0.94);
-    return rise ** 1.2 * shoulder;
-  }, "#93a67d");
+    // Hualālai rises inland of Kona. A chain of inset vents breaks
+    // its long crest, while the lower residential grade stays gentle.
+    const inland = Math.max(0, Math.min(1, (0.6 - z) / 4.6));
+    let crest = 1.34 + 0.92 * Math.cos(x * 0.58);
+    for (const cx of [-2.7, 0.12, 2.53]) {
+      const r = Math.hypot((x - cx) * 0.77, (z + 3.74) * 1.06);
+      crest += 1.6 * Math.max(0, 1-r) - 1.19 * Math.max(0, 1-r/0.47);
+    }
+    const folds = inland * (0.28 * Math.sin(2.3*x + .6*z) + .12*Math.cos(3.7*x - .9*z));
+    return rise ** 1.2 * shoulder + inland ** 1.6 * crest + folds;
+  }, "#93a67d", (x, z) => {
+    const gully = Math.cos(2.45*x + .76*z + .39*Math.sin(z*1.8));
+    const exposure = -z + .58*gully + .16*Math.sin(4*x-z);
+    if (exposure > 3.92) return "#8c8170";
+    if (exposure > 3.21) return "#94917a";
+    if (exposure > 2.72) return "#929d7c";
+    return "#93a67d";
+  });
   const roadZ = (x: number) => -0.6 - 0.23 * x + 0.45 * Math.sin(x * 0.96);
   const road = flank.lane(roadZ, -5.31, 5.31, 0.61, "#cfbc9f", "x");
   person(0, 0, 0, 0, "#ca7956", "photographer", 2, 0, {

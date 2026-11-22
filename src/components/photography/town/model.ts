@@ -1,4 +1,5 @@
 import * as T from "three";
+import { vehicleShapes } from "./vehicles";
 import { printTexture, type Surface } from "./print";
 import { spruceWhorl, inkCreases, arcade, mansard, bridgeArch, frond, gable, hull, ridge } from "./contours";
 
@@ -8,6 +9,7 @@ export function model() {
   const root = new T.Group();
   let origin = root;
   const shapes = {
+    ...vehicleShapes(),
     octagon: inkCreases(new T.CylinderGeometry(0.5, 0.5, 1, 8)),
     octagonalRoof: inkCreases(new T.ConeGeometry(0.5, 1, 8)),
     cupola: inkCreases(new T.LatheGeometry(
@@ -35,13 +37,14 @@ export function model() {
     spire: inkCreases(new T.ConeGeometry(Math.SQRT1_2, 1, 4).rotateY(Math.PI / 4)),
   };
   const wash = { value: 1 };
+  const waterTime = { value: 0 };
   function illustratedMaterial(ruled: boolean, surface?: Surface, creases = false) {
     const material = new T.MeshLambertMaterial();
     if (surface) material.map = printTexture(surface);
     const projectUV = Boolean(surface && surface !== "foliage");
-    material.customProgramCacheKey = () => `${ruled}-${projectUV}-${creases}`;
+    material.customProgramCacheKey = () => `${ruled}-${surface === "lagoon"}-${projectUV}-${creases}`;
     material.onBeforeCompile = (shader) => {
-      Object.assign(shader.uniforms, { wash });
+      Object.assign(shader.uniforms, { wash, waterTime });
       const varyings = "varying vec3 localPoint; varying vec3 faceNormal;\n";
       shader.vertexShader =
         varyings +
@@ -62,6 +65,12 @@ export function model() {
           vec3 page = position * dimensions;
           vMapUv = (abs(normal.y) > 0.5 ? page.xz : abs(normal.x) > 0.5 ? page.zy : page.xy) * 0.5;
         `,
+        );
+      }
+      if (surface === "lagoon") {
+        shader.vertexShader = "uniform float waterTime;\n" + shader.vertexShader.replace(
+          "#include <color_vertex>",
+          "#include <color_vertex>\nvMapUv += vec2(waterTime * 0.075, waterTime * 0.042 + 0.035 * sin(vMapUv.x * 3.0 + waterTime));",
         );
       }
       if (creases) {
@@ -323,6 +332,7 @@ export function model() {
   }
   return {
     wash,
+    waterTime,
     root,
     ground,
     place,

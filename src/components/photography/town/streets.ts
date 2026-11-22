@@ -229,6 +229,12 @@ export function streets(m: Model) {
     form("round", 0, 0.95, -0.088, 0.23, 0.20, 0.12, hair, seat);
     if (phase % 3 === 0) form("round", 0.04, 0.91, -0.15, 0.145, 0.13, 0.13, hair, seat);
     form("round", 0, 0.91, 0.118, 0.06, 0.068, 0.055, "#bf8d72", seat);
+    for (const side of [-1,1]) {
+      form("round",side*.048,.932,.104,.027,.029,.018,iron,seat);
+      form("round",side*.048,.951,.102,.053,.014,.018,hair,seat);
+      form("box",side*.055,.723,.084,.076,.061,.024,chalk,seat,0,0,side*.48);
+    }
+    form("round",0,.869,.106,.062,.014,.016,"#915e50",seat);
     // One hand rests across the lap while the other lifts the cup.
     beam([-0.12, 0.69, 0], [-0.17, 0.5, 0.04], 0.10, shirt, seat);
     beam([-0.17, 0.5, 0.04], [-0.06, 0.45, 0.14], 0.078, "#bf8d72", seat);
