@@ -2,8 +2,8 @@
    Studio Deval - the photography page
 
    This page has its own vibe, apart from the career pages: Helvetica set
-   large and uppercase, a free-floating nav capsule, a hover trail of
-   polaroids, and the photographs in a macOS Preview window. The theme
+   large and uppercase, a free-floating nav capsule, a living miniature
+   town, and the photographs in a macOS Preview window. The theme
    tokens are the same ones `globals.css` declares, so light and dark carry
    over untouched. Everything here is scoped under `.studio` or to classes
    only this page renders.
@@ -101,115 +101,6 @@
    Hero
    ========================================================================== */
 
-.studio-hero {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100svh - 3.5rem);
-  padding: 1.75rem var(--studio-margin) 1.1rem;
-  overflow: clip;
-  text-transform: uppercase;
-}
-
-/* The bracketed label: brackets pinned to the ends, words in the middle. */
-.studio-label {
-  display: flex;
-  justify-content: space-between;
-  width: min(75%, 22rem);
-  margin-inline: auto;
-  font-size: 0.78rem;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  white-space: pre;
-}
-
-.studio-label::before {
-  content: "[";
-}
-
-.studio-label::after {
-  content: "]";
-}
-
-@media (min-width: 768px) {
-  .studio-label {
-    width: min(26%, 24rem);
-    font-size: clamp(0.78rem, 1.1vw, 1rem);
-  }
-}
-
-.studio-title {
-  position: relative;
-  z-index: 0;
-  margin-top: 1.5rem;
-  font-size: min(23vw, 18rem);
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 0.8;
-  text-align: center;
-}
-
-@media (min-width: 768px) {
-  .studio-title {
-    margin-top: 2rem;
-    /* Wide, but never so tall that a short laptop screen loses the foot. */
-    font-size: min(16.6vw, 27svh);
-  }
-}
-
-/* Each word is the mask its letters rise out of. */
-.studio-title-word {
-  display: block;
-  overflow: hidden;
-  padding-top: 0.06em;
-}
-
-@keyframes studioLetterRise {
-  from {
-    transform: translateY(105%);
-  }
-  to {
-    transform: none;
-  }
-}
-
-.studio-letter {
-  display: inline-block;
-  animation: studioLetterRise 1100ms var(--ease-out-quint) both;
-  animation-delay: calc(var(--letter-delay, 0ms) + 100ms);
-}
-
-.studio-hero-foot {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .studio-hero-foot {
-    flex-direction: row;
-    align-items: flex-end;
-  }
-}
-
-.studio-intro {
-  max-width: 24ch;
-  font-size: clamp(1.05rem, 2vw, 1.75rem);
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-
-.studio-intro strong {
-  font-weight: 700;
-}
-
 .studio-pills {
   display: flex;
   flex-wrap: wrap;
@@ -249,38 +140,6 @@
 .studio-pill:hover::before,
 .studio-pill:focus-visible::before {
   transform: none;
-}
-
-.studio-scroll-cue {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .studio-scroll-cue {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    margin-top: 1.25rem;
-    font-size: 0.78rem;
-    letter-spacing: -0.01em;
-  }
-
-  .studio-scroll-cue::before {
-    content: "[ ";
-    white-space: pre;
-  }
-
-  .studio-scroll-cue::after {
-    content: " ]";
-    white-space: pre;
-  }
-
-  .studio-scroll-rule {
-    width: 2.85em;
-    margin-inline: 0.5em;
-    border-bottom: 1px solid currentColor;
-  }
 }
 
 /* ==========================================================================
@@ -342,67 +201,6 @@
   max-width: 76rem;
   margin-inline: auto;
   padding: 2.5rem var(--studio-margin) 0;
-}
-
-/* ==========================================================================
-   Banner - "STUDIO DEVAL" on a loop behind the Preview window
-
-   A full-bleed strip, the way Karo runs its capsule banner, set big and bold
-   with only a slight gap between repeats.
-   It crosses behind the top edge of the window, so the upper half of the
-   letters shows above it and the sides show past it on wide screens. Two
-   identical runs slide left by exactly one run's width, so the loop is
-   seamless.
-   ========================================================================== */
-
-.studio-stage {
-  --banner-size: clamp(4.25rem, 13vw, 12rem);
-  position: relative;
-  isolation: isolate;
-  /* Tied to the banner's size, so about two thirds of the lettering clears
-     the top of the window at every width. */
-  padding-top: calc(var(--banner-size) * 0.72);
-}
-
-.studio-banner {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  z-index: -1;
-  width: 100vw;
-  overflow: hidden;
-  padding-block: 0.08em 0.02em;
-  background-color: var(--color-base-200);
-  font-size: var(--banner-size);
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 0.92;
-  text-transform: uppercase;
-  white-space: nowrap;
-  translate: -50% 0;
-  user-select: none;
-}
-
-@keyframes bannerLoop {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.studio-banner-track {
-  display: flex;
-  width: max-content;
-  animation: bannerLoop 46s linear infinite;
-}
-
-.studio-banner-run {
-  display: flex;
-}
-
-/* Padding on both sides of every repeat, so the gap at the seam between the
-   two runs matches the gap everywhere else. */
-.studio-banner-run span {
-  padding-inline: 0.12em;
 }
 
 .studio-anchor {
@@ -894,64 +692,128 @@
    Gear
    ========================================================================== */
 
+
 .studio-gear {
-  margin-top: 5rem;
-  text-transform: uppercase;
-}
-
-.studio-gear .studio-label {
-  margin-inline: 0;
-  scroll-margin-top: 5.5rem;
-}
-
-.studio-gear ul {
-  margin-top: 1.25rem;
+  margin: 3.5rem auto 0;
+  max-width: 70rem;
   border-top: 1px solid var(--rule);
+  padding-top: 1rem;
 }
-
+.studio-gear h2 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  scroll-margin-top: 5rem;
+}
+.studio-gear ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2.5rem;
+  margin-top: 0.8rem;
+}
 .studio-gear li {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.2rem 1.5rem;
-  align-items: baseline;
-  padding: 0.95rem 0;
-  border-bottom: 1px solid var(--rule);
+  align-content: start;
+  gap: 0.18rem;
 }
-
-@media (min-width: 640px) {
-  .studio-gear li {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
-  }
-}
-
 .studio-gear-camera {
-  font-size: clamp(1.15rem, 2.6vw, 2rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
+  font-weight: 600;
 }
-
 .studio-gear-lenses {
-  grid-row: 2;
   color: var(--color-neutral-content);
-  font-size: 0.78rem;
+  font-size: 0.84rem;
 }
 
-.studio-gear-count {
-  grid-row: 1;
-  grid-column: 2;
-  color: var(--color-neutral-content);
-  font-size: 0.78rem;
-  font-variant-numeric: tabular-nums;
+/* Paper extends between the blocks and out to the edges of the map. */
+.town-hero {
+  --town-paper: #f4efdf;
+  --town-ink: #332e27;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: clamp(24rem, 64svh, 42rem);
+  background: var(--town-paper);
+  color: var(--town-ink);
 }
-
-@media (min-width: 640px) {
-  .studio-gear-lenses {
-    grid-row: auto;
-  }
-
-  .studio-gear-count {
-    grid-row: auto;
-    grid-column: auto;
-  }
+[data-theme="inkember"] .town-hero {
+  --town-paper: #192634;
+  --town-ink: #f5dfb0;
+}
+.town-hero[data-expanded="true"] {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  width: 100%;
+  height: 100dvh;
+}
+.town-view, .town-view canvas, .town-print, .town-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.town-view::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url("/img/town/paper.webp") repeat;
+  opacity: .065;
+  mix-blend-mode: multiply;
+}
+[data-theme="inkember"] .town-view::after { mix-blend-mode: soft-light; }
+.town-poster { background: center / cover url("/img/town/morning.webp"); }
+[data-theme="inkember"] .town-poster { background-image: url("/img/town/night.webp"); }
+.town-hero[data-expanded="true"] .town-poster {
+  margin: auto;
+  width: min(100%, calc(100dvh * 1360 / 850));
+  height: auto;
+  aspect-ratio: 1360 / 850;
+  background: center / contain no-repeat url("/img/town/overview-morning.webp");
+}
+[data-theme="inkember"] .town-hero[data-expanded="true"] .town-poster {
+  background-image: url("/img/town/overview-night.webp");
+}
+.town-hero[data-expanded="true"] .town-print { cursor: grab; touch-action: none; }
+.town-hero[data-expanded="true"] .town-print:active { cursor: grabbing; }
+.town-print:focus-visible { outline: 2px dashed currentColor; outline-offset: -5px; }
+.town-view canvas { cursor: grab; }
+.town-hero[data-expanded="true"] canvas { touch-action: none !important; }
+.town-view canvas:active { cursor: grabbing; }
+.town-view canvas[aria-hidden="true"] { pointer-events: none; }
+.town-view canvas:focus-visible { outline: 2px dashed currentColor; outline-offset: -5px; }
+.town-heading {
+  position: absolute;
+  top: clamp(1rem, 2.5vw, 2.6rem);
+  left: clamp(1rem, 3vw, 3rem);
+  z-index: 1;
+  margin: 0;
+  pointer-events: none;
+  font: 450 clamp(1.7rem, 3.6vw, 3.6rem)/1 var(--font-fraunces), Georgia, serif;
+  letter-spacing: -0.065em;
+  padding: 0.09em 0.27em 0.17em;
+  background: var(--town-paper);
+  border: 1px solid color-mix(in srgb, currentColor 42%, transparent);
+  box-shadow: 0.065em 0.065em 0 var(--town-paper);
+}
+.town-heading em { font-family: Georgia, serif; }
+.town-hero[data-expanded="true"] .town-heading { display: none; }
+.town-expand {
+  position: absolute;
+  z-index: 1;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid color-mix(in srgb, currentColor 36%, transparent);
+  border-radius: 50%;
+  background: var(--town-paper);
+  cursor: pointer;
+}
+.town-expand:hover { border-color: currentColor; }
+.town-expand svg { width: 1.15rem; height: 1.15rem; }
+@media (max-width: 720px) {
+  .town-hero { height: clamp(22rem, 56svh, 31rem); }
 }

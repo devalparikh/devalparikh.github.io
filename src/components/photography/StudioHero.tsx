@@ -1,60 +1,118 @@
-import { stickers, studio } from "@/content/studio";
-import type { Photo } from "@/lib/photos";
-import { PhotoTrail } from "./PhotoTrail";
-import { StudioPills } from "./StudioPills";
+"use client";
 
-/** Delay between letters of the title as they rise into place. */
-const LETTER_STEP_MS = 40;
+import { useEffect, useRef, useState } from "react";
+import type { mountTown } from "./town/viewport";
+import { TownPoster } from "./town/TownPoster";
+import { ExpandIcon } from "./PreviewIcons";
 
-interface StudioHeroProps {
-  photos: Photo[];
-  /** One line on the cameras the photographs were made with. */
-  gearLine: string;
-}
-
-/**
- * "STUDIO DEVAL" set huge in bold Helvetica, with a trail of small polaroids
- * that pop up under the cursor and fall away as it moves.
- */
-export function StudioHero({ photos, gearLine }: StudioHeroProps) {
-  let letterIndex = 0;
-
+export function StudioHero() {
+  const frame = useRef<HTMLElement>(null),
+    canvas = useRef<HTMLCanvasElement>(null);
+  const engine = useRef<ReturnType<typeof mountTown> | null>(null);
+  const [ready, setReady] = useState(false);
+  const [expanded, setExpanded] = useState(false),
+    [fallback, setFallback] = useState(false);
+  const exitButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    let active = true;
+    const surface = canvas.current!;
+    const lost = (e: Event) => {
+      e.preventDefault();
+      setReady(false);
+      engine.current?.dispose();
+      engine.current = null;
+    };
+    surface.addEventListener("webglcontextlost", lost);
+    async function start() {
+      try {
+        const { mountTown } = await import("./town/viewport");
+        if (!active) return;
+        engine.current = mountTown(surface);
+        setReady(true);
+      } catch {
+        if (active) setReady(false);
+      }
+    }
+    void start();
+    surface.addEventListener("webglcontextrestored", start);
+    return () => {
+      active = false;
+      surface.removeEventListener("webglcontextlost", lost);
+      surface.removeEventListener("webglcontextrestored", start);
+      engine.current?.dispose();
+      engine.current = null;
+    };
+  }, []);
+  useEffect(() => {
+    const change = () => setExpanded(document.fullscreenElement === frame.current);
+    document.addEventListener("fullscreenchange", change);
+    return () => document.removeEventListener("fullscreenchange", change);
+  }, []);
+  useEffect(() => {
+    if (!fallback) return;
+    const hero = frame.current!,
+      siblings = [...hero.parentElement!.children].filter(
+        (el): el is HTMLElement => el instanceof HTMLElement && el !== hero && !el.inert,
+      );
+    const overflow = document.body.style.overflow;
+    siblings.forEach((el) => (el.inert = true));
+    document.body.style.overflow = "hidden";
+    const close = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setFallback(false);
+        exitButton.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", close);
+    return () => {
+      siblings.forEach((el) => (el.inert = false));
+      document.body.style.overflow = overflow;
+      document.removeEventListener("keydown", close);
+    };
+  }, [fallback]);
+  const full = expanded || fallback;
+  useEffect(() => {
+    engine.current?.setExpanded(full);
+  }, [full, ready]);
+  async function toggle() {
+    if (fallback) return setFallback(false);
+    if (document.fullscreenElement === frame.current) return document.exitFullscreen();
+    try {
+      await frame.current!.requestFullscreen();
+    } catch {
+      setFallback(true);
+    }
+  }
   return (
-    <section className="studio-hero">
-      <PhotoTrail photos={photos} stickers={stickers} />
-
-      <p className="studio-label">
-        <span>{studio.label}</span>
-      </p>
-
-      <h1 className="studio-title" aria-label={studio.title.join(" ")}>
-        {studio.title.map((word) => (
-          <span key={word} className="studio-title-word" aria-hidden="true">
-            {[...word].map((letter, i) => (
-              <span
-                key={i}
-                className="studio-letter"
-                style={{ "--letter-delay": `${letterIndex++ * LETTER_STEP_MS}ms` } as React.CSSProperties}
-              >
-                {letter}
-              </span>
-            ))}
-          </span>
-        ))}
+    <section ref={frame} className="town-hero" data-expanded={full} aria-label="Photography studio">
+      <h1 className="town-heading">
+        Studio <em>Deval</em>
       </h1>
-
-      <div className="studio-hero-foot">
-        <p className="studio-intro">
-          {photos.length} frames. <strong>{gearLine}</strong>
-        </p>
-        <StudioPills />
+      <div className="town-view">
+        {!ready && <TownPoster expanded={full} />}
+        <canvas
+          ref={canvas}
+          tabIndex={ready ? 0 : -1}
+          aria-hidden={!ready}
+          aria-label="Explore the illustrated towns. Drag to orbit, shift-drag to pan, or pinch to zoom. Arrow keys rotate, plus and minus zoom, and Home resets the view."
+        />
       </div>
-
-      <p className="studio-scroll-cue" aria-hidden="true">
-        <span>Scroll to</span>
-        <span className="studio-scroll-rule" />
-        <span>Discover more</span>
-      </p>
+      <button
+        ref={exitButton}
+        className="town-expand town-tool"
+        onClick={toggle}
+        aria-label={full ? "Exit full screen" : "Enter full screen"}
+        title={full ? "Exit full screen" : "Enter full screen"}
+        aria-pressed={full}
+      >
+        {full ? (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M4 9h5V4m6 16v-5h5" />
+          </svg>
+        ) : (
+          <ExpandIcon />
+        )}
+      </button>
     </section>
   );
 }
