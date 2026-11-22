@@ -38,11 +38,11 @@ export function model() {
   };
   const wash = { value: 1 };
   const waterTime = { value: 0 };
-  function illustratedMaterial(ruled: boolean, surface?: Surface, creases = false) {
+  function illustratedMaterial(ruled: boolean, surface?: Surface, creases = false, lamps = false) {
     const material = new T.MeshLambertMaterial();
     if (surface) material.map = printTexture(surface);
     const projectUV = Boolean(surface && surface !== "foliage");
-    material.customProgramCacheKey = () => `${ruled}-${surface === "lagoon"}-${projectUV}-${creases}`;
+    material.customProgramCacheKey = () => `${ruled}-${surface === "lagoon"}-${projectUV}-${creases}-${lamps}`;
     material.onBeforeCompile = (shader) => {
       Object.assign(shader.uniforms, { wash, waterTime });
       const varyings = "varying vec3 localPoint; varying vec3 faceNormal;\n";
@@ -73,6 +73,11 @@ export function model() {
           "#include <color_vertex>\nvMapUv += vec2(waterTime * 0.075, waterTime * 0.042 + 0.035 * sin(vMapUv.x * 3.0 + waterTime));",
         );
       }
+      if (lamps) {
+        shader.vertexShader = "attribute float lamp; varying float lensLight;\n" +
+          shader.vertexShader.replace("#include <begin_vertex>", "#include <begin_vertex>\nlensLight = lamp;");
+        shader.fragmentShader = "varying float lensLight;\n" + shader.fragmentShader;
+      }
       if (creases) {
         shader.vertexShader = "attribute vec3 crease; varying vec3 inkEdge;\n" +
           shader.vertexShader.replace("#include <begin_vertex>", "#include <begin_vertex>\ninkEdge = crease;");
@@ -97,6 +102,7 @@ export function model() {
           "#include <opaque_fragment>",
           `
           outgoingLight = mix(outgoingLight, diffuseColor.rgb, wash * 0.56);
+          ${lamps ? "outgoingLight += diffuseColor.rgb * lensLight * (1.0 - wash) * 1.1;" : ""}
           float stroke = 0.58 * (1.0 - smoothstep(0.02, 0.22, abs(normal.z)));
           ${lines}
           outgoingLight = mix(outgoingLight, vec3(0.046, 0.041, 0.032), stroke * 0.98);
@@ -113,6 +119,8 @@ export function model() {
   const contourPaint = illustratedMaterial(false, undefined, true);
   const groundPaint = illustratedMaterial(false);
   groundPaint.vertexColors = true;
+  const carTrim = illustratedMaterial(false, undefined, false, true);
+  carTrim.vertexColors = true;
   const landforms: T.BufferGeometry[] = [];
   function ground(geometry: T.BufferGeometry) {
     landforms.push(geometry);
@@ -123,6 +131,7 @@ export function model() {
   const leafPaint = illustratedMaterial(false, "foliage");
   const papers: T.MeshLambertMaterial[] = [];
   const finishes = new Map<string, T.Material>([
+    ["teslaTrim", carTrim], ["carreraTrim", carTrim], ["ferrariTrim", carTrim], ["jeepTrim", carTrim],
     ["box", ruled], ["leaf", leafPaint], ["hull", thinPaint], ["frond", thinPaint],
   ]);
   const lit = new T.MeshStandardMaterial({ color: "#8eafb0", emissive: "#ffae4c", emissiveIntensity: 0 });
@@ -323,6 +332,7 @@ export function model() {
     leafPaint.dispose();
     landforms.forEach(g => g.dispose());
     groundPaint.dispose();
+    carTrim.dispose();
     contourPaint.dispose();
     thinPaint.dispose();
     ruled.dispose();
