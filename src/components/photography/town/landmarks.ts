@@ -1,3 +1,4 @@
+import { travel } from "./motion";
 import type { Model } from "./model";
 
 const ivory = "#f1e6d3", bronze = "#527269", sandstone = "#cfbfa6";
@@ -182,7 +183,7 @@ export function rialtoShops({ form, group }: Model, x: number, z: number) {
 // the arch, tapering lattice bays and balconies meet around all four corners.
 export function eiffelTower({ group, form, beam, choreographies }: Model) {
   const tower = group(0, 0.07, -0.51);
-  const iron = "#54616a", edge = "#947862", trim = "#b39a79", cab = "#ab5446";
+  const iron = { floodlit: "#54616a" }, edge = "#947862", trim = { floodlit: "#b39a79" }, cab = "#ab5446";
   form("setts", 0, 0.018, 0, 3.75, 0.036, 3.75, "#d9cbb7", tower);
   const levels = [[0.18, 1.46], [0.77, 1.27], [1.52, 0.93], [2.14, 0.67],
     [2.68, 0.49], [3.34, 0.32], [4.04, 0.22], [4.82, 0.15], [5.62, 0.105]];
@@ -252,7 +253,9 @@ export function eiffelTower({ group, form, beam, choreographies }: Model) {
       form("box", 0, 0.035, 0.152, 0.22, 0.08, 0.015, "glass", lift);
       form("box", 0.148, 0.035, 0, 0.015, 0.08, 0.23, "glass", lift);
       choreographies.push(t => {
-        const u = 0.5 - 0.5 * Math.cos(t * 0.23 + i);
+        // The two cars load at different times and dwell at each gallery.
+        const cycle = (t + i * 4.3) % (30 + i * 1.7);
+        const u = travel((cycle - 2) / 10) - travel((cycle - 16) / 10);
         lift.position.set(1.27 - 0.86 * u, 0.43 + 2.15 * u, 1.29 - 0.85 * u);
       });
     }

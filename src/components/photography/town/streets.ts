@@ -204,6 +204,19 @@ export function streets(m: Model) {
     form("box", x, 1.85, z, 0.24, 0.36, 0.24, "glass");
     form("spire", x, 2.09, z, 0.36, 0.18, 0.36, iron);
   }
+  // A shallow swag between real anchors. Pendants hang vertically off the cord.
+  function festoon(x1: number, z1: number, x2: number, z2: number, height: number, bulbs: number) {
+    const point = (u: number) => [
+      x1 + (x2 - x1) * u, height - 1.28 * u * (1 - u), z1 + (z2 - z1) * u,
+    ];
+    for (let i = 0; i <= bulbs; i++)
+      beam(point(i / (bulbs + 1)), point((i + 1) / (bulbs + 1)), 0.027, iron);
+    for (let i = 1; i <= bulbs; i++) {
+      const [x, y, z] = point(i / (bulbs + 1));
+      form("drum", x, y - 0.044, z, 0.064, 0.092, 0.064, iron);
+      form("round", x, y - 0.13, z, 0.145, 0.17, 0.145, "bulb");
+    }
+  }
   function table(x: number, z: number, color: string) {
     form("drum", x, 0.4, z, 0.09, 0.8, 0.09, iron);
     form("drum", x, 0.68, z, 0.78, 0.1, 0.78, wood);
@@ -246,7 +259,7 @@ export function streets(m: Model) {
     beam([0.02, -0.12, 0.1], [0, -0.09, 0.26], 0.075, "#bf8d72", arm);
     form("drum", 0, -0.04, 0.27, 0.14, 0.14, 0.14, chalk, arm);
     m.choreographies.push(
-      (t) => (arm.rotation.x = -0.78 * Math.pow(Math.max(0, Math.sin(t * 0.84 + phase)), 3)),
+      (t) => (arm.rotation.x = -0.78 * Math.pow(Math.max(0, Math.sin(t * (0.52 + 0.047 * phase) + phase)), 3)),
     );
   }
   function boat(x: number, z: number, color: string) {
@@ -264,5 +277,5 @@ export function streets(m: Model) {
     });
     return g;
   }
-  return { house, tree, lamp, table, patron, boat, person: residents(m) };
+  return { house, tree, lamp, festoon, table, patron, boat, person: residents(m) };
 }

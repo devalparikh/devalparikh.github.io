@@ -144,7 +144,9 @@ export function mountTown(canvas: HTMLCanvasElement) {
     rim.color.setRGB(1 - 0.52 * darkness, 0.89 - 0.23 * darkness, 0.7 + 0.3 * darkness);
     rim.intensity = 1 - darkness * 0.17;
     town.wash.value = 1 - darkness;
-    town.lit.emissiveIntensity = 0.04 + darkness * 1.58;
+    town.lit.emissiveIntensity = 0.04 + darkness * 1.02;
+    town.bulb.emissiveIntensity = darkness * 1.6;
+    town.pool.opacity = darkness * 0.46;
     if (touring && !motion.matches) track(time);
     town.waterTime.value = time;
     for (const animate of town.choreographies) animate(time);
@@ -157,6 +159,7 @@ export function mountTown(canvas: HTMLCanvasElement) {
     }
     controls.update();
     town.sync();
+    town.setMapScale(canvas.height * camera.zoom / (camera.top - camera.bottom) < 20);
     renderer.render(scene, camera);
     dirty = false;
     if (!motion.matches) wake();

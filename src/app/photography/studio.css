@@ -766,9 +766,9 @@
 [data-theme="inkember"] .town-poster { background-image: url("/img/town/night.webp"); }
 .town-hero[data-expanded="true"] .town-poster {
   margin: auto;
-  width: min(100%, calc(100dvh * 1308 / 454));
+  width: min(100%, calc(100dvh * 1360 / 850));
   height: auto;
-  aspect-ratio: 1308 / 454;
+  aspect-ratio: 1360 / 850;
   background: center / contain no-repeat url("/img/town/overview-morning.webp");
 }
 [data-theme="inkember"] .town-hero[data-expanded="true"] .town-poster {

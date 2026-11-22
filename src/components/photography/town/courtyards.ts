@@ -313,6 +313,10 @@ export function courtyards(m: Model, street: ReturnType<typeof streets>, n: Retu
         form("box", x, 0.7, -1.95, 0.05, 0.07, 0.09, iron);
       }
       person(7.08, -0.87, 7.49, -1.65, sage, "shopper", 7);
+      for (const [x, z] of [[5.96, 0.95], [8.99, -0.74]])
+        form("planks", x, 1.37, z, 0.085, 2.62, 0.085, wood);
+      street.festoon(5.96, 0.95, 8.99, -0.74, 2.66, 7);
+      form("pool", 7.49, 0.071, 0.08, 3.85, 1, 2.58, "#ffffff", undefined, 0, 0.5);
       table(7.82, 0.82, "#a5b999");
       patron(7.82, 0.82, 1, blue, 5);
       form("lagoon", 7.48, 0.085, 3.35, 4.4, 0.05, 3.91, "#93c5d4");

@@ -564,15 +564,36 @@ export function buildTown() {
   form("box", 0, 0.87, 0, 2.62, 0.13, 0.82, cream, tram);
   for (let i = 0; i < 6; i++) form("box", -0.99 + i * 0.4, 0.59, 0, 0.29, 0.37, 0.77, "glass", tram);
   for (const x of [-0.8, 0.8]) form("round", x, 0.09, 0, 0.32, 0.32, 0.76, slate, tram);
-  m.choreographies.push((t) => (tram.position.x = 2.37 * Math.sin(t * 0.19)));
+  // The railcar dwells at each end. A platform walker meets the eastern stop
+  // while the porter continues the independent parcel run behind the shelter.
+  const stationTime = (t: number) => (t + 4) % 38;
+  m.choreographies.push(t => {
+    const c = stationTime(t);
+    tram.position.x = -2.37 + 4.74 * (travel((c - 2) / 11) - travel((c - 21) / 11));
+  });
 
-  person(-2.49, 0.43, 0.97, 0.45, "#b76344", "hiker", 3, 0.24);
+  person(-2.49, 0.43, 0.97, 0.45, "#b76344", "hiker", 3, 0.245, {
+    perform(t) {
+      const c = stationTime(t);
+      const u = travel((c - 3) / 10) - travel((c - 23) / 9);
+      const facing = Math.PI / 2 * (1 - ease((c - 13) / 1.4) - ease((c - 21.5) / 1.5)
+        + 2 * ease((c - 33) / 3));
+      return { x: -2.49 + 3.46 * u, y: 0.245, z: 0.43 + 0.02 * u,
+        facing, step: 0.86 * Math.sin(12 * Math.PI * u),
+        reach: ease((c - 15) / 1.4) * (1 - ease((c - 17.8) / 1.3)) };
+    },
+  });
   n.chalet(-2.96, -4.37, "POST");
   n.chalet(0.12, -4.36, "GASTHOF");
   // A sheltered platform and Swiss railway clock beside the passing railcar.
   form("setts", -0.11, 0.16, 0.29, 6.47, 0.17, 0.94, "#c1afa0");
   for (const x of [-2.8, -0.2, 2.4]) form("drum", x, 1.21, 0, 0.09, 2.05, 0.09, slate);
   form("slate", -0.2, 2.23, 0.1, 5.78, 0.13, 1.08, slate, lot, 0.11);
+  for (const x of [-1.83, 1.38]) {
+    form("box", x, 2.12, 0.18, 0.81, 0.08, 0.24, slate);
+    form("box", x, 2.071, 0.18, 0.68, 0.034, 0.16, "bulb");
+    form("pool", x, 0.248, 0.29, 2.1, 1, 0.91, "#ffffff");
+  }
   const clock = group(1.61, 1.81, 0.54);
   form("box", 0, 0.28, 0, 0.08, 0.26, 0.09, slate, clock);
   form("drum", 0, 0, 0, 0.69, 0.11, 0.69, slate, clock, Math.PI / 2);
@@ -651,6 +672,8 @@ export function buildTown() {
   patron(2.42, 1.57, 1, "#c5784f", 6);
   lamp(-3.35, 2.94);
   lamp(3.35, 2.94);
+  for (const x of [-2.15, 0, 2.15]) form("pool", x, 0.072, 2.66, 3.23, 1, 2.48, "#ffffff");
+  street.festoon(-3.35, 2.94, 3.35, 2.94, 2.08, 10);
   person(-1.52, 0.35, -1.41, 1.86, cream, "waiter", 2);
   person(2.44, 2.86, -0.78, 2.86, "#bf874a", "photographer", 7);
   n.shop(-2.96, -4.41, 3.32, 3.43, "#b4bfc2", slate, "CHAMBRES");

@@ -3,6 +3,9 @@ import { vehicleShapes } from "./vehicles";
 import { printTexture, type Surface } from "./print";
 import { spruceWhorl, inkCreases, arcade, mansard, bridgeArch, frond, gable, hull, ridge } from "./contours";
 
+// Floodlit iron keeps its printed daytime pigment and gains amber fill at dusk.
+type Pigment = string | { floodlit: string };
+
 // Static details share geometry and instance buffers. Moving parts have their
 // own local group, so an entire skiff or tree moves as one object.
 export function model() {
@@ -30,6 +33,7 @@ export function model() {
     frond: frond(),
     parasolPanel: new T.ConeGeometry(0.5, 1, 2, 1, true, 0, Math.PI / 4),
     canopyPanel: new T.ConeGeometry(0.5, 1, 1, 1, true, 0, Math.PI / 6),
+    pool: new T.PlaneGeometry(1, 1).rotateX(-Math.PI / 2),
     box: new T.BoxGeometry(1, 1, 1),
     leaf: new T.IcosahedronGeometry(0.53, 1),
     round: new T.SphereGeometry(0.5, 14, 10),
@@ -37,13 +41,26 @@ export function model() {
     cone: new T.ConeGeometry(0.5, 1, 12),
     spire: inkCreases(new T.ConeGeometry(Math.SQRT1_2, 1, 4).rotateY(Math.PI / 4)),
   };
+  // At map scale a head or lantern is only a few pixels wide. Share simpler
+  // profiles for those batches, keeping their original silhouettes up close.
+  const mapProfiles = new Map<T.BufferGeometry, T.BufferGeometry>([
+    [shapes.round, new T.SphereGeometry(0.5, 9, 6)],
+    [shapes.drum, new T.CylinderGeometry(0.5, 0.5, 1, 10)],
+  ]);
+  const profileBatches: { mesh: T.InstancedMesh; near: T.BufferGeometry; far: T.BufferGeometry }[] = [];
+  let distant = false;
+  function setMapScale(next: boolean) {
+    if (next === distant) return;
+    distant = next;
+    for (const { mesh, near, far } of profileBatches) mesh.geometry = next ? far : near;
+  }
   const wash = { value: 1 };
   const waterTime = { value: 0 };
-  function illustratedMaterial(ruled: boolean, surface?: Surface, creases = false, lamps = false) {
+  function illustratedMaterial(ruled: boolean, surface?: Surface, creases = false, lamps = false, floodlit = false) {
     const material = new T.MeshLambertMaterial();
     if (surface) material.map = printTexture(surface);
     const projectUV = Boolean(surface && surface !== "foliage");
-    material.customProgramCacheKey = () => `${ruled}-${surface === "lagoon"}-${projectUV}-${creases}-${lamps}`;
+    material.customProgramCacheKey = () => `${ruled}-${surface === "lagoon"}-${projectUV}-${creases}-${lamps}-${floodlit}`;
     material.onBeforeCompile = (shader) => {
       Object.assign(shader.uniforms, { wash, waterTime });
       const varyings = "varying vec3 localPoint; varying vec3 faceNormal;\n";
@@ -104,6 +121,7 @@ export function model() {
           `
           outgoingLight = mix(outgoingLight, diffuseColor.rgb, wash * 0.56);
           ${lamps ? "outgoingLight += diffuseColor.rgb * lensLight * (1.0 - wash) * 1.1;" : ""}
+          ${floodlit ? "outgoingLight += vec3(1.0, 0.46, 0.095) * (1.0 - wash) * (0.32 + 1.35 * diffuseColor.r + 0.22 * abs(faceNormal.y));" : ""}
           float stroke = 0.58 * (1.0 - smoothstep(0.02, 0.22, abs(normal.z)));
           ${lines}
           outgoingLight = mix(outgoingLight, vec3(0.046, 0.041, 0.032), stroke * 0.98);
@@ -131,8 +149,25 @@ export function model() {
   }
   const leafPaint = illustratedMaterial(false, "foliage");
   const papers: T.MeshLambertMaterial[] = [];
+  // One feathered ink wash for reflected lamplight on flat paving.
+  const halo = document.createElement("canvas");
+  halo.width = halo.height = 64;
+  const ctx = halo.getContext("2d")!;
+  const falloff = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  falloff.addColorStop(0, "#ffdb9aff");
+  falloff.addColorStop(0.52, "#ffcb855c");
+  falloff.addColorStop(1, "#ffcb8500");
+  ctx.fillStyle = falloff;
+  ctx.fillRect(0, 0, 64, 64);
+  const poolMap = new T.CanvasTexture(halo);
+  poolMap.colorSpace = T.SRGBColorSpace;
+  const pool = new T.MeshBasicMaterial({ map: poolMap, transparent: true, opacity: 0, depthWrite: false });
+  const bulb = new T.MeshStandardMaterial({ color: "#e0d4b3", emissive: "#ffd490", emissiveIntensity: 0 });
   const finishes = new Map<string, T.Material>([
     ["teslaTrim", carTrim], ["carreraTrim", carTrim], ["ferrariTrim", carTrim], ["jeepTrim", carTrim],
+    ["pool", pool], ["round-bulb", bulb], ["box-bulb", bulb],
+    ["box-floodlit", illustratedMaterial(true, undefined, false, false, true)],
+    ["drum-floodlit", illustratedMaterial(false, undefined, false, false, true)],
     ["box", ruled], ["leaf", leafPaint], ["hull", thinPaint], ["frond", thinPaint], ["parasolPanel", thinPaint],
   ]);
   const lit = new T.MeshStandardMaterial({ color: "#8eafb0", emissive: "#ffae4c", emissiveIntensity: 0 });
@@ -175,7 +210,7 @@ export function model() {
     w: number,
     h: number,
     d: number,
-    color: string,
+    color: Pigment,
     parent = origin,
     rx = 0,
     ry = 0,
@@ -190,8 +225,9 @@ export function model() {
     let batch = batches.get(parent);
     if (!batch) batches.set(parent, (batch = new Map()));
     const glow = color === "glass";
+    const fixture = color === "bulb";
     const glazed = color === "glazing";
-    const key = shape + (glow ? "-lit" : glazed ? "-glazed" : "");
+    const key = shape + (typeof color === "object" ? "-floodlit" : fixture ? "-bulb" : glow ? "-lit" : glazed ? "-glazed" : "");
     let parts = batch.get(key);
     if (!parts) batch.set(key, (parts = { geometry, glow, glazed, transforms: [], colors: [] }));
     temp.position.set(x, y, z);
@@ -199,9 +235,9 @@ export function model() {
     temp.rotation.set(rx, ry, rz);
     temp.updateMatrix();
     parts.transforms.push(temp.matrix.clone());
-    parts.colors.push(new T.Color(glow || glazed ? "white" : color));
+    parts.colors.push(new T.Color(typeof color === "object" ? color.floodlit : glow || glazed || fixture ? "white" : color));
   }
-  function beam(a: number[], b: number[], width: number, color: string, parent = origin) {
+  function beam(a: number[], b: number[], width: number, color: Pigment, parent = origin) {
     const start = new T.Vector3(...a),
       end = new T.Vector3(...b);
     const axis = end.clone().sub(start);
@@ -299,9 +335,11 @@ export function model() {
                 : (finishes.get(key) ?? (p.geometry.hasAttribute("crease") ? contourPaint : paint)),
             counts.get(key)!,
           );
+          const far = mapProfiles.get(p.geometry);
+          if (far) profileBatches.push({ mesh, near: p.geometry, far });
           mesh.frustumCulled = false;
           mesh.instanceMatrix.setUsage(T.DynamicDrawUsage);
-          mesh.castShadow = !p.glow && !p.glazed;
+          mesh.castShadow = !p.glow && !p.glazed && key !== "pool";
           mesh.receiveShadow = true;
           meshes.set(key, mesh);
           root.add(mesh);
@@ -322,6 +360,7 @@ export function model() {
     root.traverse((obj) => {
       if (obj instanceof T.InstancedMesh) obj.dispose();
     });
+    mapProfiles.forEach(g => g.dispose());
     Object.values(shapes).forEach((g) => g.dispose());
     textures.forEach((t) => t.dispose());
     signs.forEach((m) => m.dispose());
@@ -336,8 +375,13 @@ export function model() {
     carTrim.dispose();
     contourPaint.dispose();
     thinPaint.dispose();
+    finishes.get("box-floodlit")!.dispose();
+    finishes.get("drum-floodlit")!.dispose();
     ruled.dispose();
     paint.dispose();
+    poolMap.dispose();
+    pool.dispose();
+    bulb.dispose();
     lit.dispose();
     glazing.dispose();
   }
@@ -348,6 +392,7 @@ export function model() {
     ground,
     place,
     sync,
+    setMapScale,
     group,
     form,
     beam,
@@ -356,6 +401,8 @@ export function model() {
     dispose,
     random,
     lit,
+    bulb,
+    pool,
     trees,
     choreographies,
   };
