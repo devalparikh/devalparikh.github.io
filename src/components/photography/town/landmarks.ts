@@ -177,3 +177,91 @@ export function rialtoShops({ form, group }: Model, x: number, z: number) {
     form("gable", 0, 2.69, 0, 0.62, 0.3, 1.16, ivory, row);
   }
 }
+
+// Four inclined piers surround an open esplanade. Build a face at a time so
+// the arch, tapering lattice bays and balconies meet around all four corners.
+export function eiffelTower({ group, form, beam, choreographies }: Model) {
+  const tower = group(0, 0.07, -0.51);
+  const iron = "#54616a", edge = "#947862", trim = "#b39a79", cab = "#ab5446";
+  form("setts", 0, 0.018, 0, 3.75, 0.036, 3.75, "#d9cbb7", tower);
+  const levels = [[0.18, 1.46], [0.77, 1.27], [1.52, 0.93], [2.14, 0.67],
+    [2.68, 0.49], [3.34, 0.32], [4.04, 0.22], [4.82, 0.15], [5.62, 0.105]];
+  for (let i = 0; i < 4; i++) {
+    const face = group(0, 0, 0, tower);
+    face.rotation.y = i * Math.PI / 2;
+    form("masonry", 1.31, 0.14, 1.31, 0.64, 0.28, 0.64, "#c4b19a", face);
+    for (let j = 1; j < levels.length; j++) {
+      const [y, r] = levels[j - 1], [top, next] = levels[j];
+      const width = Math.min(0.36, r * 0.57), endWidth = Math.min(0.36, next * 0.57);
+      const left = j >= 5 ? -r : r - width, endLeft = j >= 5 ? -next : next - endWidth;
+      beam([r, y, r], [next, top, next], j < 5 ? 0.094 : 0.057, iron, face);
+      if (j < 5) {
+        beam([left, y, r], [endLeft, top, next], 0.064, iron, face);
+        // Return flange of the same pier on its adjacent face.
+        beam([r, y, left], [next, top, endLeft], 0.064, iron, face);
+        beam([r, y, left], [next, top, next], 0.045, edge, face);
+        beam([r, y, r], [next, top, endLeft], 0.045, edge, face);
+      }
+      beam([left, y, r], [next, top, next], 0.043, edge, face);
+      beam([r, y, r], [endLeft, top, next], 0.043, edge, face);
+      beam([endLeft, top, next], [next, top, next], 0.039, iron, face);
+    }
+    // The decorative arch spans the two piers beneath the first gallery.
+    const archPoint = (x: number) => {
+      const y = 0.34 + 0.99 * Math.sqrt(Math.max(0, 1 - (x / 1.29) ** 2));
+      return [x, y, 1.47 - y * 0.31];
+    };
+    for (let j = 0; j < 12; j++) {
+      const x = 1.29 * (j / 6 - 1);
+      const a = archPoint(x), b = archPoint(x + 1.29 / 6);
+      beam(a, b, 0.084, iron, face);
+      if (Math.abs(x) < 0.91) beam(a, [x, 1.51, 0.95], 0.042, edge, face);
+    }
+    for (const [y, r] of [[1.53, 1.09], [2.71, 0.65], [5.64, 0.27]]) {
+      form("box", 0, y, r - 0.12, 2 * r, 0.105, 0.24, iron, face);
+      form("box", 0, y + 0.17, r, 2 * r, 0.034, 0.034, trim, face);
+      if (y < 3) {
+        for (const x of [-0.72 * r, 0, 0.72 * r])
+          form("box", x, y - 0.018, r + 0.005, 0.065, 0.027, 0.018, "glass", face);
+      }
+      for (let j = -3; j <= 3; j++)
+        form("box", r * j / 3, y + 0.10, r, 0.026, 0.15, 0.026, edge, face);
+    }
+    form("box", 0, 2.86, 0.42, 0.91, 0.19, 0.20, iron, face);
+    for (const x of [-0.30, 0, 0.30])
+      form("box", x, 2.87, 0.525, 0.24, 0.12, 0.018, "glazing", face);
+    if (i === 1) {
+      // A stair approach tucked into the foot of the south pier.
+      for (let j = 0; j < 5; j++) {
+        const h = 0.055 * (j + 1);
+        form("masonry", 1.30, 0.036 + h / 2, 1.84 - j * 0.093, 0.36, h, 0.105, sandstone, face);
+      }
+    }
+    if (i % 2 === 0) {
+      // Recessed glazed first-floor pavilions leave the central well open.
+      form("box", 0, 1.73, 0.75, 1.32, 0.29, 0.35, cab, face);
+      for (let j = -2; j <= 2; j++)
+        form("box", j * 0.25, 1.75, 0.936, 0.215, 0.17, 0.022, "glazing", face);
+      form("box", 0, 1.9, 0.75, 1.39, 0.052, 0.41, edge, face);
+      // Twin guide rails and a level, windowed lift car inside the inclined leg.
+      for (const dx of [-0.10, 0.10])
+        beam([1.27 + dx, 0.28, 1.29], [0.41 + dx, 2.63, 0.44], 0.038, iron, face);
+      const lift = group(0, 0, 0, face);
+      lift.userData.moving = true;
+      form("box", 0, 0, 0, 0.29, 0.26, 0.3, cab, lift);
+      form("box", 0, 0.035, 0.152, 0.22, 0.08, 0.015, "glass", lift);
+      form("box", 0.148, 0.035, 0, 0.015, 0.08, 0.23, "glass", lift);
+      choreographies.push(t => {
+        const u = 0.5 - 0.5 * Math.cos(t * 0.23 + i);
+        lift.position.set(1.27 - 0.86 * u, 0.43 + 2.15 * u, 1.29 - 0.85 * u);
+      });
+    }
+  }
+  form("octagon", 0, 5.78, 0, 0.39, 0.22, 0.39, "glazing", tower);
+  form("octagonalRoof", 0, 5.94, 0, 0.51, 0.14, 0.51, edge, tower);
+  form("drum", 0, 6.21, 0, 0.057, 0.58, 0.057, iron, tower);
+  for (const y of [6.04, 6.14, 6.24]) form("drum", 0, y, 0, 0.117, 0.035, 0.117, trim, tower);
+  form("masonry", -1.01, 0.27, 1.62, 0.24, 0.48, 0.22, sandstone, tower);
+  form("round", -1.01, 0.57, 1.62, 0.25, 0.16, 0.13, bronze, tower);
+  form("round", -1.01, 0.69, 1.62, 0.126, 0.16, 0.13, bronze, tower);
+}

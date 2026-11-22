@@ -1,0 +1,204 @@
+import type { Model } from "./model";
+
+const ink = "#354449", leather = "#78533e", linen = "#f1debd";
+type Occupation = "gardener" | "waiter" | "photographer" | "golfer" | "baker" | "hiker";
+
+export function residents(m: Model) {
+  const { form, group, beam } = m;
+  return function person(
+    x: number, z: number, endX: number, endZ: number, shirt: string,
+    occupation: Occupation, phase: number, base = 0.068,
+    { route, groundHeight, portraitPartner = false }: {
+      route?: (distance: number) => [number, number, number];
+      groundHeight?: (x: number, z: number) => number;
+      portraitPartner?: boolean;
+    } = {},
+  ) {
+    const g = group(x, base, z);
+    g.userData.moving = true;
+    g.scale.setScalar(0.79 + (phase % 4) * 0.029);
+    g.scale.x *= 0.92 + (phase % 3) * 0.074;
+    const skin = ["#bd8060", "#956446", "#d9a584", "#af765b"][phase % 4];
+    const hair = ["#493930", "#684737", "#39383a", "#8e6348"][phase % 4];
+    const trousers = occupation === "gardener" ? "#4d6556" : phase % 2 ? "#495669" : ink;
+    const hips = group(0, 0.405, 0, g);
+    const chest = group(0, 0, 0, hips);
+    const head = group(0, 0.37, 0.01, chest);
+    form("round", 0, 0.02, 0, 0.29, 0.17, 0.22, trousers, hips);
+    form("octagon", 0, 0.162, 0, 0.33, 0.29, 0.235, shirt, chest);
+    form("round", 0, 0.285, 0, 0.36, 0.125, 0.22, shirt, chest);
+    form("drum", 0, 0.326, 0, 0.115, 0.11, 0.115, skin, chest);
+    form("round", 0, 0.076, 0, 0.235, 0.272, 0.215, skin, head);
+    form("round", 0, 0.159, -0.023, 0.25, 0.161, 0.227, hair, head);
+    form("round", -0.039, 0.14, 0.069, 0.17, 0.08, 0.085, hair, head, 0, 0, 0.19);
+    form("round", 0, 0.072, 0.107, 0.056, 0.065, 0.056, skin, head);
+    for (const side of [-1, 1]) {
+      form("round", side * 0.111, 0.078, -0.005, 0.045, 0.069, 0.046, skin, head);
+      form("round", side * 0.048, 0.101, 0.094, 0.021, 0.024, 0.018, ink, head);
+    }
+    if (phase % 3 === 1)
+      form("round", 0.037, 0.091, -0.114, 0.14, 0.145, 0.14, hair, head);
+    const legs = [-1, 1].map(side => {
+      const thigh = group(side * 0.084, 0, 0, hips);
+      const shin = group(0, -0.19, 0, thigh);
+      const foot = group(0, -0.19, 0, shin);
+      form("round", 0, -0.085, 0, 0.126, 0.25, 0.139, trousers, thigh);
+      form("drum", 0, -0.086, 0, 0.106, 0.205, 0.111, trousers, shin);
+      form("round", 0, 0, 0.029, 0.13, 0.088, 0.20, leather, foot);
+      return { thigh, shin, foot, reach: 0, ankle: 0 };
+    });
+    // The hands share a shoulder-height pivot when holding the camera.
+    const arms = group(0, 0.28, 0, chest);
+    const leftShoulder = group(-0.145, 0, 0, arms), rightShoulder = group(0.145, 0, 0, arms);
+    const left = group(0.145, 0, 0, leftShoulder), right = group(-0.145, 0, 0, rightShoulder);
+    const camera = occupation === "photographer";
+    for (const side of [-1, 1]) {
+      const arm = side === 1 ? right : left;
+      const elbow = [side * 0.194, -0.147, 0.037];
+      const forwardHand = occupation === "hiker" ? side === -1 : side === 1;
+      const palm = camera ? [side * 0.09, -0.093, 0.185]
+        : forwardHand ? [side * 0.162, -0.118, 0.193] : [side * 0.15, -0.281, 0.069];
+      beam([side * 0.145, 0, 0], elbow, 0.106, shirt, arm);
+      beam(elbow, palm, 0.079, skin, arm);
+      form("round", palm[0], palm[1], palm[2], 0.088, 0.087, 0.096, skin, arm);
+    }
+    const cameraBody = camera ? group(0, -0.086, 0.187, arms) : undefined;
+    if (cameraBody) {
+      form("box", 0, 0, 0, 0.199, 0.134, 0.105, ink, cameraBody);
+      form("drum", 0, 0.003, 0.07, 0.108, 0.087, 0.108, leather, cameraBody, Math.PI / 2);
+      form("drum", 0, 0.003, 0.118, 0.083, 0.016, 0.083, "#789a9d", cameraBody, Math.PI / 2);
+      form("box", -0.04, 0.079, -0.007, 0.071, 0.043, 0.064, ink, cameraBody);
+      form("octagon", 0, 0.028, 0, 0.339, 0.088, 0.245, shirt, chest);
+      beam([0, 0.28, 0.114], [0, 0.028, 0.117], 0.016, linen, chest);
+      beam([-0.114, 0.31, 0.085], [0.115, 0.033, 0.116], 0.034, leather, chest);
+      form("box", 0.145, 0.047, 0.034, 0.136, 0.176, 0.16, leather, chest);
+    }
+    if (occupation === "baker" || occupation === "waiter") {
+      form("box", 0, 0.062, 0.111, 0.245, 0.287, 0.032, linen, chest);
+      form("box", 0, 0.156, 0.132, 0.26, 0.032, 0.02, leather, chest);
+      form("drum", 0.162, -0.089, 0.214, 0.34, 0.034, 0.34, ink, right);
+      if (occupation === "baker") {
+        form("round", 0, 0.206, -0.01, 0.27, 0.14, 0.25, linen, head);
+        for (const dx of [-0.072, 0.069])
+          form("round", 0.162 + dx, -0.042, 0.224, 0.093, 0.099, 0.259, "#c88f49", right);
+      } else {
+        form("box", 0, 0.287, 0.11, 0.098, 0.039, 0.028, ink, chest);
+        form("drum", 0.162, -0.019, 0.214, 0.123, 0.108, 0.123, linen, right);
+      }
+    }
+    if (occupation === "gardener" || occupation === "golfer") {
+      const gardening = occupation === "gardener";
+      form("round", 0, 0.20, 0, 0.245, 0.131, 0.248, gardening ? "#cead71" : linen, head);
+      form("round", 0, 0.166, gardening ? 0 : 0.084, gardening ? 0.36 : 0.218,
+        0.036, gardening ? 0.35 : 0.227, gardening ? "#b5955c" : linen, head);
+      beam([0.162, -0.11, 0.185], [0.22, -0.584, 0.35], 0.032, leather, right);
+      form("box", 0.22, -0.586, 0.35, 0.166, 0.05, 0.066, ink, right);
+      if (gardening) {
+        form("box", 0, 0.135, 0.112, 0.182, 0.228, 0.03, trousers, chest);
+        for (const dx of [-0.075, 0.075]) {
+          beam([dx, 0.159, 0.13], [dx, 0.301, 0.073], 0.036, trousers, chest);
+          form("box", 0.22 + dx, -0.613, 0.367, 0.025, 0.088, 0.033, ink, right);
+        }
+      }
+    }
+    if (occupation === "hiker") {
+      // A folded neckerchief and a bedroll break the pack silhouette.
+      form("drum", 0, 0.316, 0, 0.166, 0.054, 0.155, "#647e78", chest);
+      beam([0.06, 0.303, 0.08], [0.094, 0.214, 0.116], 0.05, "#647e78", chest);
+      form("round", 0, 0.171, -0.143, 0.243, 0.32, 0.166, "#976243", chest);
+      form("drum", 0, 0.295, -0.166, 0.103, 0.265, 0.103, "#79938c", chest, 0, 0, Math.PI / 2);
+      for (const dx of [-0.10, 0.10])
+        beam([dx, 0.306, 0.05], [dx, 0.121, 0.105], 0.037, leather, chest);
+    }
+    const speeds = { gardener: 0.56, waiter: 0.98, photographer: 0.65, golfer: 0.47, baker: 0.82, hiker: 0.74 };
+    const pace = portraitPartner ? speeds.photographer : speeds[occupation];
+    let travelTime = 3.7;
+    let length = Math.hypot(endX - x, endZ - z);
+    if (route) {
+      let previous = route(0);
+      length = 0;
+      for (let i = 1; i <= 16; i++) {
+        const point = route(i / 16);
+        length += Math.hypot(point[0] - previous[0], point[1] - previous[1], point[2] - previous[2]);
+        previous = point;
+      }
+      travelTime = Math.max(travelTime, length / 0.92);
+    }
+    const halfLap = travelTime + 2.3;
+    const stepCount = Math.max(2, Math.round(length / (0.49 * g.scale.z)));
+    const swing = length / (4 * stepCount * g.scale.z);
+    const heading = Math.atan2(endX - x, endZ - z);
+    m.choreographies.push((t) => {
+      const cycle = (t * pace + (portraitPartner ? 4.5 : phase)) % (2 * halfLap);
+      const outbound = cycle < halfLap;
+      const legTime = cycle % halfLap;
+      const progress = Math.min(1, legTime / travelTime);
+      const distance = outbound ? progress : 1 - progress;
+      const walking = progress < 1;
+      const stepAngle = progress * stepCount * Math.PI * 2;
+      const stride = Math.sin(stepAngle);
+      let grade = 0;
+      // Stop at the counter, flower bed or tee before turning for the return.
+      const turn = Math.max(0, (legTime - halfLap + 0.6) / 0.6);
+      let bearing = heading;
+      if (route) {
+        const [px, py, pz] = route(distance);
+        const step = distance < 0.999 ? 0.001 : -0.001;
+        const [nx, ny, nz] = route(distance + step);
+        bearing = Math.atan2((nx - px) / step, (nz - pz) / step);
+        grade = ((ny - py) * Math.sign(step) * (outbound ? 1 : -1)) / (Math.hypot(nx - px, nz - pz) || 1);
+        g.position.set(px, py, pz);
+      } else {
+        g.position.set(x + (endX - x) * distance, base, z + (endZ - z) * distance);
+      }
+      g.rotation.y = bearing + (Number(!outbound) + turn) * Math.PI;
+      const gesture = walking ? 0 : Math.sin(Math.PI * Math.min(1, (legTime - travelTime) / 1.7));
+      const pose = portraitPartner && outbound ? gesture : 0;
+      const lean = occupation === "gardener" ? 0.58 * gesture : 0.08 * gesture;
+      hips.position.y = 0.411 - 0.075 * lean - Math.abs(stride) * 0.012 - Math.min(0.08, Math.abs(grade) * 0.15);
+      // Solve two equal leg segments to a level shoe. Only the returning
+      // foot lifts; the other sole stays on the route through the stride.
+      for (const [i, leg] of legs.entries()) {
+        const sign = i === 0 ? -1 : 1;
+        // Linear travel on the planted half-step cancels the walker's advance.
+        leg.reach = sign * (0.034 + swing * Math.asin(stride) * 2 / Math.PI);
+        const lift = walking ? 0.055 * Math.max(0, sign * Math.cos(stepAngle))
+          * Math.min(1, legTime * 5, (travelTime - legTime) * 5) : 0;
+        let ground = grade * leg.reach;
+        if (groundHeight) {
+          const dx = leg.thigh.position.x * g.scale.x, dz = (leg.reach + 0.029) * g.scale.z;
+          const cos = Math.cos(g.rotation.y), sin = Math.sin(g.rotation.y);
+          const surface = groundHeight(g.position.x + dx * cos + dz * sin, g.position.z - dx * sin + dz * cos);
+          ground = (surface - g.position.y) / g.scale.y;
+        }
+        leg.ankle = ground + lift + 0.044;
+        hips.position.y = Math.min(hips.position.y, leg.ankle + Math.sqrt(0.38 ** 2 - leg.reach ** 2));
+      }
+      for (const { thigh, shin, foot, reach, ankle } of legs) {
+        const drop = hips.position.y - ankle;
+        const knee = Math.acos(Math.min(1, Math.hypot(drop, reach) / 0.38));
+        thigh.rotation.x = -Math.atan2(reach, drop) - knee;
+        shin.rotation.x = 2 * knee;
+        foot.rotation.x = -shin.rotation.x - thigh.rotation.x;
+      }
+      chest.rotation.x = lean + (occupation === "hiker" ? 0.12 : 0);
+      chest.rotation.z = walking ? 0.038 * stride : 0.065 * pose;
+      head.rotation.y = walking ? 0.09 * stride : (camera ? 0.04 : 0.36) * gesture;
+      head.rotation.x = camera ? 0.10 * gesture : -0.075 * gesture;
+      leftShoulder.rotation.x = camera ? 0 : -stride * 0.32;
+      rightShoulder.rotation.x = camera ? 0 : stride * 0.15;
+      arms.rotation.x = camera ? -1.16 * gesture : 0;
+      if (cameraBody) cameraBody.rotation.x = -arms.rotation.x - chest.rotation.x;
+      if (occupation === "golfer") arms.rotation.y = 1.02 * gesture * Math.sin(legTime * 3);
+      if (occupation === "gardener") rightShoulder.rotation.x -= gesture * (0.18 + 0.17 * Math.sin(t * 2));
+      if (occupation === "waiter" || occupation === "baker") {
+        rightShoulder.rotation.x = -chest.rotation.x;
+        rightShoulder.rotation.z = -0.26 * gesture;
+      }
+      if (occupation === "hiker") {
+        rightShoulder.rotation.z = 2.13 * pose;
+        chest.rotation.y = 0.42 * gesture;
+      }
+    });
+  };
+}

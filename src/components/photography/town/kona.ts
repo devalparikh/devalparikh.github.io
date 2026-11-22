@@ -28,7 +28,9 @@ export function konaCoast(m: Model, { tree, person }: Street) {
   }, "#93a67d");
   const roadZ = (x: number) => -0.6 - 0.23 * x + 0.45 * Math.sin(x * 0.96);
   const road = flank.lane(roadZ, -5.31, 5.31, 0.61, "#cfbc9f", "x");
-  person(0, 0, 0, 0, "#ca7956", "photographer", 2, 0, t => road(0.08 + 0.83 * t));
+  person(0, 0, 0, 0, "#ca7956", "photographer", 2, 0, {
+    route: t => road(0.08 + 0.83 * t), groundHeight: flank.laneHeight,
+  });
   for (let row = 0; row < 2; row++) {
     for (let i = 0; i < 3; i++) {
       const x = -3.48 + i * 2.84 + row * 0.77;

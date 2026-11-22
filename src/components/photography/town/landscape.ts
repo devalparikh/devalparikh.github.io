@@ -37,6 +37,7 @@ export function hillside(m: Model, rise: Grade, turf: string) {
     return [x, height(x, z), z];
   }, turf);
   // Walkers take both bearing and foot height from the painted centerline.
+  const laneHeight: Grade = (x, z) => height(x, z) + 0.025;
   function lane(
     center: (along: number) => number,
     from: number,
@@ -49,10 +50,10 @@ export function hillside(m: Model, rise: Grade, turf: string) {
       const along = from + v * (to - from);
       const x = axis === "z" ? center(along) + offset : along;
       const z = axis === "z" ? along : center(along) - offset;
-      return [x, height(x, z) + 0.025, z];
+      return [x, laneHeight(x, z), z];
     };
     patch(6, 80, (u, v) => point(v, (u - 0.5) * width), color);
     return (v: number) => point(v);
   }
-  return { height, lane };
+  return { height, lane, laneHeight };
 }

@@ -2,7 +2,7 @@ import { hillside } from "./landscape";
 import { model } from "./model";
 import { streets } from "./streets";
 
-import { georgetownLock, lincolnMemorial, bartholdiFountain, piazzaDuomo, rialtoShops } from "./landmarks";
+import { eiffelTower, georgetownLock, lincolnMemorial, bartholdiFountain, piazzaDuomo, rialtoShops } from "./landmarks";
 import { golfCart, konaCoast, oceanCourse } from "./kona";
 import { neighborhood } from "./neighborhood";
 
@@ -281,9 +281,11 @@ export function buildTown() {
       form("setts", bx, 0.365 + step * 0.086, bz + side * (length / 2 + 0.32 - step * 0.17),
         1.72, 0.13, 0.21, cream);
   rialtoShops(m, bx, bz);
-  person(bx, bz - 2.8, bx, bz + 2.8, "#bb6e4e", "photographer", 3, 0, t => {
-    const u = 0.045 + 0.91 * t;
-    return [bx, bridgeTop(u) + 0.055, bz + length * (u - 0.5)];
+  person(bx, bz - 2.8, bx, bz + 2.8, "#bb6e4e", "photographer", 3, 0, {
+    route: t => {
+      const u = 0.045 + 0.91 * t;
+      return [bx, bridgeTop(u) + 0.055, bz + length * (u - 0.5)];
+    },
   });
   n.quay(0, 4.62);
   boat(-3.94, 1.78, cream);
@@ -343,7 +345,9 @@ export function buildTown() {
   const farmRoad = (z: number) => 2.63 + 0.91 * Math.sin(z * 0.89);
   const farmWalk = farm.lane(farmRoad, -4.12, 5.31, 0.92, "#ddc7a0");
   farm.lane(() => -3.53, -2.73, farmRoad(-3.53), 0.58, "#ddc7a0", "x");
-  person(0, 0, 0, 0, "#a75c43", "gardener", 3, 0, t => farmWalk(0.13 + 0.78 * t));
+  person(0, 0, 0, 0, "#a75c43", "gardener", 3, 0, {
+    route: t => farmWalk(0.13 + 0.78 * t), groundHeight: farm.laneHeight,
+  });
   for (let i = 0; i < 5; i++) {
     const rowZ = (x: number) => -2.64 + i * 1.21 + 0.32 * Math.cos(0.64 * x + 0.18 * i);
     for (let j = 0; j < 10; j++) {
@@ -488,7 +492,9 @@ export function buildTown() {
     const x = -3.91 + i * 0.55, z = 0.87 + random() * 1.18;
     tree(x, z, 1.77 + random() * 0.66, "#688779", "pine", alp.height(x,z));
   }
-  person(0, 0, 0, 0, "#b97838", "hiker", 3, 0, t => traverse(0.03 + t * 0.94));
+  person(0, 0, 0, 0, "#b97838", "hiker", 3, 0, {
+    route: t => traverse(0.03 + t * 0.94), groundHeight: alp.laneHeight,
+  });
   // A cableway above the footpath, with an inclined haul rope and a glazed cabin.
   for (const side of [-1, 1]) {
     const x = side * 4.39,
@@ -568,28 +574,7 @@ export function buildTown() {
   // Paris: ironwork, boulevard cafés, then the booksellers on the Seine.
   block(1, 0, "#aac180");
   {
-    const tx = 0,
-      tz = -0.51;
-    for (const sx of [-1, 1])
-      for (const sz of [-1, 1]) {
-        for (const [a, b, y, h] of [
-          [1.42, 0.73, 0, 2.04],
-          [0.73, 0.38, 2.04, 3.45],
-          [0.38, 0.08, 3.45, 5.78],
-        ]) {
-          beam([tx + sx * a, y, tz + sz * a], [tx + sx * b, h, tz + sz * b], 0.13, slate);
-          beam([tx + sx * a, y, tz + sz * a], [tx - sx * b, h, tz + sz * b], 0.06, wood);
-          beam([tx + sx * a, y, tz + sz * a], [tx + sx * b, h, tz - sz * b], 0.06, wood);
-        }
-      }
-    for (const [w, y] of [
-      [1.8, 2.04],
-      [1.04, 3.45],
-      [0.4, 5.78],
-    ])
-      form("box", tx, y, tz, w, 0.17, w, slate);
-    form("cone", tx, 6.16, tz, 0.22, 0.82, 0.22, slate);
-
+    eiffelTower(m);
     form("box", 0, 0.096, 1.94, 1.37, 0.04, 3.59, "#dfcca9");
     for (const side of [-1, 1]) {
       flowerbed(side * 2.49, 1.76, 1.18, 2.48);
@@ -601,7 +586,9 @@ export function buildTown() {
   n.kiosk(2.69, -4.32, "JARDIN");
   n.stall(-3.76, 4.02, "prints", "#6b92a1");
   n.bench(2.88, 4.13);
-  n.visitors(-1.8, 3.92);
+  // They approach from opposite sides, then hold the pose for the photograph.
+  person(-1.8, 3.92, -0.66, 4.04, "#73879b", "photographer", 4, 0.07, { portraitPartner: true });
+  person(1.08, 4.24, 0.31, 4.14, "#c27858", "hiker", 7, 0.07, { portraitPartner: true });
 
   block(0, 1, "#e6d7c7");
   for (let i = 0; i < 3; i++) {
