@@ -9,13 +9,18 @@ import { streets } from "./streets";
 
 import { eiffelTower, georgetownLock, lincolnMemorial, bartholdiFountain, piazzaDuomo, rialtoShops } from "./landmarks";
 import { makaleiCart, konaCoast, oceanCourse } from "./kona";
+import { courtyards } from "./courtyards";
 import { neighborhood } from "./neighborhood";
 
-const curbWidth = 10.78;
+const curbDepth = 10.78;
+const courtyardWidth = 4.4;
+const curbWidth = curbDepth + courtyardWidth;
+// Landmarks and their surveyed routes retain the original local origin.
+const roadCenterX = courtyardWidth / 2;
 const laneWidth = 1.31;
 const boulevardLane = 1.9;
 export const pitch = curbWidth + 2 * laneWidth;
-export const rowPitch = curbWidth + 2 * boulevardLane;
+export const rowPitch = curbDepth + 2 * boulevardLane;
 const roadHeight = -0.1;
 const markingHeight = roadHeight + 0.0005;
 const cream = "#f5ebd4",
@@ -31,27 +36,28 @@ export function buildTown() {
   const street = streets(m);
   const { house, tree, lamp, table, patron, boat, person } = street;
   const n = neighborhood(m, street);
+  const yards = courtyards(m, street, n);
   const footprints: [number, number][] = [];
   let lot = m.root;
   function block(col: number, row: number, surface: string) {
-    footprints.push([col * pitch, row * rowPitch]);
+    footprints.push([col * pitch + roadCenterX, row * rowPitch]);
     lot = m.place(col * pitch, row * rowPitch);
-    form("box", 0, roadHeight - 0.12, 0, pitch, 0.24, rowPitch, "#ded8cb");
-    form("box", 0, -0.07, 0, curbWidth, 0.24, curbWidth, cream);
+    form("box", roadCenterX, roadHeight - 0.12, 0, pitch, 0.24, rowPitch, "#ded8cb");
+    form("box", roadCenterX, -0.07, 0, curbWidth, 0.24, curbDepth, cream);
     const ground =
       surface === water
         ? "lagoon"
         : [moss, "#b1c38d", "#9cb298", "#aac180"].includes(surface)
           ? "meadow"
           : "setts";
-    form(ground, 0, 0.045, 0, 10.66, 0.045, 10.66, surface);
-    for (const n of [-4, -2, 0, 2, 4]) {
-      form("box", n, markingHeight, rowPitch / 2 - 0.024, 0.79, 0.001, 0.046, "#f6e3ac");
-      form("box", pitch / 2 - 0.024, markingHeight, n, 0.046, 0.001, 0.79, "#f6e3ac");
-    }
+    form(surface === "#b09480" ? "meadow" : ground, roadCenterX, 0.045, 0, curbWidth - 0.12, 0.045, 10.66, surface);
+    for (let x = -4; x <= 8; x += 2)
+      form("box", x, markingHeight, rowPitch / 2 - 0.024, 0.79, 0.001, 0.046, "#f6e3ac");
+    for (const n of [-4, -2, 0, 2, 4])
+      form("box", roadCenterX + pitch / 2 - 0.024, markingHeight, n, 0.046, 0.001, 0.79, "#f6e3ac");
     for (let i = 0; i < 5; i++) {
-      form("box", curbWidth / 2 + (i + 0.5) * laneWidth / 5, markingHeight, 4.87, 0.12, 0.001, 0.61, "#f7f1e2");
-      form("box", 4.87, markingHeight, curbWidth / 2 + (i + 0.5) * boulevardLane / 5, 0.61, 0.001, 0.17, "#f7f1e2");
+      form("box", roadCenterX + curbWidth / 2 + (i + 0.5) * laneWidth / 5, markingHeight, 4.87, 0.12, 0.001, 0.61, "#f7f1e2");
+      form("box", 4.87 + courtyardWidth, markingHeight, curbDepth / 2 + (i + 0.5) * boulevardLane / 5, 0.61, 0.001, 0.17, "#f7f1e2");
     }
   }
   function flowerbed(x: number, z: number, w: number, d: number) {
@@ -75,6 +81,7 @@ export function buildTown() {
   }
   // Georgetown shop row and the towpath café.
   block(-1, 0, "#e3d6c3");
+  yards.printYard();
   house(-2.45, -0.95, 2.22, 3.3, "#c87967", "#a24b43", "COFFEE", "gable");
   house(-0.13, -1.05, 2.18, 4.15, "#b9b5c6", "#536c70", "BOOKS", "oriel");
   house(2.15, -0.95, 2.13, 3.5, "#d9bd70", "#70917a", "BAKERY", "mansard");
@@ -112,6 +119,7 @@ export function buildTown() {
 
   // The reflecting pool is a separate block from both Georgetown and the glasshouse.
   block(0, 0, moss);
+  yards.chessGrove();
   form("box", 0, 0.1, 0, 2.8, 0.07, 7.44, cream);
   form("box", 0, 0.145, -0.15, 2.14, 0.05, 3.92, water);
   form("box", 0, 0.31, 3.02, 1.24, 0.49, 1.24, cream);
@@ -129,6 +137,7 @@ export function buildTown() {
   n.pedestrian(0.17, 4.36);
 
   block(-1, -1, "#b1c38d");
+  yards.propagation();
   {
     const gx = 0,
       gz = -0.65;
@@ -180,6 +189,7 @@ export function buildTown() {
 
   // A Paris garden carousel gives the intersection its own moving landmark.
   block(0, -1, "#dcd5b7");
+  yards.puppetShow();
   const ride = group(-0.8, 0.08, -0.8);
   ride.userData.moving = true;
   form("drum", 0, 0.19, 0, 3.7, 0.32, 3.7, "#ab594a", ride);
@@ -223,6 +233,7 @@ export function buildTown() {
 
   // Venice, a Florentine market, and the hillside vineyards.
   block(1, -1, water);
+  yards.squero();
   form("box", 0, 0.17, -1.95, 10.62, 0.29, 3.75, "#d6c5a3");
   house(-2.45, -1.62, 2.18, 3.1, "#dca172", "#b85d48", "FORNO", "palazzo", 0.31);
   house(-0.28, -1.63, 1.95, 3.66, "#d6c88b", "#728b78", "CAFFÈ", "palazzo", 0.31);
@@ -307,6 +318,7 @@ export function buildTown() {
   person(-1.4, 4.5, 2.34, 4.5, "#b97d60", "hiker", 8, 0.31);
 
   block(1, -2, "#e4daca");
+  yards.pottery();
   piazzaDuomo(m);
   for (let i = 0; i < 3; i++) {
     const x = -2.42 + i * 2.28,
@@ -350,6 +362,7 @@ export function buildTown() {
   n.pedestrian(1.17, 4.52);
 
   block(0, -2, moss);
+  yards.bottling();
   // The crest levels out into a farmyard. Contour rows bow around the
   // shoulder, leaving a continuous gravel lane for the harvest crew.
   const farm = hillside(m, (x, z) =>
@@ -408,6 +421,7 @@ export function buildTown() {
 
   // The Kona shore opens onto its own marina and Makalei putting green.
   block(-2, 1, water);
+  yards.sailing();
   form("box", -2.35, 0.16, 0, 2.9, 0.25, 7.6, "#e1c693");
   form("box", -0.19, 0.24, -2.5, 3.25, 0.17, 0.61, wood);
   for (let j = 0; j < 9; j++) form("box", 0.58, 0.23, -2.42 + j * 0.52, 0.63, 0.15, 0.49, "#b69265");
@@ -425,11 +439,14 @@ export function buildTown() {
   tree(-4.55, 0.6, 3.3, "#71926b", "palm", 0.27);
 
   block(-2, 0, moss);
+  yards.canoeBeach();
   konaCoast(m, street);
   block(-2, -1, "#b09480");
+  yards.fieldStation();
   maunakea(m);
 
   block(-2, 2, moss);
+  yards.practiceGreen();
   for (const side of [-1, 1]) {
     form("round", side * 1.47, 0.16, side * 1.32, 3.98, 0.25, 2.92, "#b7ce83");
     form("round", side * 2.22, 0.26, side * 1.91, 1.35, 0.13, 0.78, "#e1cb96");
@@ -487,10 +504,12 @@ export function buildTown() {
   person(-0.04, 4.23, -1.46, 4.11, "#d19b52", "picnicker", 7, 0.092);
 
   block(-1, 2, moss);
+  yards.juiceLanai();
   oceanCourse(m, street);
 
   // Three Swiss blocks: lake railway, alpine ridge and chalet village.
   block(2, -2, "#9cb298");
+  yards.lookout();
   mountain(-1.05, -0.92, 4.72, 4.43, true);
   mountain(1.35, -1.67, 3.88, 3.63, true);
   const alp = hillside(m, (x, z) =>
@@ -534,6 +553,7 @@ export function buildTown() {
   n.bench(3.26, 4.2);
 
   block(2, -1, "#cabc9d");
+  yards.parcelPlatform();
   house(-1.64, -1.39, 2.65, 1.97, "#b89168", "#aa5947", "BAHN", "gable");
   tree(2.74, -2.15, 2.91, "#69816b", "pine");
   for (let i = 0; i < 17; i++) form("box", -3.62 + i * 0.45, 0.12, 1.37, 0.13, 0.09, 0.8, wood);
@@ -576,6 +596,7 @@ export function buildTown() {
   n.pedestrian(-1.62, 2.81);
 
   block(2, 0, moss);
+  yards.dairy();
   house(-1.61, -1.15, 2.56, 2.51, "#ad8766", "#945643", "CHALET", "gable");
   house(1.55, -1.96, 2.08, 2.11, "#c8a378", "#8f6353", "", "gable");
   tree(2.82, 1.2, 2.5, "#618065", "pine");
@@ -590,6 +611,7 @@ export function buildTown() {
 
   // Paris: ironwork, boulevard cafés, then the booksellers on the Seine.
   block(1, 0, "#aac180");
+  yards.boules();
   {
     eiffelTower(m);
     form("box", 0, 0.096, 1.94, 1.37, 0.04, 3.59, "#dfcca9");
@@ -608,6 +630,7 @@ export function buildTown() {
   person(1.08, 4.24, 0.31, 4.14, "#c27858", "hiker", 7, 0.07, { portraitPartner: true });
 
   block(0, 1, "#e6d7c7");
+  yards.busker();
   for (let i = 0; i < 3; i++) {
     const x = -2.4 + i * 2.37,
       h = i === 1 ? 3.72 : 3.04;
@@ -652,6 +675,7 @@ export function buildTown() {
   n.pedestrian(-1.2, 4.03);
 
   block(-1, 1, water);
+  yards.bindery();
   form("box", 0, 0.15, -1.44, 7.64, 0.26, 4.76, "#c9b99c");
   for (let i = 0; i < 5; i++) {
     const x = -2.9 + i * 1.44;
@@ -682,10 +706,11 @@ export function buildTown() {
     // The vineyard estate pulls up opposite the footpath for a passenger.
     const door = g.getObjectByName("estateDoor");
     const boarding = Boolean(door);
-    const stopX = 1.82;
-    const stopZ = z + curbWidth / 2 + 0.61;
+    x += roadCenterX;
+    const stopX = 1.82 - roadCenterX;
+    const stopZ = z + curbDepth / 2 + 0.61;
     const radius = 1.18;
-    const halfX = (curbWidth + laneWidth) / 2, halfZ = (curbWidth + boulevardLane) / 2;
+    const halfX = (curbWidth + laneWidth) / 2, halfZ = (curbDepth + boulevardLane) / 2;
     const southStraight = 2 * (halfX - radius);
     const stopPhase = (stopX + southStraight / 2) / (southStraight + Math.PI * radius / 2);
     const lapSeconds = 4 / 0.048;
@@ -729,7 +754,7 @@ export function buildTown() {
           const bearing = waiting ? 0 : g.rotation.y;
           const side = -1.16 + 1.03 * progress;
           return {
-            x: (waiting ? stopX : g.position.x) - 0.40 * Math.cos(bearing) + side * Math.sin(bearing),
+            x: (waiting ? x + stopX : g.position.x) - 0.40 * Math.cos(bearing) + side * Math.sin(bearing),
             z: (waiting ? stopZ : g.position.z) + 0.40 * Math.sin(bearing) + side * Math.cos(bearing),
             y: 0.068 + 0.235 * sit - 0.16 * ease(progress / 0.38),
             facing: Math.PI / 2 * sit + bearing,

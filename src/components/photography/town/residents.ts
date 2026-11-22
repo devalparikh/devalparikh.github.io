@@ -10,7 +10,7 @@ export type Performance = (time: number) => {
   step: number; sitting?: number; reach?: number;
 };
 type Occupation = "gardener" | "waiter" | "photographer" | "golfer" | "baker" | "hiker"
-  | "beachcomber" | "surfer" | "reader" | "driver" | "shopper" | "commuter" | "artist" | "picnicker";
+  | "maker" | "beachcomber" | "surfer" | "reader" | "driver" | "shopper" | "commuter" | "artist" | "picnicker";
 
 export function residents(m: Model) {
   const { form, group, beam } = m;
@@ -261,7 +261,7 @@ export function residents(m: Model) {
       });
       return;
     }
-    const speeds = { gardener: 0.56, waiter: 0.98, photographer: 0.65, golfer: 0.47, baker: 0.82, hiker: 0.74, shopper: 0.71, commuter: 0.87, driver: 0.72, beachcomber: 0.55 };
+    const speeds = { maker: 0.63, gardener: 0.56, waiter: 0.98, photographer: 0.65, golfer: 0.47, baker: 0.82, hiker: 0.74, shopper: 0.71, commuter: 0.87, driver: 0.72, beachcomber: 0.55 };
     const variation = Math.sin(17.3 * x + 7.1 * z + phase);
     const pace = portraitPartner ? speeds.photographer : speeds[occupation] * (1 + 0.16 * variation);
     let travelTime = 3.7;

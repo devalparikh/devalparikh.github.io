@@ -46,6 +46,11 @@ export function mountTown(canvas: HTMLCanvasElement) {
     [-pitch * 2, rowPitch * 2],
     [0, -rowPitch * 2],
     [pitch * 2, -rowPitch * 2],
+    [6.1, -rowPitch - 0.6],
+    [2 * pitch + 4.9, -rowPitch],
+    [pitch + 4.9, -2 * rowPitch],
+    [-2 * pitch + 4.8, 1.1],
+    [-pitch + 4.6, rowPitch + 0.1],
   ];
   const [x, z, focusHeight = 1.12] = closeUps[Math.floor(Math.random() * closeUps.length)];
   const center = new T.Vector3(x, focusHeight, z);
@@ -65,9 +70,9 @@ export function mountTown(canvas: HTMLCanvasElement) {
   }
   const sky = new T.HemisphereLight(0xffeed3, 0xd9ceb8, 1.8);
   const sun = new T.DirectionalLight(0xffdfaa, 2.15);
-  sun.position.set(-20, 27, 14);
+  sun.position.set(-32, 43.2, 22.4);
   sun.castShadow = true;
-  Object.assign(sun.shadow.camera, { left: -34, right: 34, top: 30, bottom: -30, far: 95 });
+  Object.assign(sun.shadow.camera, { left: -48, right: 48, top: 39, bottom: -39, far: 110 });
   sun.shadow.mapSize.set(1024, 1024);
   sun.shadow.normalBias = 0.024;
   const rim = new T.DirectionalLight(0xffeac5, 1.1);
