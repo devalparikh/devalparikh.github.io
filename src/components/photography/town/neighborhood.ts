@@ -13,7 +13,8 @@ export function neighborhood(m: Model, street: ReturnType<typeof streets>) {
   const { group, form, beam, sign } = m;
   const { house, person } = street;
   function bench(x: number, z: number, turn = 0) {
-    const g = group(x, 0.09, z);
+    const g = group(x, 0.068, z);
+    g.scale.set(0.66, 0.62, 0.71);
     g.rotation.y = turn;
     for (const dx of [-0.55, 0.55]) {
       form("box", dx, 0.17, 0, 0.07, 0.34, 0.46, ink, g);
@@ -23,7 +24,8 @@ export function neighborhood(m: Model, street: ReturnType<typeof streets>) {
     for (const y of [0.56, 0.72]) form("planks", 0, y, -0.23, 1.47, 0.12, 0.055, timber, g);
   }
   function cycle(x: number, z: number, turn = 0) {
-    const g = group(x, 0.09, z);
+    const g = group(x, 0.064, z);
+    g.scale.setScalar(0.77);
     g.rotation.y = turn;
     for (const dx of [-0.36, 0.36]) {
       form("rim", dx, 0.25, 0, 0.47, 0.47, 0.44, ink, g);

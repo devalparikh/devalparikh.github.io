@@ -356,7 +356,9 @@ export function model() {
     }
     batches.clear();
   }
+  const onDispose: (() => void)[] = [];
   function dispose() {
+    for (const cleanup of onDispose) cleanup();
     root.traverse((obj) => {
       if (obj instanceof T.InstancedMesh) obj.dispose();
     });
@@ -399,6 +401,7 @@ export function model() {
     sign,
     finish,
     dispose,
+    onDispose,
     random,
     lit,
     bulb,

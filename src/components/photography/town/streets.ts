@@ -217,19 +217,26 @@ export function streets(m: Model) {
       form("round", x, y - 0.13, z, 0.145, 0.17, 0.145, "bulb");
     }
   }
+  // Chairs, patrons and the cup gesture share the same pavement-relative frame.
+  function terrace(x: number, z: number) {
+    const g = group(x, 0.068, z);
+    g.scale.setScalar(0.69);
+    return g;
+  }
   function table(x: number, z: number, color: string) {
-    form("drum", x, 0.4, z, 0.09, 0.8, 0.09, iron);
-    form("drum", x, 0.68, z, 0.78, 0.1, 0.78, wood);
-    form("drum", x, 1.05, z, 0.055, 0.9, 0.055, wood);
-    form("cone", x, 1.67, z, 1.48, 0.35, 1.48, color);
+    const g = terrace(x, z);
+    form("drum", 0, 0.34, 0, 0.09, 0.68, 0.09, iron, g);
+    form("drum", 0, 0.68, 0, 0.78, 0.1, 0.78, wood, g);
+    form("drum", 0, 1.14, 0, 0.055, 0.94, 0.055, wood, g);
+    form("cone", 0, 1.67, 0, 1.48, 0.35, 1.48, color, g);
     for (const side of [-1, 1]) {
-      form("box", x + side * 0.62, 0.28, z, 0.36, 0.12, 0.4, wood);
-      form("box", x + side * 0.78, 0.52, z, 0.08, 0.4, 0.39, wood);
-      form("box", x + side * 0.62, 0.14, z, 0.13, 0.28, 0.16, iron);
+      form("box", side * 0.62, 0.28, 0, 0.36, 0.12, 0.4, wood, g);
+      form("box", side * 0.78, 0.52, 0, 0.08, 0.4, 0.39, wood, g);
+      form("box", side * 0.62, 0.14, 0, 0.13, 0.28, 0.16, iron, g);
     }
   }
   function patron(x: number, z: number, side: number, shirt: string, phase: number) {
-    const seat = group(x + side * 0.62, 0, z);
+    const seat = group(side * 0.62, 0, 0, terrace(x, z));
     seat.rotation.y = (-side * Math.PI) / 2;
     form("round", 0, 0.57, 0, 0.31, 0.48, 0.24, shirt, seat);
     form("round", 0, 0.91, 0, 0.24, 0.27, 0.24, "#bf8d72", seat);
@@ -252,7 +259,7 @@ export function streets(m: Model) {
     beam([-0.12, 0.69, 0], [-0.17, 0.5, 0.04], 0.10, shirt, seat);
     beam([-0.17, 0.5, 0.04], [-0.06, 0.45, 0.14], 0.078, "#bf8d72", seat);
     for (const dx of [-0.08, 0.08])
-      form("round", dx, 0.093, 0.245, 0.12, 0.09, 0.17, wood, seat);
+      form("round", dx, 0.047, 0.245, 0.12, 0.09, 0.17, wood, seat);
     const arm = group(0.14, 0.69, 0.02, seat);
     arm.userData.moving = true;
     beam([0, 0, 0], [0.02, -0.12, 0.1], 0.09, shirt, arm);

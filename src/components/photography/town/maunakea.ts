@@ -1,4 +1,5 @@
 import { Matrix4, Vector3 } from "three";
+import { summitSky } from "./summit-sky";
 import { vehicle } from "./vehicles";
 import { ease } from "./motion";
 import { hillside } from "./landscape";
@@ -43,6 +44,7 @@ export function maunakea(m: Model) {
     },
   );
   lane(road, -2.15, 5.31, roadWidth, "#c7b7a8");
+  summitSky(m);
   summitTraffic(m, road, roadScale, laneHeight, grade);
   lane((x) => 1.45 - 0.32 * (x - road(1.45)), road(1.45), 2.76, 0.4, "#c7b7a8", "x");
   for (const [x, z, r] of [
