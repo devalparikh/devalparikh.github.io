@@ -94,7 +94,7 @@ export function StudioHero() {
           ref={canvas}
           tabIndex={ready ? 0 : -1}
           aria-hidden={!ready}
-          aria-label="Explore the illustrated towns. Drag to orbit, shift-drag to pan, or pinch to zoom. Arrow keys rotate, plus and minus zoom, and Home resets the view."
+          aria-label="Explore the illustrated towns. Drag one finger to pan. Pinch to zoom, twist to rotate, or drag two fingers up or down to tilt. With a mouse, drag to orbit or shift-drag to pan. Arrow keys rotate, plus and minus zoom, and Home resets the view."
         />
       </div>
       <button

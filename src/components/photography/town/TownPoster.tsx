@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import { bindMapTouch } from "./map-touch";
+
 // The printed overview also works on devices that cannot allocate a WebGL context.
 export function TownPoster({ expanded }: { expanded: boolean }) {
   const surface = useRef<HTMLDivElement>(null);
@@ -9,7 +11,7 @@ export function TownPoster({ expanded }: { expanded: boolean }) {
     if (!expanded || !surface.current) return;
     const el = surface.current;
     const paper = el.firstElementChild as HTMLElement;
-    const contacts = new Map<number, { x: number; y: number }>();
+    let pointer: { id: number; x: number; y: number } | undefined;
     let scale = 1,
       x = 0,
       y = 0;
@@ -70,33 +72,27 @@ export function TownPoster({ expanded }: { expanded: boolean }) {
       draw();
     }
     function down(e: PointerEvent) {
-      if (e.button !== 0 || contacts.size >= 2) return;
+      if (e.button !== 0 || pointer) return;
       el.setPointerCapture(e.pointerId);
-      contacts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      pointer = { id: e.pointerId, x: e.clientX, y: e.clientY };
     }
     function move(e: PointerEvent) {
-      const last = contacts.get(e.pointerId);
-      if (!last) return;
-      const other = [...contacts.values()].find((point) => point !== last);
-      if (other) {
-        const oldDistance = Math.hypot(last.x - other.x, last.y - other.y);
-        const distance = Math.hypot(e.clientX - other.x, e.clientY - other.y);
-        const rect = el.getBoundingClientRect();
-        if (oldDistance > 1)
-          zoom(
-            distance / oldDistance,
-            (last.x + other.x - rect.width) / 2 - rect.left,
-            (last.y + other.y - rect.height) / 2 - rect.top,
-          );
-      }
-      x += (e.clientX - last.x) / (other ? 2 : 1);
-      y += (e.clientY - last.y) / (other ? 2 : 1);
-      contacts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointer?.id !== e.pointerId) return;
+      x += e.clientX - pointer.x;
+      y += e.clientY - pointer.y;
+      pointer = { id: e.pointerId, x: e.clientX, y: e.clientY };
       draw();
     }
     function release(e: PointerEvent) {
-      contacts.delete(e.pointerId);
+      if (pointer?.id === e.pointerId) pointer = undefined;
     }
+    const releaseTouch = bindMapTouch(el, false, ({ from, to, scale }) => {
+      const rect = el.getBoundingClientRect();
+      zoom(scale, from.x - rect.left - rect.width / 2, from.y - rect.top - rect.height / 2);
+      x += to.x - from.x;
+      y += to.y - from.y;
+      draw();
+    });
     const size = new ResizeObserver(draw);
     size.observe(el);
     el.addEventListener("wheel", wheel, { passive: false });
@@ -105,6 +101,7 @@ export function TownPoster({ expanded }: { expanded: boolean }) {
     el.addEventListener("pointermove", move);
     el.addEventListener("lostpointercapture", release);
     return () => {
+      releaseTouch();
       size.disconnect();
       paper.style.transform = "";
       el.removeEventListener("wheel", wheel);

@@ -1,5 +1,7 @@
 import * as T from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { bindMapTouch } from "./map-touch";
+import { moveMapCamera } from "./map-camera";
 import { buildTown, pitch, rowPitch } from "./squares";
 
 export function mountTown(canvas: HTMLCanvasElement) {
@@ -15,7 +17,6 @@ export function mountTown(canvas: HTMLCanvasElement) {
   const scene = new T.Scene();
   const camera = new T.OrthographicCamera(-10, 10, 8, -8, 0.1, 150);
   const controls = new OrbitControls(camera, canvas);
-  canvas.style.touchAction = "pan-y";
   controls.enablePan = true;
   controls.cursor.set(0, 1.3, 0);
   controls.maxTargetRadius = 51;
@@ -233,6 +234,10 @@ export function mountTown(canvas: HTMLCanvasElement) {
     e.preventDefault();
     invalidate();
   }
+  const releaseTouch = bindMapTouch(canvas, true, motion => {
+    moveMapCamera(camera, controls, canvas.getBoundingClientRect(), motion);
+    invalidate();
+  }, interruptTour);
   controls.addEventListener("change", invalidate);
   canvas.addEventListener("keydown", key);
   canvas.addEventListener("pointermove", hover);
@@ -271,6 +276,7 @@ export function mountTown(canvas: HTMLCanvasElement) {
       document.removeEventListener("visibilitychange", invalidate);
       controls.removeEventListener("start", interruptTour);
       canvas.removeEventListener("wheel", pageWheel, true);
+      releaseTouch();
       controls.dispose();
       town.dispose();
       shadow.geometry.dispose();

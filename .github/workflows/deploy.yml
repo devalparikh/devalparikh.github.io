@@ -37,6 +37,7 @@ jobs:
 
       - name: Lint and typecheck
         run: |
+          npm run test:map
           npm run test:notes
           npm run lint
           npm run typecheck
