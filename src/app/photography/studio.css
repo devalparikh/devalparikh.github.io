@@ -778,6 +778,7 @@
 .town-hero[data-expanded="true"] .town-print:active { cursor: grabbing; }
 .town-print:focus-visible { outline: 2px dashed currentColor; outline-offset: -5px; }
 .town-view canvas { cursor: grab; }
+.town-hero:not([data-expanded="true"]) .town-view canvas { touch-action: pan-y !important; }
 .town-view canvas:active { cursor: grabbing; }
 .town-view canvas[aria-hidden="true"] { pointer-events: none; }
 .town-view canvas:focus-visible { outline: 2px dashed currentColor; outline-offset: -5px; }

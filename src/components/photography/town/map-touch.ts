@@ -37,9 +37,19 @@ export function mapDrag(allowTilt: boolean, apply: (motion: MapMotion) => void) 
         const separationChange = Math.hypot(bx - ax, by - ay);
         if (!mode) {
           if (Math.max(Math.abs(dx), Math.abs(dy), separationChange) < 5) return;
+          const parallel = allowTilt && Math.abs(dy) > 1.5 * Math.max(Math.abs(dx), separationChange);
+          if (allowTilt && !parallel) {
+            const firstY = c.y - a.y;
+            const secondY = d.y - b.y;
+            const verticalTravel = Math.max(Math.abs(firstY), Math.abs(secondY));
+            const horizontalTravel = Math.max(Math.abs(c.x - a.x), Math.abs(d.x - b.x));
+            // A parallel swipe can arrive one contact at a time. Give the
+            // trailing finger room to catch up before committing to a turn.
+            if (firstY * secondY >= 0 && verticalTravel > 2 * horizontalTravel && verticalTravel < 24)
+              return;
+          }
           tiltAnchor = from;
-          mode = allowTilt && Math.abs(dy) > 1.5 * Math.max(Math.abs(dx), separationChange)
-            ? "tilt" : "map";
+          mode = parallel ? "tilt" : "map";
         }
         if (mode === "tilt") {
           motion.from = motion.to = tiltAnchor;

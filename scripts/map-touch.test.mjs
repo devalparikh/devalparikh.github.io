@@ -69,6 +69,21 @@ test("parallel swipes tilt in both directions around one pivot without twisting 
   near(camera.zoom, 1);
 });
 
+test("staggered contact updates still tilt without a transient turn", () => {
+  const { camera, controls, drag } = setup();
+  const left = point(300, 420), right = point(400, 420);
+  const initial = controls.getPolarAngle(), heading = controls.getAzimuthalAngle();
+  drag.rebase([left, right]);
+  drag.move([point(300, 412), right]);
+  drag.move([point(300, 404), right]);
+  near(controls.getPolarAngle(), initial);
+  near(controls.getAzimuthalAngle(), heading);
+  drag.move([point(300, 404), point(400, 404)]);
+  assert.ok(controls.getPolarAngle() > initial);
+  near(controls.getAzimuthalAngle(), heading);
+  near(camera.zoom, 1);
+});
+
 test("changing the contact set rebases without carrying pinch, tilt or canceled deltas", () => {
   const motions = [];
   const drag = mapDrag(true, m => motions.push(m));
