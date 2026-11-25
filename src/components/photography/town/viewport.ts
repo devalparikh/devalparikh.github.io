@@ -2,7 +2,7 @@ import * as T from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { bindMapTouch } from "./map-touch";
 import { moveMapCamera } from "./map-camera";
-import { buildTown, pitch, rowPitch } from "./squares";
+import { buildTown, pitch, rowPitch, studioView } from "./squares";
 
 export function mountTown(canvas: HTMLCanvasElement) {
   const renderer = new T.WebGLRenderer({
@@ -33,30 +33,11 @@ export function mountTown(canvas: HTMLCanvasElement) {
   }
   canvas.addEventListener("wheel", pageWheel, { capture: true, passive: true });
   const angle = new T.Vector3(38, 34, 40);
-  const closeUps = [
-    [-pitch, 0.25],
-    [pitch, -rowPitch],
-    [pitch - 0.6, -2 * rowPitch - 1.8, 2.19],
-    [0, rowPitch - 0.4],
-    [-pitch, -rowPitch],
-    [0, -rowPitch],
-    [0, 0],
-    [-pitch * 2, -1.4, 2.6],
-    [-pitch * 2, -rowPitch, 2],
-    [-pitch, rowPitch * 2],
-    [-pitch * 2, rowPitch * 2],
-    [0, -rowPitch * 2],
-    [pitch * 2, -rowPitch * 2],
-    [6.1, -rowPitch - 0.6],
-    [2 * pitch + 4.9, -rowPitch],
-    [pitch + 4.9, -2 * rowPitch],
-    [-2 * pitch + 4.8, 1.1],
-    [-pitch + 4.6, rowPitch + 0.1],
-  ];
-  const [x, z, focusHeight = 1.12] = closeUps[Math.floor(Math.random() * closeUps.length)];
-  const center = new T.Vector3(x, focusHeight, z);
+  const studioAngle = new T.Vector3(26, 30, 47);
+  const center = new T.Vector3(studioView.x, studioView.y, studioView.z);
   let touring = true,
-    expanded = false;
+    expanded = false,
+    tourTime = 0;
   const saved = { position: camera.position.clone(), target: center.clone(), zoom: 1, touring: true };
   function interruptTour() {
     touring = false;
@@ -64,7 +45,7 @@ export function mountTown(canvas: HTMLCanvasElement) {
   controls.addEventListener("start", interruptTour);
   function home() {
     controls.target.copy(expanded ? overview : center);
-    camera.position.copy(controls.target).add(angle);
+    camera.position.copy(controls.target).add(expanded ? angle : studioAngle);
     camera.zoom = 1;
     camera.updateProjectionMatrix();
     controls.update();
@@ -119,12 +100,14 @@ export function mountTown(canvas: HTMLCanvasElement) {
     moon = new T.Color("#9bbdff"),
     daylight = new T.Color("#fff0da"),
     nightSky = new T.Color("#acbce2");
-  // A small lateral drift keeps the same street in frame throughout the shot.
+  // Keep the sign in context while the camera drifts and gently pushes in.
   function track(t: number) {
     controls.target.copy(center);
-    controls.target.x += 0.95 * Math.sin(t * 0.065);
-    controls.target.z -= 0.55 * Math.sin(t * 0.048);
-    camera.position.copy(controls.target).add(angle);
+    controls.target.x += 0.54 * Math.sin(t * 0.14);
+    controls.target.z -= 0.3 * Math.sin(t * 0.11);
+    camera.position.copy(controls.target).add(studioAngle);
+    camera.zoom = 1 + 0.045 * (1 - Math.cos(t * 0.18));
+    camera.updateProjectionMatrix();
   }
   function render(now: number) {
     frame = 0;
@@ -148,7 +131,10 @@ export function mountTown(canvas: HTMLCanvasElement) {
     town.lit.emissiveIntensity = 0.04 + darkness * 1.02;
     town.bulb.emissiveIntensity = darkness * 1.6;
     town.pool.opacity = darkness * 0.46;
-    if (touring && !motion.matches) track(time);
+    if (touring && !motion.matches) {
+      tourTime += dt;
+      track(tourTime);
+    }
     town.waterTime.value = time;
     for (const animate of town.choreographies) animate(time);
     for (const [i, tree] of town.trees.entries()) {
