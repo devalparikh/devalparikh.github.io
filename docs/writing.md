@@ -67,6 +67,17 @@ the 12-colour palette, headline position, corner label). Titles, summaries
 and dates come from the MDX frontmatter; word counts are computed at build
 time by `src/lib/word-count.ts` (prose only - no code, JSX or link targets).
 
+The shelf is a furnished room, drawn entirely in CSS and SVG: a built-in
+bookcase (crown, side panels, board-and-groove back, plinth) on a limewashed
+wall, oak planks with puck lights pooling under each shelf, an oak floor and
+rug, and styled objects between the books (`ShelfDecor.tsx`: a vase of
+eucalyptus, a linen stack, a trailing pothos, a leaning print; an olive tree
+and a floor lamp beside the case on wide screens). Day is white oak in window
+light; inkember is walnut at lamp-light. Every surface reads the `--room-*`,
+`--case-*` and `--decor-*` tokens in `globals.css`; wood, plaster and grain
+are cached noise tiles, so nothing is filtered per frame. Phones keep two
+objects so the case stays scannable.
+
 Views: Same size, Scaled to length (sqrt of words), **Thickness** (default;
 spine depth linear in words) and Shelf (spines). The choice is remembered per
 browser. Geometry is in `src/lib/book-geometry.ts`.

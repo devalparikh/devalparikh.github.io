@@ -144,8 +144,10 @@ The full runbook is `docs/writing.md`.
 - **Covers** - hand-drawn SVG per post in `components/writing/covers/`, inks
   as `k1`/`k2`/`g` classes, palette as `--cover-*` tokens. Motion is CSS under
   `.cover[data-playing="true"]`; the resting drawing is the poster.
-- **Shelf** - `components/writing/Bookshelf.tsx` and `bookshelf.css`: four
-  views (Thickness default), hover-intent loops, tap-to-preview on touch,
+- **Shelf** - `components/writing/Bookshelf.tsx` and `bookshelf.css`: a
+  furnished room (built-in bookcase, lit planks, objects from
+  `ShelfDecor.tsx`, day oak / night walnut via `--room-*`, `--case-*` and
+  `--decor-*` tokens), four views (Thickness default), hover-intent loops, tap-to-preview on touch,
   no motion under reduced motion or Save-Data. Sizes come from build-time
   word counts (`lib/word-count.ts`, `lib/book-geometry.ts`).
 

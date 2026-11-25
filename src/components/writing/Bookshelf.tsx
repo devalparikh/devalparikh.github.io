@@ -22,6 +22,7 @@ import {
 } from "@/lib/shelf-view";
 import { formatWordCount } from "@/lib/word-count";
 import { BookCover, type CoverPost } from "./BookCover";
+import { FloorLamp, OliveTree, ShelfDecor, type ShelfDecorKind } from "./ShelfDecor";
 import "./bookshelf.css";
 
 export interface ShelfItem extends CoverPost {
@@ -43,6 +44,21 @@ interface BookshelfProps {
 const HOVER_INTENT_MS = 320;
 
 const href = (slug: string) => `/writing/${slug}/` as Route;
+
+/**
+ * Styled objects between the books, keyed by how many books precede them, so
+ * the shelves read as a furnished room whatever the filter leaves standing.
+ */
+const DECOR_AFTER: Record<number, ShelfDecorKind[]> = { 2: ["vase"], 5: ["stack"] };
+const DECOR_END: ShelfDecorKind[] = ["plant", "print"];
+
+function DecorSlot({ kind }: { kind: ShelfDecorKind }) {
+  return (
+    <li className="shelf-slot shelf-decor" data-kind={kind} aria-hidden="true">
+      <ShelfDecor kind={kind} />
+    </li>
+  );
+}
 
 /**
  * The writing shelf. Covers open their article on click. Hovering one with a
@@ -109,76 +125,91 @@ export function Bookshelf({ books, filters, elsewhere, elsewhereTitle }: Bookshe
 
       <Reveal index={3} className="mt-5">
         <section className="shelf" data-view={view} aria-label="Bookshelf">
-          {visible.length === 0 ? (
-            <p className="shelf-empty">No books on this shelf yet.</p>
-          ) : (
-            <ul className="shelf-books">
-              {visible.map((book) => {
-                const geometry = bookGeometry(book.words);
-                const style = {
-                  "--thick": `${geometry.thickness}px`,
-                  "--scale": geometry.scale,
-                  "--spine": `${geometry.spine}px`,
-                  "--g": `var(--cover-${book.cover.ground})`,
-                  "--k1": `var(--cover-${book.cover.inks[0]})`,
-                  "--t": `var(--cover-${book.cover.text})`,
-                } as CSSProperties;
-                const isActive = active === book.slug;
-                return (
-                  <li key={book.slug} className="shelf-slot" style={style}>
-                    <Link
-                      href={href(book.slug)}
-                      className="book"
-                      data-active={isActive}
-                      data-armed={armed === book.slug}
-                      aria-label={`${book.title}. ${formatWordCount(book.words)}, ${book.dateLabel}.`}
-                      onPointerDown={(event) => {
-                        lastPointer.current = event.pointerType;
-                      }}
-                      onPointerEnter={(event) => {
-                        if (event.pointerType === "mouse") look(book.slug);
-                      }}
-                      onPointerLeave={(event) => {
-                        if (event.pointerType !== "mouse") return;
-                        leave(book.slug);
-                        setActive((current) => (current === book.slug ? null : current));
-                      }}
-                      onFocus={(event) => {
-                        // Keyboard focus previews like a hover; a tap's focus is handled on click.
-                        if (event.currentTarget.matches(":focus-visible")) look(book.slug);
-                      }}
-                      onBlur={() => {
-                        leave(book.slug);
-                        setArmed((current) => (current === book.slug ? null : current));
-                      }}
-                      onClick={(event) => {
-                        if (lastPointer.current === "touch" && armed !== book.slug) {
-                          // First tap previews and shows the caption; the second opens.
-                          event.preventDefault();
-                          setArmed(book.slug);
-                          look(book.slug, 0);
-                          playInterfaceSound("toggle");
-                          return;
-                        }
-                        playInterfaceSound("tap");
-                      }}
-                    >
-                      <span className="book-object">
-                        <span className="book-front">
-                          <BookCover post={book} playing={playing === book.slug && view !== "spines"} />
-                        </span>
-                        <span className="book-spine" aria-hidden="true">
-                          <span className="book-spine-issue">{String(book.issue).padStart(2, "0")}</span>
-                          <span className="book-spine-title">{book.cover.title.join(" ")}</span>
-                          <span className="book-spine-mark">DP</span>
-                        </span>
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+          <div className="shelf-room">
+            <OliveTree />
+            <FloorLamp />
+            <div className="shelf-case">
+              <div className="shelf-case-inner">
+                {visible.length === 0 ? (
+                  <p className="shelf-empty">No books on this shelf yet.</p>
+                ) : (
+                  <ul className="shelf-books">
+                    {visible.map((book, index) => {
+                      const geometry = bookGeometry(book.words);
+                      const style = {
+                        "--thick": `${geometry.thickness}px`,
+                        "--scale": geometry.scale,
+                        "--spine": `${geometry.spine}px`,
+                        "--g": `var(--cover-${book.cover.ground})`,
+                        "--k1": `var(--cover-${book.cover.inks[0]})`,
+                        "--t": `var(--cover-${book.cover.text})`,
+                      } as CSSProperties;
+                      const isActive = active === book.slug;
+                      return [
+                        <li key={book.slug} className="shelf-slot" style={style}>
+                          <Link
+                            href={href(book.slug)}
+                            className="book"
+                            data-active={isActive}
+                            data-armed={armed === book.slug}
+                            aria-label={`${book.title}. ${formatWordCount(book.words)}, ${book.dateLabel}.`}
+                            onPointerDown={(event) => {
+                              lastPointer.current = event.pointerType;
+                            }}
+                            onPointerEnter={(event) => {
+                              if (event.pointerType === "mouse") look(book.slug);
+                            }}
+                            onPointerLeave={(event) => {
+                              if (event.pointerType !== "mouse") return;
+                              leave(book.slug);
+                              setActive((current) => (current === book.slug ? null : current));
+                            }}
+                            onFocus={(event) => {
+                              // Keyboard focus previews like a hover; a tap's focus is handled on click.
+                              if (event.currentTarget.matches(":focus-visible")) look(book.slug);
+                            }}
+                            onBlur={() => {
+                              leave(book.slug);
+                              setArmed((current) => (current === book.slug ? null : current));
+                            }}
+                            onClick={(event) => {
+                              if (lastPointer.current === "touch" && armed !== book.slug) {
+                                // First tap previews and shows the caption; the second opens.
+                                event.preventDefault();
+                                setArmed(book.slug);
+                                look(book.slug, 0);
+                                playInterfaceSound("toggle");
+                                return;
+                              }
+                              playInterfaceSound("tap");
+                            }}
+                          >
+                            <span className="book-object">
+                              <span className="book-front">
+                                <BookCover post={book} playing={playing === book.slug && view !== "spines"} />
+                              </span>
+                              <span className="book-spine" aria-hidden="true">
+                                <span className="book-spine-issue">{String(book.issue).padStart(2, "0")}</span>
+                                <span className="book-spine-title">{book.cover.title.join(" ")}</span>
+                                <span className="book-spine-mark">DP</span>
+                              </span>
+                            </span>
+                          </Link>
+                        </li>,
+                        ...(DECOR_AFTER[index + 1] ?? []).map((kind) => <DecorSlot key={kind} kind={kind} />),
+                      ];
+                    })}
+                    {DECOR_END.map((kind) => (
+                      <DecorSlot key={kind} kind={kind} />
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+            <div className="room-floor" aria-hidden="true">
+              <div className="room-rug" />
+            </div>
+          </div>
 
           <div className="shelf-caption" data-visible={Boolean(shown)}>
             {shown ? (
