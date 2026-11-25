@@ -16,14 +16,14 @@ function seeded(seed: number) {
   };
 }
 
-export type ShelfDecorKind = "vase" | "stack" | "plant" | "print";
+export type ShelfDecorKind = "vase" | "stack" | "bonsai" | "print";
 
 export function ShelfDecor({ kind }: { kind: ShelfDecorKind }) {
   return (
     <span className="shelf-decor-art" data-kind={kind} aria-hidden="true">
       {kind === "vase" && <Vase />}
       {kind === "stack" && <Stack />}
-      {kind === "plant" && <Plant />}
+      {kind === "bonsai" && <Bonsai />}
       {kind === "print" && <Print />}
     </span>
   );
@@ -97,55 +97,67 @@ function Stack() {
   );
 }
 
-/** Pothos in a stone pot, its vines spilling over the shelf edge. */
-function Plant() {
-  const random = seeded(29);
-  const vines = [
-    "M34 52 C22 62 16 84 18 112 C19 124 22 134 20 146",
-    "M66 52 C80 60 86 82 84 104 C83 114 86 122 90 128",
-    "M50 48 C48 36 40 24 30 16",
-    "M52 48 C58 34 68 26 78 22",
+/** A bonsai: a twisted juniper with cloud pads, in a shallow glazed tray. */
+function Bonsai() {
+  const random = seeded(41);
+  const pads = [
+    { cx: 34, cy: 52, rx: 22, ry: 7 },
+    { cx: 80, cy: 26, rx: 27, ry: 9 },
+    { cx: 112, cy: 46, rx: 19, ry: 6.5 },
   ];
-  const leaves: { x: number; y: number; a: number; s: number }[] = [];
-  const points = [
-    [22, 70], [17, 92], [19, 114], [21, 136], [80, 70], [85, 92], [84, 112], [89, 126],
-    [42, 30], [33, 20], [62, 32], [74, 24], [50, 42], [36, 48], [64, 46],
-  ];
-  for (const [x, y] of points) leaves.push({ x, y, a: random() * 80 - 40, s: 0.8 + random() * 0.5 });
+  const puffs: { x: number; y: number; r: number; lit: boolean }[] = [];
+  for (const pad of pads) {
+    for (let index = 0; index < 26; index++) {
+      const angle = random() * Math.PI * 2;
+      const distance = Math.sqrt(random());
+      const x = pad.cx + Math.cos(angle) * distance * pad.rx;
+      const y = pad.cy + Math.sin(angle) * distance * pad.ry;
+      puffs.push({ x, y, r: 3.4 + random() * 2.6, lit: y < pad.cy - pad.ry * 0.15 });
+    }
+  }
   return (
-    <svg viewBox="0 0 100 110" preserveAspectRatio="xMidYMax meet" overflow="visible">
-      {vines.map((vine) => (
-        <path key={vine} d={vine} className="d-stem-green" fill="none" strokeWidth="1.3" strokeLinecap="round" />
+    <svg viewBox="0 0 140 110" preserveAspectRatio="xMidYMax meet" overflow="visible">
+      {/* Shadow of the pads on the trunk side, then trunk and branches. */}
+      <path d="M46 64 C38 60 32 58 24 56 M66 48 C82 46 94 46 104 46 M70 40 C74 34 76 30 78 28" className="d-bark-stroke" fill="none" strokeWidth="3.2" strokeLinecap="round" />
+      <path
+        d="M54 92 C58 82 42 74 45 63 C48 53 66 51 70 41 C72 35 75 30 77 26 L81 28 C80 36 77 44 73 52 C67 63 57 66 61 75 C63 81 71 85 73 92 Z"
+        className="d-bark"
+      />
+      <path d="M61 75 C63 81 71 85 73 92 L67 92 C66 86 59 82 58 75 C57 68 66 62 72 52 L73 52 C67 63 57 66 61 75 Z" className="d-shade" />
+      {puffs.map((puff, index) => (
+        <circle key={index} cx={puff.x} cy={puff.y} r={puff.r} className={puff.lit ? "d-leaf-light" : index % 2 ? "d-leaf" : "d-leaf-dark"} />
       ))}
-      <path d="M26 56 H74 L70 108 C70 110 68 110 66 110 H34 C32 110 30 110 30 108 Z" className="d-stone" />
-      <path d="M58 56 H74 L70 108 C70 110 68 110 66 110 H60 Z" className="d-shade" />
-      <rect x="24" y="52" width="52" height="6" rx="1.5" className="d-stone" />
-      <rect x="24" y="52" width="52" height="2" rx="1" className="d-gloss-fill" />
-      {leaves.map((leaf, index) => (
-        <path
-          key={index}
-          transform={`translate(${leaf.x} ${leaf.y}) rotate(${leaf.a}) scale(${leaf.s})`}
-          d="M0 -6 C5 -6 7 -1 0 6 C-7 -1 -5 -6 0 -6 Z"
-          className={index % 3 === 0 ? "d-leaf-light" : index % 2 ? "d-leaf" : "d-leaf-dark"}
-        />
-      ))}
+      {/* Moss and a stone on the soil. */}
+      <ellipse cx="70" cy="91" rx="46" ry="4" className="d-moss" />
+      <ellipse cx="92" cy="89.5" rx="7" ry="4" className="d-stone" />
+      <ellipse cx="90.5" cy="88.3" rx="3" ry="1.4" className="d-gloss-fill" />
+      {/* Tray, with two small feet. */}
+      <path d="M16 92 H124 L119 104 H21 Z" className="d-glaze" />
+      <path d="M16 92 H124 L123 95 H17 Z" className="d-gloss-fill" />
+      <path d="M100 92 H124 L119 104 H97 Z" className="d-shade" />
+      <rect x="27" y="104" width="10" height="6" rx="1" className="d-glaze" />
+      <rect x="103" y="104" width="10" height="6" rx="1" className="d-glaze" />
     </svg>
   );
 }
 
-/** A small framed print - an arch and a low sun - leaning on the back panel. */
+/**
+ * A small framed print - an arch and a low sun - leaning on the back panel.
+ * Seen head-on, a lean reads as upright: the top sits further back, so it is
+ * a touch narrower and in shade, and the frame casts onto the boards.
+ */
 function Print() {
   return (
     <svg viewBox="0 0 100 130" preserveAspectRatio="xMidYMax meet" overflow="visible">
-      <g transform="rotate(-4 50 130)">
-        <rect x="6" y="4" width="88" height="124" className="d-wood" />
-        <rect x="10" y="8" width="80" height="116" className="d-paper" />
-        <rect x="22" y="22" width="56" height="88" className="d-linen" />
-        <path d="M30 110 V70 a20 20 0 0 1 40 0 V110 Z" className="d-clay" />
-        <circle cx="62" cy="48" r="8" className="d-brass" />
-        <rect x="22" y="94" width="56" height="16" className="d-linen-2" opacity="0.85" />
-        <rect x="6" y="4" width="88" height="124" className="d-frame-edge" fill="none" strokeWidth="1" />
-      </g>
+      <path d="M10 6 H90 L94 130 H6 Z" className="d-wood" />
+      <path d="M14 10 H86 L89 126 H11 Z" className="d-paper" />
+      <path d="M25 24 H75 L77 110 H23 Z" className="d-linen" />
+      <path d="M31 110 V72 a19.5 19.5 0 0 1 39 0 V110 Z" className="d-clay" />
+      <circle cx="62" cy="49" r="8" className="d-brass" />
+      <path d="M23.4 95 H76.6 L77 110 H23 Z" className="d-linen-2" opacity="0.85" />
+      {/* the top leans away from the light */}
+      <path d="M10 6 H90 L91.5 52 H8.5 Z" className="d-shade" opacity="0.5" />
+      <path d="M10 6 H90 L94 130 H6 Z" className="d-frame-edge" fill="none" strokeWidth="1" />
     </svg>
   );
 }

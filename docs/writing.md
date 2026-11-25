@@ -71,7 +71,7 @@ The shelf is a furnished room, drawn entirely in CSS and SVG: a built-in
 bookcase (crown, side panels, board-and-groove back, plinth) on a limewashed
 wall, oak planks with puck lights pooling under each shelf, an oak floor and
 rug, and styled objects between the books (`ShelfDecor.tsx`: a vase of
-eucalyptus, a linen stack, a trailing pothos, a leaning print; an olive tree
+eucalyptus, a linen stack, a bonsai, a leaning print; an olive tree
 and a floor lamp beside the case on wide screens). Day is white oak in window
 light; inkember is walnut at lamp-light. Every surface reads the `--room-*`,
 `--case-*` and `--decor-*` tokens in `globals.css`; wood, plaster and grain

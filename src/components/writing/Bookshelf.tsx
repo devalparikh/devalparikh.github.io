@@ -50,7 +50,7 @@ const href = (slug: string) => `/writing/${slug}/` as Route;
  * the shelves read as a furnished room whatever the filter leaves standing.
  */
 const DECOR_AFTER: Record<number, ShelfDecorKind[]> = { 2: ["vase"], 5: ["stack"] };
-const DECOR_END: ShelfDecorKind[] = ["plant", "print"];
+const DECOR_END: ShelfDecorKind[] = ["bonsai", "print"];
 
 function DecorSlot({ kind }: { kind: ShelfDecorKind }) {
   return (

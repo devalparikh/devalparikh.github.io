@@ -372,7 +372,11 @@
   --cover-w: clamp(108px, 25vw, 168px);
   --cover-h: calc(var(--cover-w) * 1.5);
   --gap: clamp(14px, 2.6vw, 28px);
-  --plank: 22px;
+  /* Shelf thickness, and how much of its top surface shows. Things stand
+     --stand into that surface, so books and objects share one line. */
+  --plank: 24px;
+  --plank-top: 9px;
+  --stand: 6px;
   --row: calc(var(--cover-h) + 48px);
   --room-pad: clamp(12px, 3.2vw, 44px);
   --floor-h: clamp(54px, 8vw, 96px);
@@ -576,10 +580,21 @@
   margin: 0;
   padding: 0 clamp(12px, 2.4vw, 32px);
   list-style: none;
+  /* An LED strip tucked under the front of each shelf: a thin warm line,
+     and the light it washes down the back panel and over the books. */
   background:
-    linear-gradient(to bottom, var(--plank-shadow) 0, transparent 16px) 0 0 / 100% var(--row) repeat-y,
-    radial-gradient(closest-side at 50% 0, var(--case-led), transparent) 0 0 / 300px calc(var(--row) * 0.9) repeat,
-    linear-gradient(to bottom, color-mix(in oklab, var(--case-led) 45%, transparent), transparent 60%) 0 0 / 100% var(--row) repeat-y;
+    linear-gradient(
+      to bottom,
+      var(--case-led-strip) 0 1.5px,
+      color-mix(in oklab, var(--case-led-strip) 35%, transparent) 1.5px 3px,
+      transparent 3px
+    ) 0 0 / 100% var(--row) repeat-y,
+    linear-gradient(
+      to bottom,
+      var(--case-led) 0,
+      color-mix(in oklab, var(--case-led) 40%, transparent) 18%,
+      transparent 58%
+    ) 0 0 / 100% var(--row) repeat-y;
 }
 
 .shelf-books::before {
@@ -589,13 +604,17 @@
   z-index: 0;
   pointer-events: none;
   background:
+    /* Seen from just above: the top surface (back edge in shade, front edge
+       catching the strip below), a bright arris, then the grained front. */
     linear-gradient(
       to bottom,
       transparent calc(var(--row) - var(--plank)),
-      var(--case-wood-light) calc(var(--row) - var(--plank)),
-      color-mix(in oklab, var(--case-wood-light) 70%, var(--case-wood)) calc(var(--row) - var(--plank) + 6px),
-      color-mix(in oklab, var(--case-wood-dark) 22%, transparent) calc(var(--row) - var(--plank) + 6px),
-      transparent calc(var(--row) - 6px),
+      color-mix(in oklab, var(--case-wood) 70%, var(--case-wood-dark)) calc(var(--row) - var(--plank)),
+      var(--case-wood-light) calc(var(--row) - var(--plank) + var(--plank-top) - 1px),
+      color-mix(in oklab, var(--case-wood-light) 60%, white) calc(var(--row) - var(--plank) + var(--plank-top) - 1px) calc(var(--row) - var(--plank) + var(--plank-top)),
+      transparent calc(var(--row) - var(--plank) + var(--plank-top)),
+      transparent calc(var(--row) - 5px),
+      color-mix(in oklab, var(--case-wood-dark) 70%, transparent) calc(var(--row) - 2px),
       var(--case-wood-dark) var(--row)
     ) 0 0 / 100% var(--row) repeat-y,
     var(--tex-grain-h) 0 0 / 800px 64px,
@@ -610,13 +629,13 @@
   align-items: flex-end;
   height: var(--row);
   /* Books stand at the back edge of the plank's lit top face. */
-  padding-bottom: calc(var(--plank) - 4px);
+  padding-bottom: calc(var(--plank) - var(--stand));
 }
 
 /* Styled objects between the books. */
 .shelf-decor-art {
   display: block;
-  filter: drop-shadow(4px 6px 5px var(--plank-shadow));
+  filter: drop-shadow(2px 1px 2px var(--plank-shadow)) drop-shadow(5px 0 6px color-mix(in oklab, var(--plank-shadow) 40%, transparent));
 }
 
 .shelf-decor-art svg {
@@ -627,7 +646,7 @@
 
 .shelf-decor-art[data-kind="vase"] { width: calc(var(--cover-w) * 0.6); height: calc(var(--cover-h) * 1.02); }
 .shelf-decor-art[data-kind="stack"] { width: calc(var(--cover-w) * 0.95); height: calc(var(--cover-w) * 0.475); }
-.shelf-decor-art[data-kind="plant"] { width: calc(var(--cover-w) * 0.8); height: calc(var(--cover-w) * 0.88); }
+.shelf-decor-art[data-kind="bonsai"] { width: calc(var(--cover-w) * 1.05); height: calc(var(--cover-w) * 0.825); }
 .shelf-decor-art[data-kind="print"] { width: calc(var(--cover-w) * 0.74); height: calc(var(--cover-w) * 0.96); }
 
 .shelf .d-ceramic { fill: var(--decor-ceramic); }
@@ -654,6 +673,10 @@
 .shelf .d-stem { stroke: var(--decor-stem); }
 .shelf .d-stem-green { stroke: var(--decor-leaf-dark); }
 .shelf .d-trunk { stroke: var(--decor-stem); }
+.shelf .d-bark { fill: var(--decor-bark); }
+.shelf .d-bark-stroke { stroke: var(--decor-bark); }
+.shelf .d-moss { fill: var(--decor-moss); }
+.shelf .d-glaze { fill: var(--decor-glaze); }
 .shelf .d-wood-stroke { stroke: var(--case-wood-dark); }
 .shelf .d-weave { stroke: var(--decor-linen-3); opacity: 0.5; }
 .shelf .d-page-line { stroke: var(--decor-linen-2); opacity: 0.55; }
@@ -665,7 +688,7 @@
   gap: 0 3px;
 }
 
-/* Phones keep the vase and the trailing plant; four objects make the case
+/* Phones keep the vase and the bonsai; four objects make the case
    too tall to scan. */
 @media (max-width: 639px) {
   .shelf-decor:is([data-kind="stack"], [data-kind="print"]) {
@@ -688,6 +711,9 @@
   border-radius: 3px;
   outline-offset: 5px;
   perspective: 1100px;
+  /* Project from the base, so a turned book's near corner stays on the
+     shelf instead of dipping below it. */
+  perspective-origin: 50% 100%;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -697,9 +723,9 @@
   position: absolute;
   left: 2%;
   right: 2%;
-  bottom: -5px;
+  bottom: -3px;
   z-index: -1;
-  height: 9px;
+  height: 6px;
   background: radial-gradient(closest-side, var(--plank-shadow), transparent);
   transition: opacity 320ms var(--ease-out-quint), transform 320ms var(--ease-out-quint);
 }
@@ -835,7 +861,7 @@
   height: calc(var(--cover-h) * (0.82 + 0.18 * var(--scale)));
   padding: 9px 0 8px;
   border-radius: 2px;
-  box-shadow: 0 6px 10px -4px var(--shelf-shadow);
+  box-shadow: 0 2px 3px -1px var(--shelf-shadow), 4px 0 8px -4px var(--shelf-shadow);
   font-size: min(calc(var(--spine) * 0.36), 15px);
 }
 

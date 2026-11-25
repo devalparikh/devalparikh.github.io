@@ -74,7 +74,8 @@
   --case-wood-dark: #7d5a38;
   --case-panel: #43342a;
   --case-panel-deep: #2b211b;
-  --case-led: rgb(255 214 160 / 0.42);
+  --case-led: rgb(255 214 160 / 0.34);
+  --case-led-strip: rgb(255 240 214 / 0.95);
   --plank-shadow: rgb(20 12 6 / 0.55);
   --decor-ceramic: #ece5d9;
   --decor-ceramic-shade: #c7bba8;
@@ -90,6 +91,9 @@
   --decor-linen-3: #6f6252;
   --decor-paper: #f4eee2;
   --decor-lamp-shade: #f1e5cf;
+  --decor-bark: #5c4634;
+  --decor-moss: #6f7f4e;
+  --decor-glaze: #4a5a62;
   --shelf-shadow: rgb(0 0 0 / 0.5);
 }
 
@@ -112,7 +116,8 @@
   --case-wood-dark: #3b281a;
   --case-panel: #1c1511;
   --case-panel-deep: #110c09;
-  --case-led: rgb(255 186 112 / 0.5);
+  --case-led: rgb(255 186 112 / 0.42);
+  --case-led-strip: rgb(255 222 178 / 0.95);
   --plank-shadow: rgb(0 0 0 / 0.7);
   --decor-ceramic: #d6cdbf;
   --decor-ceramic-shade: #9c9182;
@@ -128,6 +133,9 @@
   --decor-linen-3: #574b3e;
   --decor-paper: #ddd5c6;
   --decor-lamp-shade: #f3dcb2;
+  --decor-bark: #4a3828;
+  --decor-moss: #55623c;
+  --decor-glaze: #36444b;
   --shelf-shadow: rgb(0 0 0 / 0.65);
   --color-base-100: #08080a;
   --color-base-200: #111114;
