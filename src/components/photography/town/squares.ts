@@ -1,4 +1,5 @@
 import { ease, travel } from "./motion";
+import { studio } from "@/content/studio";
 import { picnicBlanket } from "./activities";
 import { vehicle, type Vehicle } from "./vehicles";
 import { maunakea } from "./maunakea";
@@ -21,6 +22,8 @@ const laneWidth = 1.31;
 const boulevardLane = 1.9;
 export const pitch = curbWidth + 2 * laneWidth;
 export const rowPitch = curbDepth + 2 * boulevardLane;
+const studioRoof = { x: 2.13, z: -4.35, height: 2.47 };
+export const studioView = { x: studioRoof.x - pitch - 1, y: 2.02, z: studioRoof.z + 2.48 };
 const roadHeight = -0.1;
 const markingHeight = roadHeight + 0.0005;
 const cream = "#f5ebd4",
@@ -96,7 +99,18 @@ export function buildTown() {
 
   n.shop(-3.7, -4.39, 2.55, 2.63, "#d9b389", slate, "PRINTS");
   n.shop(-0.98, -4.36, 2.7, 3.05, "#a5b8b2", brick, "BINDERY");
-  n.shop(2.13, -4.35, 3.16, 2.47, "#e3c5a0", "#527f7c", "STUDIO");
+  n.shop(studioRoof.x, studioRoof.z, 3.16, studioRoof.height, "#e3c5a0", "#527f7c", "STUDIO");
+  const billboard = group(studioRoof.x, studioRoof.height + 0.60, studioRoof.z);
+  const signInk = "#3d5a58";
+  for (const x of [-1.19, 1.19]) {
+    form("box", x, 0.49, 0.033, 0.095, 1.19, 0.12, signInk, billboard);
+    beam([x, -0.06, -0.43], [x, 0.85, 0.035], 0.075, signInk, billboard);
+    beam([x, 1.01, 0.095], [x, 1.11, 0.36], 0.038, signInk, billboard);
+    form("box", x, 1.085, 0.365, 0.24, 0.09, 0.15, signInk, billboard, -0.28);
+    form("box", x, 1.039, 0.365, 0.18, 0.028, 0.095, "bulb", billboard, -0.28);
+  }
+  form("planks", 0, 0.64, 0.09, 3.36, 0.88, 0.105, signInk, billboard);
+  m.sign(studio.title.join(" ").toUpperCase(), 0, 0.64, 0.145, 3.22, 0.75, "#465f58", billboard);
   // The bookshop rolls a two-tier display out under the reading-room bay.
   const bookcart = group(-0.28, 0.1, 0.66);
   for (const dx of [-0.45, 0.45]) {

@@ -762,7 +762,7 @@
   mix-blend-mode: multiply;
 }
 [data-theme="inkember"] .town-view::after { mix-blend-mode: soft-light; }
-.town-poster { pointer-events: none; background: center / cover url("/img/town/morning.webp"); }
+.town-poster { pointer-events: none; background: 54% center / cover url("/img/town/morning.webp"); }
 [data-theme="inkember"] .town-poster { background-image: url("/img/town/night.webp"); }
 .town-hero[data-expanded="true"] .town-poster {
   margin: auto;
@@ -782,22 +782,6 @@
 .town-view canvas:active { cursor: grabbing; }
 .town-view canvas[aria-hidden="true"] { pointer-events: none; }
 .town-view canvas:focus-visible { outline: 2px dashed currentColor; outline-offset: -5px; }
-.town-heading {
-  position: absolute;
-  top: clamp(1rem, 2.5vw, 2.6rem);
-  left: clamp(1rem, 3vw, 3rem);
-  z-index: 1;
-  margin: 0;
-  pointer-events: none;
-  font: 450 clamp(1.7rem, 3.6vw, 3.6rem)/1 var(--font-fraunces), Georgia, serif;
-  letter-spacing: -0.065em;
-  padding: 0.09em 0.27em 0.17em;
-  background: var(--town-paper);
-  border: 1px solid color-mix(in srgb, currentColor 42%, transparent);
-  box-shadow: 0.065em 0.065em 0 var(--town-paper);
-}
-.town-heading em { font-family: Georgia, serif; }
-.town-hero[data-expanded="true"] .town-heading { display: none; }
 .town-expand {
   position: absolute;
   z-index: 1;
