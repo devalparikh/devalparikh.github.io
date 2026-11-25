@@ -1,3 +1,4 @@
+import { metadata as layoutMetadata } from "../layout";
 import type { Metadata } from "next";
 import { PageFrame } from "@/components/chrome/PageFrame";
 import { PageHeader } from "@/components/primitives/PageHeader";
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
   title: writing.title,
   description: writing.description,
   alternates: { canonical: `${SITE_ORIGIN}/writing/` },
+  openGraph: { ...layoutMetadata.openGraph, url: `${SITE_ORIGIN}/writing/` },
 };
 
 export default function WritingPage() {

@@ -30,7 +30,6 @@ export const metadata: Metadata = {
     siteName: site.name,
     title: site.name,
     description: site.tagline,
-    url: site.url,
     images: [{ url: "/img/og.webp", width: 1200, height: 706, alt: site.name }],
   },
   twitter: { card: "summary_large_image" },
