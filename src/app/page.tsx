@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { metadata as layoutMetadata } from "./layout";
 import { PageFrame } from "@/components/chrome/PageFrame";
 import { Hero } from "@/components/home/Hero";
 import { PreviewList } from "@/components/home/PreviewList";
@@ -6,6 +8,10 @@ import { experience } from "@/content/experience";
 import { projects } from "@/content/projects";
 import { site } from "@/content/site";
 import { writing } from "@/content/writing";
+
+export const metadata: Metadata = {
+  openGraph: { ...layoutMetadata.openGraph, url: site.url },
+};
 
 export default function HomePage() {
   return (

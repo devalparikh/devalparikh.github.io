@@ -4,7 +4,7 @@
  */
 import test from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 
 const out = new URL("../out/", import.meta.url);
 const snapshot = JSON.parse(readFileSync(new URL("../src/content/blog/snapshot.json", import.meta.url), "utf8"));
@@ -40,6 +40,24 @@ test("the Jev demos fall back to the live post instead of calling /api", () => {
 
 test("the shelf links every cover to its in-site post", () => {
   const page = html("writing/index.html");
+  assert.match(page, /<link rel="canonical" href="https:\/\/devalparikh\.me\/writing\/"/);
+  assert.match(page, /<meta property="og:url" content="https:\/\/devalparikh\.me\/writing\/"/);
   for (const { slug } of snapshot.posts) assert.match(page, new RegExp(`href="/writing/${slug}/"`));
   assert.match(page, /rolodex\.dev/);
+});
+
+
+test("every exported canonical has exactly one matching og:url", () => {
+  const files = readdirSync(out, { recursive: true }).filter((file) => file.endsWith(".html")).sort();
+  assert.ok(files.length > 0, "expected exported HTML pages");
+  for (const file of files) {
+    const page = html(file);
+    const canonicals = [...page.matchAll(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"[^>]*>/g)].map((match) => match[1]);
+    const urls = [...page.matchAll(/<meta[^>]+property="og:url"[^>]+content="([^"]+)"[^>]*>/g)].map((match) => match[1]);
+    console.log(`${file} | ${canonicals.join(", ") || "(none)"} | ${urls.join(", ") || "(none)"}`);
+    if (canonicals.length) {
+      assert.equal(canonicals.length, 1, `${file}: expected one canonical`);
+      assert.deepEqual(urls, canonicals, `${file}: og:url must equal canonical`);
+    }
+  }
 });
