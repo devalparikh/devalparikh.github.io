@@ -227,6 +227,15 @@ export function streets(m: Model) {
     const g = terrace(x, z);
     form("drum", 0, 0.34, 0, 0.09, 0.68, 0.09, iron, g);
     form("drum", 0, 0.68, 0, 0.78, 0.1, 0.78, wood, g);
+    const saucer = group(-0.16, 0.737, 0.13, g);
+    form("drum", 0, 0.012, 0, 0.19, 0.024, 0.19, chalk, saucer);
+    form("drum", 0, 0.068, 0, 0.123, 0.102, 0.123, chalk, saucer);
+    form("drum", 0, 0.121, 0, 0.096, 0.007, 0.096, "#735744", saucer);
+    form("rim", 0.067, 0.078, 0, 0.066, 0.083, 0.07, chalk, saucer);
+    form("box", 0.13, 0.741, -0.13, 0.153, 0.021, 0.22, "#f5e5bc", g, 0, -0.27);
+    form("drum", -0.11, 0.834, -0.17, 0.085, 0.23, 0.085, "#6a958a", g);
+    beam([-0.11, 0.93, -0.17], [-0.085, 1.04, -0.16], 0.013, "#6d825c", g);
+    form("leaf", -0.085, 1.053, -0.16, 0.077, 0.066, 0.075, color, g);
     form("drum", 0, 1.14, 0, 0.055, 0.94, 0.055, wood, g);
     form("cone", 0, 1.67, 0, 1.48, 0.35, 1.48, color, g);
     for (const side of [-1, 1]) {

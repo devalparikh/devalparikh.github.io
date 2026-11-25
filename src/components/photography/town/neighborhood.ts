@@ -1,3 +1,4 @@
+import { foldedPaper } from "./street-life";
 import type { Model } from "./model";
 import type { streets } from "./streets";
 
@@ -69,7 +70,16 @@ export function neighborhood(m: Model, street: ReturnType<typeof streets>) {
       form("box", u, 1.87, -0.04, 0.251, 0.055, 1.12, c, g, 0.15);
       form("box", u, 1.74, 0.51, 0.25, 0.13, 0.035, c, g);
     }
-    person(x - 0.33, z - 0.63, x + 0.48, z - 0.65, color, wares === "flowers" ? "gardener" : "baker", 2);
+    person(x - 0.33, z - 0.63, x + 0.48, z - 0.65, color, wares === "flowers" ? "gardener" : "maker", 2, 0.068, {
+      apron: wares !== "flowers",
+      carry: wares === "flowers" ? undefined : hand => {
+        if (wares === "prints") foldedPaper(m, hand);
+        else {
+          form("round", 0, 0.047, 0.02, 0.14, 0.16, 0.14, "#daa259", hand);
+          form("leaf", 0.034, 0.129, 0.02, 0.069, 0.031, 0.034, green, hand);
+        }
+      },
+    });
     person(x + 0.67, z + 0.61, x + 0.13, z + 0.58, color, "shopper", wares === "flowers" ? 6 : wares === "fruit" ? 9 : 3);
     for (let i = 0; i < 3; i++) {
       const u = (i - 1) * 0.48;

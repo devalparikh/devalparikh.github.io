@@ -1,5 +1,4 @@
-// Small painted surfaces are baked into two meshes per car so traffic only
-// uploads two transforms as it rounds a corner. +X is the nose and +Y is up.
+// Painted panels share body, trim and wheel geometry. +X is the nose and +Y is up.
 import { BoxGeometry, BufferGeometry, Color, Euler, Quaternion, Float32BufferAttribute, Vector3 } from "three";
 
 export type Point = [number, number, number];

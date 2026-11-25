@@ -1,3 +1,4 @@
+import { utilityWheels } from "./wheels";
 import { ease } from "./motion";
 import { hillside } from "./landscape";
 import type { Model } from "./model";
@@ -203,14 +204,11 @@ function konaBeach(m: Model, person: Street["person"]) {
 }
 
 // Parked on the path with the club heads projecting above the rear bag.
-export function golfCart({ form, group, beam }: Model, x: number, z: number, heading: number) {
+export function golfCart(m: Model, x: number, z: number, heading: number) {
+  const { form, group, beam } = m;
   const cart = group(x, 0.09, z);
   cart.rotation.y = heading;
-  for (const dx of [-0.46, 0.46])
-    for (const dz of [-0.31, 0.31]) {
-      form("drum", dx, 0.18, dz, 0.36, 0.13, 0.36, "#535652", cart, Math.PI / 2);
-      form("drum", dx, 0.18, dz * 1.14, 0.17, 0.08, 0.17, "#b2afa2", cart, Math.PI / 2);
-    }
+  const roll = utilityWheels(m, cart, [-0.46, 0.46], 0.31, 0.18, 0.13);
   form("box", 0, 0.34, 0, 1.43, 0.18, 0.68, "#769584", cart);
   form("box", 0.5, 0.49, 0, 0.39, 0.24, 0.7, sand, cart);
   form("box", -0.22, 0.53, 0, 0.46, 0.14, 0.62, sand, cart);
@@ -227,14 +225,14 @@ export function golfCart({ form, group, beam }: Model, x: number, z: number, hea
     beam([-0.65, 0.9, dz], [-0.72, 1.24, dz], 0.032, "#58615f", cart);
     form("box", -0.68, 1.24, dz, 0.13, 0.059, 0.06, "#717674", cart);
   }
-  return cart;
+  return { cart, roll };
 }
 
 // A short shuttle on the mown green's paved cart path. The golfer climbs in,
 // drives down to the tee, backs into the original space, then steps off.
 export function makaleiCart(m: Model, person: Street["person"]) {
   const heading = Math.PI / 2 + 0.12;
-  const cart = golfCart(m, -3.75, 0.48, heading);
+  const { cart, roll } = golfCart(m, -3.75, 0.48, heading);
   cart.userData.moving = true;
   cart.position.y = 0.109;
   const cos = Math.cos(heading), sin = Math.sin(heading);
@@ -243,6 +241,7 @@ export function makaleiCart(m: Model, person: Street["person"]) {
     const drive = -1.05 + 2.42 * (ease((phase - 6) / 4.5) - ease((phase - 12) / 4.5));
     cart.position.x = -3.75 + cos * drive;
     cart.position.z = 0.48 - sin * drive;
+    roll(drive);
   });
   person(0, 0, 0, 0, "#ab7952", "driver", 3, 0, {
     perform(t) {

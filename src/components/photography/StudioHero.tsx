@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { studio } from "@/content/studio";
 import type { mountTown } from "./town/viewport";
 import { TownPoster } from "./town/TownPoster";
 import { ExpandIcon } from "./PreviewIcons";
@@ -85,9 +86,7 @@ export function StudioHero() {
   }
   return (
     <section ref={frame} className="town-hero" data-expanded={full} aria-label="Photography studio">
-      <h1 className="town-heading">
-        Studio <em>Deval</em>
-      </h1>
+      <h1 className="sr-only">{studio.title.join(" ")}</h1>
       <div className="town-view">
         {!ready && <TownPoster expanded={full} />}
         <canvas
