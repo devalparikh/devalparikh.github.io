@@ -10,24 +10,27 @@ export type Performance = (time: number) => {
   step: number; sitting?: number; reach?: number;
 };
 type Occupation = "gardener" | "waiter" | "photographer" | "golfer" | "baker" | "hiker"
-  | "maker" | "beachcomber" | "surfer" | "reader" | "driver" | "shopper" | "commuter" | "artist" | "picnicker";
+  | "maker" | "beachcomber" | "surfer" | "reader" | "driver" | "shopper" | "commuter" | "artist" | "picnicker" | "dancer";
 
 export function residents(m: Model) {
   const { form, group, beam } = m;
   return function person(
     x: number, z: number, endX: number, endZ: number, shirt: string,
     occupation: Occupation, phase: number, base = 0.068,
-    { route, groundHeight, portraitPartner = false, perform, parent }: {
+    { route, groundHeight, portraitPartner = false, perform, parent, size = 1, carry, apron }: {
       route?: (distance: number) => [number, number, number];
       groundHeight?: (x: number, z: number) => number;
       portraitPartner?: boolean;
       perform?: Performance;
       parent?: Group;
+      size?: number;
+      apron?: boolean;
+      carry?: (rightHand: Group) => void;
     } = {},
   ) {
     const g = group(x, base, z, parent);
     g.userData.moving = true;
-    g.scale.setScalar(0.79 + (phase % 4) * 0.029);
+    g.scale.setScalar(size * (0.79 + (phase % 4) * 0.029));
     g.scale.x *= 0.92 + (phase % 3) * 0.074;
     const dog = portraitPartner && occupation === "hiker" ? companionDog(m, g) : undefined;
     const skin = ["#bd8060", "#956446", "#d9a584", "#af765b"][phase % 4];
@@ -91,6 +94,30 @@ export function residents(m: Model) {
       beam(elbow, palm, 0.079, skin, arm);
       form("round", side*.183,-.121,.029,.11,.053,.108,occupation === "waiter" ? linen : shirt,arm);
       form("round", palm[0], palm[1], palm[2], 0.088, 0.087, 0.096, skin, arm);
+      if (carry && side === 1) carry(group(palm[0], palm[1], palm[2], arm));
+    }
+    if (apron) {
+      const cloth = phase % 2 ? "#d9bd8e" : "#889e9c";
+      form("box", 0, 0.085, 0.127, 0.21, 0.25, 0.028, cloth, chest);
+      form("box", 0, -0.043, 0.121, 0.286, 0.12, 0.032, cloth, chest);
+      form("box", 0.038, 0.094, 0.146, 0.105, 0.068, 0.013, leather, chest);
+      for (const side of [-1, 1]) {
+        beam([side * 0.084, 0.21, 0.119], [side * 0.102, 0.296, 0.055], 0.028, cloth, chest);
+        beam([side * 0.102, 0.293, -0.052], [-side * 0.10, 0.04, -0.12], 0.025, cloth, chest);
+      }
+    }
+    if (occupation === "dancer") {
+      if (phase % 4 === 1) {
+        form("cone", 0, -0.012, 0, 0.43, 0.38, 0.39, shirt, chest);
+        form("round", 0, 0.092, 0, 0.328, 0.047, 0.24, leather, chest);
+        form("round", -0.083, 0.132, -0.089, 0.106, 0.095, 0.074, linen, head);
+      } else {
+        for (const side of [-1, 1]) {
+          beam([side * 0.086, 0.292, 0.09], [side * 0.098, 0.035, 0.116], 0.028, leather, chest);
+          beam([side * 0.086, 0.292, -0.076], [0, 0.044, -0.121], 0.03, leather, chest);
+        }
+        form("box", 0, 0.29, 0.112, 0.105, 0.034, 0.024, "#ab6e52", chest);
+      }
     }
     if (occupation === "artist") {
       easel(m, g);
@@ -256,12 +283,18 @@ export function residents(m: Model) {
         }
         leftShoulder.rotation.x = 0.23 * step - 0.53 * sitting;
         rightShoulder.rotation.x = -0.18 * step - 0.8 * reach - 0.37 * sitting;
+        if (occupation === "dancer") {
+          leftShoulder.rotation.x = -1.45 + 0.14 * step;
+          rightShoulder.rotation.x = -0.93 - 0.11 * step;
+          chest.rotation.z = 0.097 * step;
+          head.rotation.z = -0.05 * step;
+        }
         chest.rotation.x = 0.12 * reach;
         head.rotation.y = 0.12 * Math.sin(1.13 * t + phase);
       });
       return;
     }
-    const speeds = { maker: 0.63, gardener: 0.56, waiter: 0.98, photographer: 0.65, golfer: 0.47, baker: 0.82, hiker: 0.74, shopper: 0.71, commuter: 0.87, driver: 0.72, beachcomber: 0.55 };
+    const speeds = { dancer: 0.78, maker: 0.63, gardener: 0.56, waiter: 0.98, photographer: 0.65, golfer: 0.47, baker: 0.82, hiker: 0.74, shopper: 0.71, commuter: 0.87, driver: 0.72, beachcomber: 0.55 };
     const variation = Math.sin(17.3 * x + 7.1 * z + phase);
     const pace = portraitPartner ? speeds.photographer : speeds[occupation] * (1 + 0.16 * variation);
     let travelTime = 3.7;

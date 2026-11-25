@@ -1,7 +1,8 @@
 import { Matrix4, Vector3 } from "three";
 import { summitSky } from "./summit-sky";
 import { vehicle } from "./vehicles";
-import { ease } from "./motion";
+import { utilityWheels } from "./wheels";
+import { ease, lapDistance } from "./motion";
 import { hillside } from "./landscape";
 import type { Model } from "./model";
 
@@ -126,10 +127,6 @@ function summitTraffic(m: Model, road: (z: number) => number, roadScale: (z: num
     form("box", x, 0.77, 0, 0.052, 0.38, 0.75, "#eee2c9", bus);
   for (const side of [-1, 1]) {
     form("box", 0, 0.51, side * 0.383, 2.13, 0.082, 0.018, "#657b75", bus);
-    for (const x of [-0.71, 0.73]) {
-      form("drum", x, 0.18, side * 0.36, 0.36, 0.12, 0.36, "#424747", bus, Math.PI / 2);
-      form("drum", x, 0.18, side * 0.425, 0.18, 0.02, 0.18, "#c1bcb0", bus, Math.PI / 2);
-    }
     form("round", 1.085, 0.37, side * 0.28, 0.036, 0.095, 0.11, "#f6e3ad", bus);
   }
   // A closed out-and-back with a turning bulb at either end. Scale the
@@ -143,11 +140,13 @@ function summitTraffic(m: Model, road: (z: number) => number, roadScale: (z: num
     const dz = Math.min(along, straight) + radius * Math.sin(turn);
     const z = uphill ? low - dz : high + dz;
     const x = road(z) + (uphill ? 1 : -1) * radius * Math.cos(turn) * roadScale(z);
-    return [x, surface(x, z), z];
+    return [x, surface(x, z), z] as const;
   }
+  const rollBus = utilityWheels(m, bus, [-0.71, 0.73], 0.36, 0.18, 0.12);
+  const distance = lapDistance(point);
   const normal = new Vector3(0, 1, grade).normalize(), tangent = new Vector3(), across = new Vector3();
   const basis = new Matrix4();
-  for (const [i, car] of [bus, jeep].entries()) {
+  for (const [i, { body: car, roll }] of [{ body: bus, roll: rollBus }, jeep].entries()) {
     car.userData.moving = true;
     car.scale.setScalar(i ? 0.42 : 0.39);
     m.choreographies.push(t => {
@@ -159,6 +158,7 @@ function summitTraffic(m: Model, road: (z: number) => number, roadScale: (z: num
       across.crossVectors(tangent, normal).normalize();
       car.quaternion.setFromRotationMatrix(basis.makeBasis(tangent, normal, across));
       car.position.set(x, y - 0.0015, z);
+      roll(distance(u));
     });
   }
 }

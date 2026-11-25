@@ -1,9 +1,11 @@
-import { ease, travel } from "./motion";
+import { ease, lapDistance, travel } from "./motion";
 import { studio } from "@/content/studio";
+import { newsCorner, postcardStand } from "./street-life";
+import { fitWheels } from "./wheels";
 import { picnicBlanket } from "./activities";
 import { vehicle, type Vehicle } from "./vehicles";
 import { maunakea } from "./maunakea";
-import { shopCat } from "./pets";
+import { foragingBird, shopCat } from "./pets";
 import { hillside } from "./landscape";
 import { model } from "./model";
 import { streets } from "./streets";
@@ -85,9 +87,21 @@ export function buildTown() {
   // Georgetown shop row and the towpath café.
   block(-1, 0, "#e3d6c3");
   yards.printYard();
+  newsCorner(m, person);
+  postcardStand(m, person);
   house(-2.45, -0.95, 2.22, 3.3, "#c87967", "#a24b43", "COFFEE", "gable");
   house(-0.13, -1.05, 2.18, 4.15, "#b9b5c6", "#536c70", "BOOKS", "oriel");
   house(2.15, -0.95, 2.13, 3.5, "#d9bd70", "#70917a", "BAKERY", "mansard");
+  const roofBed = group(-0.61, 4.46, -0.59);
+  for (const [x, z, w] of [[0, 0, 0.78], [0.91, -0.04, 0.62]]) {
+    form("planks", x, 0.135, z, w, 0.27, 0.31, wood, roofBed);
+    form("meadow", x, 0.276, z, w - 0.052, 0.033, 0.25, "#786449", roofBed);
+    for (let i = 0; i < 5; i++) {
+      const dx = x + (i - 2) * w / 6;
+      form("leaf", dx, 0.38 + 0.041 * Math.sin(i), z, 0.21, 0.24, 0.21, i % 2 ? "#7a906a" : "#98a77b", roofBed);
+      if (i % 2) form("round", dx + 0.047, 0.43, z + 0.071, 0.073, 0.07, 0.071, "#bb7057", roofBed);
+    }
+  }
   table(-2.5, 1.85, "#bf5445");
   table(-0.5, 2.05, "#dfae54");
   patron(-2.5, 1.85, -1, "#7c97a9", 1);
@@ -129,6 +143,7 @@ export function buildTown() {
   n.stall(4.35, -0.45, "prints", "#548477");
   n.cycle(-3.86, 2.7, -0.25);
   georgetownLock(m);
+  foragingBird(m, -1.48, 0.385, 3.065, 2.3, "#978474", 8.4);
   n.pedestrian(-1.5, 2.83);
 
   // The reflecting pool is a separate block from both Georgetown and the glasshouse.
@@ -216,13 +231,19 @@ export function buildTown() {
     form("canopyPanel", 0, 2.72, 0, 4.15, 0.91, 4.15, i % 2 ? "#e1af59" : "#fff2d5", ride, 0, angle);
     form("round", 1.94 * Math.sin(angle), 2.25, 1.94 * Math.cos(angle), 0.24, 0.22, 0.24, "glass", ride);
     if (i % 2) continue;
-    form("drum", x, 1.32, z, 0.06, 1.83, 0.06, "#bb9557", ride);
+    form("drum", x + 0.19 * Math.cos(angle), 1.32, z - 0.19 * Math.sin(angle), 0.06, 1.83, 0.06, "#bb9557", ride);
     const horse = group(x, 1, z, ride);
     horse.rotation.y = angle + Math.PI / 2;
     form("round", 0, 0, 0, 0.22, 0.28, 0.51, cream, horse);
     form("round", 0, 0.17, 0.21, 0.17, 0.36, 0.19, cream, horse, -0.36);
     form("round", 0, 0.3, 0.28, 0.16, 0.16, 0.25, cream, horse);
     form("box", 0, 0.13, -0.03, 0.23, 0.055, 0.18, "#b5554d", horse);
+    if (i === 2 || i === 8) {
+      person(0, 0, 0, 0, i === 2 ? "#6a939e" : "#cd895f", "maker", i + 1, 0, {
+        parent: horse, size: 0.68,
+        perform: () => ({ x: 0, y: 0.15, z: -0.037, facing: 0, sitting: 1, step: 0, reach: 0.72 }),
+      });
+    }
     for (const side of [-1, 1])
       for (const leg of [-1, 1])
         beam([side * 0.07, -0.07, leg * 0.16], [side * 0.09, -0.28, leg * 0.23], 0.05, cream, horse);
@@ -524,6 +545,7 @@ export function buildTown() {
   // Three Swiss blocks: lake railway, alpine ridge and chalet village.
   block(2, -2, "#9cb298");
   yards.lookout();
+  foragingBird(m, 7.42, 0.068, 2.59, 3, "#707778", 12.5);
   mountain(-1.05, -0.92, 4.72, 4.43, true);
   mountain(1.35, -1.67, 3.88, 3.63, true);
   const alp = hillside(m, (x, z) =>
@@ -568,22 +590,29 @@ export function buildTown() {
 
   block(2, -1, "#cabc9d");
   yards.parcelPlatform();
+  foragingBird(m, 7.32, 0.245, 0.16, 0.63, "#8a999c", 10);
+  foragingBird(m, 8.05, 0.245, -0.012, 0, "#a39786", 10);
   house(-1.64, -1.39, 2.65, 1.97, "#b89168", "#aa5947", "BAHN", "gable");
   tree(2.74, -2.15, 2.91, "#69816b", "pine");
   for (let i = 0; i < 17; i++) form("box", -3.62 + i * 0.45, 0.12, 1.37, 0.13, 0.09, 0.8, wood);
   for (const z of [1.15, 1.62]) form("box", 0, 0.21, z, 7.71, 0.08, 0.07, slate);
   const tram = group(0, 0.22, 1.37);
   tram.userData.moving = true;
-  form("box", 0, 0.44, 0, 2.48, 0.78, 0.75, "#b45444", tram);
+  form("box", 0, 0.54, 0, 2.48, 0.58, 0.75, "#b45444", tram);
   form("box", 0, 0.87, 0, 2.62, 0.13, 0.82, cream, tram);
   for (let i = 0; i < 6; i++) form("box", -0.99 + i * 0.4, 0.59, 0, 0.29, 0.37, 0.77, "glass", tram);
-  for (const x of [-0.8, 0.8]) form("round", x, 0.09, 0, 0.32, 0.32, 0.76, slate, tram);
+  const bogie = group(0, 0.03, 0, tram);
+  const rollTram = fitWheels(m, bogie, 0.16, [-0.8, 0.8].map(x => ({ x, track: 0.236 })), (hub, side) => {
+    form("drum", 0, 0, 0, 0.32, 0.092, 0.32, slate, hub, Math.PI / 2);
+    for (let i = 0; i < 3; i++) form("box", 0, 0, side * 0.052, 0.023, 0.23, 0.013, "#a7aba3", hub, 0, 0, i * Math.PI / 3);
+  });
   // The railcar dwells at each end. A platform walker meets the eastern stop
   // while the porter continues the independent parcel run behind the shelter.
   const stationTime = (t: number) => (t + 4) % 38;
   m.choreographies.push(t => {
     const c = stationTime(t);
     tram.position.x = -2.37 + 4.74 * (travel((c - 2) / 11) - travel((c - 21) / 11));
+    rollTram(tram.position.x);
   });
 
   person(-2.49, 0.43, 0.97, 0.45, "#b76344", "hiker", 3, 0.245, {
@@ -738,7 +767,7 @@ export function buildTown() {
   m.place(0, 0);
   function car(x: number, z: number, phase: number, kind: Vehicle, color: string) {
     // Let the lowest tread facets meet the pavement over a small contact patch.
-    const g = vehicle(m, kind, x, roadHeight - 0.004, z, color);
+    const { body: g, roll } = vehicle(m, kind, x, roadHeight - 0.004, z, color);
     g.userData.moving = true;
     // The vineyard estate pulls up opposite the footpath for a passenger.
     const door = g.getObjectByName("estateDoor");
@@ -754,12 +783,8 @@ export function buildTown() {
     // The passenger crosses the curb after the estate stops, settles into the rear seat,
     // then steps back out on the next visit. Both use the same stop clock.
     const stopClock = (t: number) => (t + 5) % (lapSeconds + 10);
-    m.choreographies.push((t) => {
-      // Four streets around one square, with rounded turns at the junctions.
-      const clock = stopClock(t);
-      const lap = boarding ? (stopPhase + 4 * travel((clock - 10) / lapSeconds, 0.025)) % 4
-        : (t * 0.048 + phase) % 4,
-        side = Math.floor(lap);
+    function roadPose(lap: number) {
+      const side = Math.floor(lap);
       const angle = (side * Math.PI) / 2,
         along = lap - side,
         halfAlong = side % 2 ? halfZ : halfX,
@@ -770,14 +795,21 @@ export function buildTown() {
       const u = Math.min(distance, straight) - straight / 2 + Math.sin(turn) * radius;
       const pullIn = boarding && side === 0 ? 1 - ease(Math.abs(u - stopX) / 1.8) : 0;
       const v = halfAcross - radius + Math.cos(turn) * radius - (halfZ + z - stopZ) * pullIn;
-      g.position.set(
-        x + u * Math.cos(angle) + v * Math.sin(angle),
-        g.position.y,
-        z - u * Math.sin(angle) + v * Math.cos(angle),
-      );
       const approach = Math.min(1, Math.abs(u - stopX) / 1.8);
       const slope = (halfZ + z - stopZ) * Math.sign(u - stopX) * 6 * approach * (1 - approach) / 1.8;
-      g.rotation.y = angle + turn - (pullIn ? Math.atan(slope) : 0);
+      return [x + u * Math.cos(angle) + v * Math.sin(angle), roadHeight - 0.004,
+        z - u * Math.sin(angle) + v * Math.cos(angle), angle + turn - (pullIn ? Math.atan(slope) : 0)] as const;
+    }
+    const distance = lapDistance(lap => roadPose((lap * 4) % 4));
+    m.choreographies.push(t => {
+      const clock = stopClock(t);
+      const laps = boarding
+        ? Math.floor((t + 5) / (lapSeconds + 10)) + stopPhase / 4 + travel((clock - 10) / lapSeconds, 0.025)
+        : (t * 0.048 + phase) / 4;
+      const [px, py, pz, heading] = roadPose((laps % 1) * 4);
+      g.position.set(px, py, pz);
+      g.rotation.y = heading;
+      roll(distance(laps), Math.floor(laps) * 2 * Math.PI + heading);
       if (door) door.rotation.y = -1.24 * ease(clock / 1.4) * (1 - ease((clock - 7.5) / 1.5));
     });
     if (door) {
