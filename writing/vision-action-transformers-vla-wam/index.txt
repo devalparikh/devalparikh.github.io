@@ -1,0 +1,305 @@
+1:"$Sreact.fragment"
+2:"/_next/static/chunks/0rsmiuqolpxy9.js"
+3:I[60596,["$2"],"SiteSearch"]
+4:I[39756,["$2"],"default"]
+5:I[37457,["$2"],"default"]
+b:I[97367,["$2"],"OutletBoundary"]
+c:"$Sreact.suspense"
+e:"ViewportBoundary"
+f:I[97367,["$2"],"$e"]
+11:"MetadataBoundary"
+12:I[97367,["$2"],"$11"]
+14:I[68027,["$2"],"default",1]
+:HL["/_next/static/chunks/2vx1d03izgq7b.css","style"]
+:HL["/_next/static/media/660acf689794c992-s.p.2_mbdogr7ni8i.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/edb99fec956915f8-s.p.32sris142tqlb.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/chunks/3j3l063v-n0f3.css","style"]
+:HL["/_next/static/chunks/38a9_7o9m9t-f.css","style"]
+7:X
+9:[["children",{"s":"__PAGE__","h":512,"d":{"r":["$","$1","c",{"children":["$La",[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/3j3l063v-n0f3.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","link","1",{"rel":"stylesheet","href":"/_next/static/chunks/38a9_7o9m9t-f.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/07nw_ieuzb_b-.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/_next/static/chunks/0rl9o2dcjsn-1.js","async":true,"nonce":"$undefined"}]],["$","$Lb",null,{"children":["$","$c",null,{"name":"Next.MetadataOutlet","children":"$@d"}]}]]}],"p":false,"v":null}}]]
+8:[["children",{"s":{"n":"slug","t":"d","k":"vision-action-transformers-vla-wam","s":[]},"h":66048,"d":{"r":["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],"p":false,"v":"$7"},"c":"$Q9"}]]
+6:[["children",{"s":"writing","h":131584,"d":{"r":["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],"p":false,"v":"$7"},"c":"$Q8"}]]
+0:{"P":null,"c":["","writing","vision-action-transformers-vla-wam",""],"q":"","i":false,"t":{"t":{"s":"","h":131600,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/2vx1d03izgq7b.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/0rsmiuqolpxy9.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"en","data-theme":"parchment","suppressHydrationWarning":true,"children":[["$","head",null,{"children":["$","script",null,{"dangerouslySetInnerHTML":{"__html":"(function(){try{\nvar s=localStorage.getItem(\"deval-theme\");\nvar t=(s===\"parchment\"||s===\"inkember\")?s:(matchMedia(\"(prefers-color-scheme: dark)\").matches?\"inkember\":\"parchment\");\ndocument.documentElement.setAttribute(\"data-theme\",t);\ndocument.documentElement.style.colorScheme=t===\"inkember\"?\"dark\":\"light\";\n}catch(e){}})();"}}]}],["$","body",null,{"className":"gGo3DG_variable zt62-W_variable","children":[["$","a",null,{"href":"#main","className":"sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-base-200 focus:px-4 focus:py-2 focus:text-sm","children":"Skip to content"}],["$","$L3",null,{"children":["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]]}]]}]]}],"p":false,"v":null},"c":"$Q6"},"h":{"r":["$","$1","h",{"children":[null,["$","$Lf",null,{"children":"$L10"}],["$","$L12",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$c",null,{"name":"Next.Metadata","children":"$L13"}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":false,"v":null}},"m":"$undefined","G":["$14",[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/2vx1d03izgq7b.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]]],"S":true,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"lq0n9QMB_RFEm7BO25qCp"}
+7:C
+10:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#faf8f5","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#08080a","media":"(prefers-color-scheme: dark)"}]]
+15:I[27201,["$2"],"IconMark"]
+d:null
+13:[["$","title","0",{"children":"Vision-Action Transformers vs. VLA vs. World-Action Models - Deval Parikh"}],["$","meta","1",{"name":"description","content":"The practical difference is what conditions the robot policy and what it is trained to predict: actions, language-conditioned actions, or actions plus future world states."}],["$","link","2",{"rel":"author","href":"https://devalparikh.me"}],["$","meta","3",{"name":"author","content":"Deval Parikh"}],["$","link","4",{"rel":"manifest","href":"/manifest.json","crossOrigin":"$undefined"}],["$","link","5",{"rel":"canonical","href":"https://devalparikh.me/writing/vision-action-transformers-vla-wam/"}],["$","meta","6",{"property":"og:title","content":"Vision-Action Transformers vs. VLA vs. World-Action Models"}],["$","meta","7",{"property":"og:description","content":"The practical difference is what conditions the robot policy and what it is trained to predict: actions, language-conditioned actions, or actions plus future world states."}],["$","meta","8",{"property":"og:url","content":"https://devalparikh.me/writing/vision-action-transformers-vla-wam/"}],["$","meta","9",{"property":"og:site_name","content":"Deval Parikh"}],["$","meta","10",{"property":"og:image","content":"https://devalparikh.me/img/writing/vision-action-transformers-vla-wam/cover.webp"}],["$","meta","11",{"property":"og:image:alt","content":"Vision-Action Transformers vs. VLA vs. World-Action Models"}],["$","meta","12",{"property":"og:type","content":"article"}],["$","meta","13",{"property":"article:published_time","content":"2026-07-13T12:00:00-04:00"}],["$","meta","14",{"property":"article:author","content":"Deval Parikh"}],["$","meta","15",{"property":"article:tag","content":"Robotics"}],["$","meta","16",{"property":"article:tag","content":"Transformers"}],["$","meta","17",{"property":"article:tag","content":"World Models"}],["$","meta","18",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","19",{"name":"twitter:title","content":"Vision-Action Transformers vs. VLA vs. World-Action Models"}],["$","meta","20",{"name":"twitter:description","content":"The practical difference is what conditions the robot policy and what it is trained to predict: actions, language-conditioned actions, or actions plus future world states."}],["$","meta","21",{"name":"twitter:image","content":"https://devalparikh.me/img/writing/vision-action-transformers-vla-wam/cover.webp"}],["$","meta","22",{"name":"twitter:image:alt","content":"Vision-Action Transformers vs. VLA vs. World-Action Models"}],["$","link","23",{"rel":"icon","href":"/icon.png?icon.1p2f8q295w899.png","sizes":"96x96","type":"image/png"}],["$","link","24",{"rel":"apple-touch-icon","href":"/apple-icon.png?apple-icon.0rev6fufno4rq.png","sizes":"180x180","type":"image/png"}],["$","$L15","25",{}]]
+16:"/_next/static/chunks/07nw_ieuzb_b-.js"
+17:"/_next/static/chunks/0rl9o2dcjsn-1.js"
+18:I[8507,["$2","$16","$17"],"NavBar"]
+19:I[22016,["$2","$16","$17"],""]
+1a:"BlogArticleLayout"
+1b:I[58267,["$2","$16","$17"],"$1a"]
+1c:"EmbodiedArchitectureExplorer"
+1d:I[97708,["$2","$16","$17"],"$1c"]
+:HL["/img/writing/vision-action-transformers-vla-wam/cover.webp","image"]
+a:["$undefined",["$","$L18",null,{}],["$","main",null,{"id":"main","className":"notes-frame","children":["$","article",null,{"className":"blog-article writing-article min-w-0","children":[["$","header",null,{"className":"blog-article-header min-w-0","children":[["$","$L19",null,{"href":"/writing","className":"blog-article-back","children":"Writing"}],["$","time",null,{"className":"blog-article-date","dateTime":"2026-07-13T12:00:00-04:00","children":"Jul 13, 2026"}],["$","h1",null,{"className":"blog-article-title","children":"Vision-Action Transformers vs. VLA vs. World-Action Models"}],["$","p",null,{"className":"blog-article-author","children":"Deval, with AI-assisted editing"}],["$","div",null,{"className":"blog-article-cover","children":["$","img",null,{"src":"/img/writing/vision-action-transformers-vla-wam/cover.webp","alt":"","width":1200,"height":675,"className":"aspect-video w-full object-cover","decoding":"async"}]}]]}],["$","$L1b",null,{"children":[["$","p",null,{"children":"The shortest useful distinction is:"}],"\n",["$","figure",null,{"data-rehype-pretty-code-figure":"","children":["$","pre",null,{"tabIndex":"0","data-language":"text","data-theme":"one-light one-dark-pro","children":["$","code",null,{"data-language":"text","data-theme":"one-light one-dark-pro","style":{"display":"grid"},"children":[["$","span",null,{"data-line":"","children":["$","span",null,{"children":"Vision-Action: see → act"}]}],"\n",["$","span",null,{"data-line":"","children":" "}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"VLA: see + understand an instruction → act"}]}],"\n",["$","span",null,{"data-line":"","children":" "}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"WAM: see + optional instruction"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"     → learn how the world changes"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"     → act"}]}]]}]}]}],"\n",["$","p",null,{"children":["All three can learn from robot demonstrations. The practical difference is ",["$","strong",null,{"children":"what conditions the policy"}]," and ",["$","strong",null,{"children":"what the model must predict during training"}],"."]}],"\n",["$","$L1d",null,{}],"\n",["$","h2",null,{"children":"Start with the shared data unit: a trajectory"}],"\n",["$","p",null,{"children":"A robot-learning dataset is usually organized as trajectories, not isolated images."}],"\n",["$","figure",null,{"data-rehype-pretty-code-figure":"","children":["$","pre",null,{"tabIndex":"0","data-language":"text","data-theme":"one-light one-dark-pro","children":["$","code",null,{"data-language":"text","data-theme":"one-light one-dark-pro","style":{"display":"grid"},"children":[["$","span",null,{"data-line":"","children":["$","span",null,{"children":"trajectory ="}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"  (observation₀, robot state₀, action₀),"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"  (observation₁, robot state₁, action₁),"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"  ..."}]}]]}]}]}],"\n",["$","p",null,{"children":"An observation can be one RGB frame, several camera views, or a short history of frames. Robot state can include joint positions, end-effector pose, gripper state, and other proprioception."}],"\n",["$","p",null,{"children":["Training code samples short windows from those trajectories. The model sees the window ending at time ",["$","code",null,{"children":"t"}],", then predicts the action taken ",["$","strong",null,{"children":"after that observation"}],". Previous actions may also be included, but they are optional rather than a defining input for every architecture."]}],"\n",["$","p",null,{"children":"That shared setup matters because the three model families can look deceptively similar from the outside. They all consume visual context and eventually control a robot. The difference appears inside the forward pass and the loss."}],"\n",["$","h2",null,{"children":"1. Vision-Action Transformer: predict actions from what the robot sees"}],"\n",["$","p",null,{"children":"A Vision-Action Transformer is the most direct version of the loop."}],"\n",["$","figure",null,{"data-rehype-pretty-code-figure":"","children":"$L1e"}],"\n","$L1f","\n","$L20","\n","$L21","\n","$L22","\n","$L23","\n","$L24","\n","$L25","\n","$L26","\n","$L27","\n","$L28","\n","$L29","\n","$L2a","\n","$L2b","\n","$L2c","\n","$L2d","\n","$L2e","\n","$L2f","\n","$L30","\n","$L31","\n","$L32","\n","$L33","\n","$L34","\n","$L35","\n","$L36","\n","$L37","\n","$L38","\n","$L39","\n","$L3a","\n","$L3b","\n","$L3c","\n","$L3d","\n","$L3e","\n","$L3f","\n","$L40","\n","$L41","\n","$L42","\n","$L43","\n","$L44","\n","$L45","\n","$L46","\n","$L47","\n","$L48","\n","$L49","\n","$L4a","\n","$L4b","\n","$L4c","\n","$L4d","\n","$L4e","\n","$L4f","\n","$L50","\n","$L51","\n","$L52","\n","$L53","\n","$L54","\n","$L55","\n","$L56","\n","$L57","\n","$L58","\n","$L59","\n","$L5a","\n","$L5b","\n","$L5c","\n","$L5d","\n","$L5e","\n","$L5f","\n","$L60","\n","$L61","\n","$L62","\n","$L63","\n","$L64","\n","$L65","\n","$L66","\n","$L67"]}],"$L68"]}]}],"$L69"]
+6a:"MotionControlledGif"
+6b:I[79595,["$2","$16","$17"],"$6a"]
+70:"BehaviorCloningLoop"
+71:I[65008,["$2","$16","$17"],"$70"]
+1e:["$","pre",null,{"tabIndex":"0","data-language":"text","data-theme":"one-light one-dark-pro","children":["$","code",null,{"data-language":"text","data-theme":"one-light one-dark-pro","style":{"display":"grid"},"children":[["$","span",null,{"data-line":"","children":["$","span",null,{"children":"[frames t−3 → t] + robot stateₜ"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"                 ↓"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"            Transformer"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"                 ↓"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"        predicted actionₜ"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"                 ↓"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"      compare with real actionₜ"}]}]]}]}]
+1f:["$","h3",null,{"children":"Forward-pass input"}]
+20:["$","ul",null,{"children":["\n",["$","li",null,{"children":"Current frame plus a short history of recent frames"}],"\n",["$","li",null,{"children":"Current robot state"}],"\n",["$","li",null,{"children":"Optionally, previous actions"}],"\n"]}]
+21:["$","h3",null,{"children":"Forward-pass output"}]
+22:["$","p",null,{"children":"The next action or an action chunk, for example:"}]
+23:["$","figure",null,{"data-rehype-pretty-code-figure":"","children":["$","pre",null,{"tabIndex":"0","data-language":"text","data-theme":"one-light one-dark-pro","children":["$","code",null,{"data-language":"text","data-theme":"one-light one-dark-pro","style":{"display":"grid"},"children":["$","span",null,{"data-line":"","children":["$","span",null,{"children":"[move x, move y, move z, rotate, gripper]"}]}]}]}]}]
+24:["$","p",null,{"children":"The action may be continuous values, discrete classes, or a short sequence. That representation changes the exact loss, but not the basic objective: predict the demonstrated control command from the current visual and robot context."}]
+25:["$","h3",null,{"children":"Training"}]
+26:["$","ol",null,{"children":["\n",["$","li",null,{"children":"Sample short windows from multiple trajectories."}],"\n",["$","li",null,{"children":"Run each window through the transformer."}],"\n",["$","li",null,{"children":"Compare the predicted action with the action the operator took after the current observation."}],"\n",["$","li",null,{"children":"Backpropagate the action loss."}],"\n",["$","li",null,{"children":"Let the optimizer update the weights for that batch."}],"\n"]}]
+27:["$","p",null,{"children":["I built a small version of this loop in ",["$","a",null,{"href":"https://github.com/devalparikh/vat-mini","children":["$","code",null,{"children":"vat-mini"}]}],". It started as a discrete GridWorld sandbox and now runs the same causal-policy idea on RoboMimic Can images with a continuous 7-DoF action head. RGB frames and shifted previous controls become timestep tokens; the transformer can read the available history, but never future frames or the action it is currently learning to predict."]}]
+28:["$","p",null,{"children":["The GIF below is a ",["$","strong",null,{"children":"closed-loop simulator rollout"}]," after a 10-epoch ",["$","code",null,{"children":"make robomimic-can"}]," training run (10,000 training windows, 1,000 validation windows, and a sequence length of 12). This is a stronger reality check than replaying held-out actions: the policy executes its own predictions, sees the resulting camera frame, and has to keep controlling from the state it created."]}]
+29:["$","$L6b",null,{"animatedSrc":"/img/writing/vision-action-transformers-vla-wam/robomimic-can-rollout.gif","posterSrc":"/img/writing/vision-action-transformers-vla-wam/robomimic-can-rollout-poster.png","alt":"VAT Mini closed-loop RoboMimic Can simulation rollout, with a robot arm controlling a red can","caption":"Closed-loop RoboMimic Can rollout from","sourceHref":"https://github.com/devalparikh/vat-mini","sourceLabel":"VAT Mini"}]
+2a:["$","p",null,{"children":"The repository also includes an interactive learning workbench for tracing the tensor contract, causal attention, and the different training and inference paths back to the Python implementation."}]
+2b:["$","div",null,{"className":"border-l-2 border-blue-400/50 bg-blue-400/5 my-6 not-prose flex items-start gap-3 rounded-r-lg px-4 py-3.5","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","fill":"none","viewBox":"0 0 24 24","className":"size-5 shrink-0 text-blue-400/80","strokeWidth":"2","stroke":"currentColor","children":["$","path",null,{"strokeLinecap":"round","strokeLinejoin":"round","d":"M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"}]}],["$","div",null,{"className":"text-sm text-neutral-content leading-relaxed","children":["$","p",null,{"children":[["$","strong",null,{"children":"Name warning:"}]," “Vision-Action Transformer” is a useful descriptive label, not a strict industry standard. A transformer policy can gain language conditioning or a world-modeling head and begin to overlap with the next two categories."]}]}]]}]
+2c:["$","h2",null,{"children":"2. VLA: add language as a first-class condition"}]
+2d:["$","p",null,{"children":"A Vision-Language-Action model answers a more general question:"}]
+2e:["$","blockquote",null,{"children":["\n",["$","p",null,{"children":"Given what the robot sees, what the user asked for, and any additional robot state the policy uses, what should it do next?"}],"\n"]}]
+2f:["$","figure",null,{"data-rehype-pretty-code-figure":"","children":["$","pre",null,{"tabIndex":"0","data-language":"text","data-theme":"one-light one-dark-pro","children":["$","code",null,{"data-language":"text","data-theme":"one-light one-dark-pro","style":{"display":"grid"},"children":[["$","span",null,{"data-line":"","children":["$","span",null,{"children":"\"Put the cup on the coaster\""}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"              +"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"      [frames t−3 → t]"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"              +"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"    optional robot stateₜ"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"              ↓"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"             VLA"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"              ↓"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"      actions t → t+k"}]}]]}]}]}]
+30:["$","h3",null,{"children":"Forward-pass input"}]
+31:["$","ul",null,{"children":["\n",["$","li",null,{"children":"Language instruction"}],"\n",["$","li",null,{"children":"Current or recent frames"}],"\n",["$","li",null,{"children":"Robot state or proprioception, when the architecture uses it"}],"\n",["$","li",null,{"children":"Optionally, previous actions"}],"\n"]}]
+32:["$","p",null,{"children":"The instruction is often attached to an entire trajectory. A training batch can therefore mix windows from many tasks, scenes, robots, and instructions."}]
+33:["$","h3",null,{"children":"Forward-pass output"}]
+34:["$","p",null,{"children":"The next robot action or action chunk. Language changes the condition, not the basic requirement that the system eventually emit low-level controls."}]
+35:["$","h3",null,{"children":"Training"}]
+36:["$","p",null,{"children":"The demonstrated action remains the target. The exact loss depends on how actions are represented:"}]
+37:["$","ul",null,{"children":["\n",["$","li",null,{"children":[["$","strong",null,{"children":"Tokenized actions:"}]," next-token cross-entropy over discrete action tokens"]}],"\n",["$","li",null,{"children":[["$","strong",null,{"children":"Continuous actions:"}]," regression, diffusion, or flow-matching objectives"]}],"\n"]}]
+38:["$","p",null,{"children":["For a concrete tokenized example, ",["$","a",null,{"href":"https://arxiv.org/abs/2406.09246","children":"OpenVLA"}]," maps an image and language instruction to a 7D robot action. It discretizes each action dimension into tokens and trains with next-token prediction, evaluating cross-entropy only on the action tokens."]}]
+39:["$","p",null,{"children":"During an update, gradients can flow through the action head, the transformer, and whichever vision or language components are being fine-tuned. Some systems freeze parts of the pretrained backbone; others train more of the stack end to end."}]
+3a:["$","p",null,{"children":"The core objective is still compact:"}]
+3b:["$","figure",null,{"data-rehype-pretty-code-figure":"","children":["$","pre",null,{"tabIndex":"0","data-language":"text","data-theme":"one-light one-dark-pro","children":["$","code",null,{"data-language":"text","data-theme":"one-light one-dark-pro","style":{"display":"grid"},"children":[["$","span",null,{"data-line":"","children":["$","span",null,{"children":"vision + language + optional robot state"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"                ↓"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"             action"}]}]]}]}]}]
+3c:["$","h2",null,{"children":"3. WAM: predict actions and how the world evolves"}]
+3d:["$","p",null,{"children":"A World-Action Model adds another learning target: the future world."}]
+3e:["$","figure",null,{"data-rehype-pretty-code-figure":"","children":["$","pre",null,{"tabIndex":"0","data-language":"text","data-theme":"one-light one-dark-pro","children":["$","code",null,{"data-language":"text","data-theme":"one-light one-dark-pro","style":{"display":"grid"},"children":[["$","span",null,{"data-line":"","children":["$","span",null,{"children":"optional instruction"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"+"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"frames t−3 → t"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"+"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"optional robot stateₜ"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"        ↓"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"       WAM"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"       / \\"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"      /   \\"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"future frames   future actions"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":" t+1 → t+k       t → t+k"}]}]]}]}]}]
+3f:["$","p",null,{"children":"Instead of learning only which action follows the current observation, a WAM jointly models future visual states and actions. Video prediction supplies a dense signal about object motion, contact, geometry, and the consequences of control."}]
+40:["$","h3",null,{"children":"Forward-pass input"}]
+41:["$","ul",null,{"children":["\n",["$","li",null,{"children":"Current or recent frames, or their visual latents"}],"\n",["$","li",null,{"children":"Language instruction, when the model is language-conditioned"}],"\n",["$","li",null,{"children":"Robot state and action history, when the architecture uses them"}],"\n"]}]
+42:["$","h3",null,{"children":"Forward-pass output"}]
+43:["$","ul",null,{"children":["\n",["$","li",null,{"children":"Predicted future visual states or video"}],"\n",["$","li",null,{"children":"Predicted future actions"}],"\n"]}]
+44:["$","h3",null,{"children":"Training"}]
+45:["$","p",null,{"children":"A generic WAM objective combines both branches:"}]
+46:["$","figure",null,{"data-rehype-pretty-code-figure":"","children":["$","pre",null,{"tabIndex":"0","data-language":"text","data-theme":"one-light one-dark-pro","children":["$","code",null,{"data-language":"text","data-theme":"one-light one-dark-pro","style":{"display":"grid"},"children":["$","span",null,{"data-line":"","children":["$","span",null,{"children":"Ltotal = λworld · Lworld + λaction · Laction"}]}]}]}]}]
+47:["$","p",null,{"children":"The world loss compares predicted future observations with later frames from the trajectory. The action loss compares predicted actions with demonstrated actions. Backpropagation updates shared representations and any specialized video or action components."}]
+48:["$","p",null,{"children":["The recent ",["$","a",null,{"href":"https://arxiv.org/pdf/2606.20521v1","children":[["$","em",null,{"children":"HumanScale: Egocentric Human Video Can Outperform Real-Robot Data for Embodied Pretraining"}]," paper"]}]," uses an autoregressive WAM with a Mix-of-Transformers architecture. It predicts future video observations followed by subsequent actions, then uses that fixed architecture to compare 5,000 hours of egocentric-human-video pretraining with 5,000 hours of real-robot pretraining."]}]
+49:["$","h3",null,{"children":"WAM does not imply one fixed inference path"}]
+4a:["$","p",null,{"children":"“Imagine, then act” is the easiest mental model, but it is not universal."}]
+4b:["$","p",null,{"children":"Some WAMs generate future video during inference and then decode the corresponding actions. Others co-train with video prediction because it shapes stronger representations, but skip expensive future-video generation in the live control loop. The HumanScale paper explicitly contrasts these patterns in its related work, including Fast-WAM-style systems that keep video supervision during training while avoiding iterative video rollout at test time."}]
+4c:["$","p",null,{"children":"So the safest definition is:"}]
+4d:["$","blockquote",null,{"children":["\n",["$","p",null,{"children":"A WAM learns future world states and actions jointly. Whether it renders those future states during deployment is an architectural choice."}],"\n"]}]
+4e:["$","h2",null,{"children":"One-glance comparison"}]
+6c:T189f,
+        .efc {
+          --efc-border: color-mix(in oklab, var(--color-base-content) 13%, transparent);
+          --efc-muted: color-mix(in oklab, var(--color-base-content) 58%, transparent);
+          margin: 3rem 0;
+          overflow: hidden;
+          border: 1px solid var(--efc-border);
+          border-radius: 1.3rem;
+          background: color-mix(in oklab, var(--color-base-200) 88%, transparent);
+          box-shadow: 0 22px 68px rgb(0 0 0 / .14), inset 0 1px 0 rgb(255 255 255 / .035);
+          color: var(--color-base-content);
+          font-family: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+        }
+        [data-theme="parchment"] .efc {
+          --efc-border: rgb(30 26 22 / .12);
+          --efc-muted: #6b6560;
+          box-shadow: 0 18px 52px rgb(38 31 24 / .075), inset 0 1px 0 rgb(255 255 255 / .78);
+        }
+        .efc-head {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 1rem;
+          align-items: end;
+          padding: clamp(1rem, 3vw, 1.4rem);
+        }
+        .efc-kicker {
+          display: block;
+          margin-bottom: .5rem;
+          color: var(--efc-muted);
+          font-size: .65rem;
+          font-weight: 800;
+          letter-spacing: .16em;
+          text-transform: uppercase;
+        }
+        .efc h3 {
+          max-width: 34rem;
+          margin: 0;
+          color: var(--color-base-content);
+          font-size: clamp(1.25rem, 3vw, 1.65rem);
+          font-weight: 680;
+          line-height: 1.08;
+          letter-spacing: -.045em;
+          text-wrap: balance;
+        }
+        .efc-head-note {
+          margin: 0;
+          color: var(--efc-muted);
+          font: 700 .62rem/1.35 ui-monospace, SFMono-Regular, Menlo, monospace;
+          text-align: right;
+        }
+        .efc-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 1px;
+          border-top: 1px solid var(--efc-border);
+          background: var(--efc-border);
+        }
+        .efc-family {
+          --efc-accent: var(--efc-accent-dark);
+          display: grid;
+          min-width: 0;
+          grid-template-rows: auto repeat(3, minmax(6.25rem, auto));
+          background: var(--color-base-100);
+          transition: background 180ms ease, box-shadow 180ms ease;
+        }
+        [data-theme="parchment"] .efc-family {
+          --efc-accent: var(--efc-accent-light);
+        }
+        .efc-family-head {
+          min-width: 0;
+          padding: 1rem 1rem .9rem;
+          background:
+            radial-gradient(circle at 0 0, color-mix(in oklab, var(--efc-accent) 13%, transparent), transparent 9rem),
+            color-mix(in oklab, var(--color-base-200) 72%, var(--color-base-100));
+        }
+        .efc-family-label {
+          display: flex;
+          align-items: center;
+          gap: .5rem;
+          min-width: 0;
+        }
+        .efc-dot {
+          width: .52rem;
+          height: .52rem;
+          flex: 0 0 auto;
+          border-radius: 50%;
+          background: var(--efc-accent);
+          box-shadow: 0 0 0 .22rem color-mix(in oklab, var(--efc-accent) 13%, transparent);
+        }
+        .efc-family-label b {
+          color: var(--efc-accent);
+          font-size: .72rem;
+          font-weight: 900;
+          letter-spacing: .12em;
+        }
+        .efc-family-head h4 {
+          min-height: 2.2rem;
+          margin: .52rem 0 .7rem;
+          color: var(--color-base-content);
+          font-size: .85rem;
+          font-weight: 760;
+          line-height: 1.25;
+          letter-spacing: -.018em;
+          text-wrap: balance;
+        }
+        .efc-contract {
+          display: grid;
+          grid-template-columns: minmax(0, auto) 1.6rem minmax(0, auto);
+          gap: .35rem;
+          align-items: center;
+          color: var(--efc-muted);
+          font: 750 .58rem/1.15 ui-monospace, SFMono-Regular, Menlo, monospace;
+          letter-spacing: -.02em;
+        }
+        .efc-contract span:last-child {
+          color: var(--efc-accent);
+          text-align: right;
+        }
+        .efc-arrow {
+          display: block;
+          width: 100%;
+          height: .55rem;
+          color: var(--efc-accent);
+        }
+        .efc-cell {
+          min-width: 0;
+          padding: .9rem 1rem;
+          border-top: 1px solid var(--efc-border);
+        }
+        .efc-cell span {
+          display: block;
+          margin-bottom: .45rem;
+          color: var(--efc-muted);
+          font-size: .58rem;
+          font-weight: 850;
+          letter-spacing: .13em;
+          text-transform: uppercase;
+        }
+        .efc-cell strong {
+          display: block;
+          color: var(--color-base-content);
+          font-size: .79rem;
+          font-weight: 760;
+          line-height: 1.28;
+          letter-spacing: -.018em;
+          text-wrap: pretty;
+        }
+        .efc-cell small {
+          display: block;
+          margin-top: .35rem;
+          color: var(--efc-muted);
+          font-size: .65rem;
+          line-height: 1.35;
+          text-wrap: pretty;
+        }
+        .efc-caption {
+          margin: 0;
+          padding: .85rem clamp(1rem, 3vw, 1.4rem) 1rem;
+          border-top: 1px solid var(--efc-border);
+          color: var(--efc-muted);
+          background: color-mix(in oklab, var(--color-base-200) 66%, transparent);
+          font-size: .68rem;
+          line-height: 1.45;
+        }
+        .efc-caption b { color: var(--color-base-content); }
+        @media (hover: hover) and (pointer: fine) {
+          .efc-family:hover {
+            background: color-mix(in oklab, var(--efc-accent) 3.5%, var(--color-base-100));
+            box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--efc-accent) 22%, transparent);
+          }
+        }
+        @media (max-width: 680px) {
+          .efc-head { grid-template-columns: 1fr; }
+          .efc-head-note { text-align: left; }
+          .efc-grid { grid-template-columns: 1fr; }
+          .efc-family { grid-template-rows: auto; }
+          .efc-family-head { padding: 1rem; }
+          .efc-family-head h4 { min-height: 0; }
+          .efc-cell { padding: .82rem 1rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .efc-family { transition-duration: .01ms; }
+        }
+      4f:["$","figure",null,{"className":"efc not-prose","aria-labelledby":"efc-title","children":[["$","style",null,{"children":"$6c"}],"$L6d","$L6e","$L6f"]}]
+50:["$","p",null,{"children":"The comparison is less about whether a transformer appears in the diagram—they can all use transformers—and more about the contract around it."}]
+51:["$","ul",null,{"children":["\n",["$","li",null,{"children":[["$","strong",null,{"children":"VAT:"}]," visual control policy"]}],"\n",["$","li",null,{"children":[["$","strong",null,{"children":"VLA:"}]," language-conditioned visual control policy"]}],"\n",["$","li",null,{"children":[["$","strong",null,{"children":"WAM:"}]," policy trained to model both control and world evolution"]}],"\n"]}]
+52:["$","h2",null,{"children":"Training and inference are different views of the same model"}]
+53:["$","p",null,{"children":["During ",["$","strong",null,{"children":"training"}],", the model has demonstrated targets. It can compare its prediction with what actually happened, calculate a loss, backpropagate gradients, and update its weights."]}]
+54:["$","p",null,{"children":["During ",["$","strong",null,{"children":"inference"}],", those targets are absent. The model receives the current condition, predicts an action, executes it, observes the changed world, and repeats."]}]
+55:["$","figure",null,{"data-rehype-pretty-code-figure":"","children":["$","pre",null,{"tabIndex":"0","data-language":"text","data-theme":"one-light one-dark-pro","children":["$","code",null,{"data-language":"text","data-theme":"one-light one-dark-pro","style":{"display":"grid"},"children":[["$","span",null,{"data-line":"","children":["$","span",null,{"children":"training:"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"observation → prediction → compare with target → update weights"}]}],"\n",["$","span",null,{"data-line":"","children":" "}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"inference:"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"observation → prediction → execute → new observation → repeat"}]}]]}]}]}]
+56:["$","$L71",null,{}]
+57:["$","p",null,{"children":"This is why offline action accuracy is not enough. A model can predict expert actions well on held-out windows and still fail in a closed-loop rollout as small errors compound and move the robot into unfamiliar states."}]
+58:["$","h2",null,{"children":"Which architecture should you reach for?"}]
+59:["$","h3",null,{"children":"Use a focused Vision-Action Transformer when"}]
+5a:["$","ul",null,{"children":["\n",["$","li",null,{"children":"The task set is narrow and language is unnecessary."}],"\n",["$","li",null,{"children":"You want a small, understandable imitation-learning baseline."}],"\n",["$","li",null,{"children":"Latency and implementation simplicity matter more than broad semantic generalization."}],"\n"]}]
+5b:["$","h3",null,{"children":"Use a VLA when"}]
+5c:["$","ul",null,{"children":["\n",["$","li",null,{"children":"One policy must follow many natural-language instructions."}],"\n",["$","li",null,{"children":"Semantic knowledge about objects and tasks matters."}],"\n",["$","li",null,{"children":"You want to reuse vision-language pretraining instead of learning every concept from robot demonstrations alone."}],"\n"]}]
+5d:["$","h3",null,{"children":"Use a WAM when"}]
+5e:["$","ul",null,{"children":["\n",["$","li",null,{"children":"Modeling physical change is part of the learning objective."}],"\n",["$","li",null,{"children":"Dense video supervision can improve the representation."}],"\n",["$","li",null,{"children":"The extra training and, in some designs, inference compute is justified by the task."}],"\n"]}]
+5f:["$","p",null,{"children":"These are not mutually exclusive endpoints. A system can start as a language-conditioned action policy, add a future-video objective, and become WAM-like without replacing every component."}]
+60:["$","h2",null,{"children":"The bottom line"}]
+61:["$","p",null,{"children":"Do not distinguish these models by the word “transformer.” Distinguish them by two questions:"}]
+62:["$","ol",null,{"children":["\n",["$","li",null,{"children":["$","strong",null,{"children":"What information conditions the forward pass?"}]}],"\n",["$","li",null,{"children":["$","strong",null,{"children":"What targets must the model predict?"}]}],"\n"]}]
+63:["$","figure",null,{"data-rehype-pretty-code-figure":"","children":["$","pre",null,{"tabIndex":"0","data-language":"text","data-theme":"one-light one-dark-pro","children":["$","code",null,{"data-language":"text","data-theme":"one-light one-dark-pro","style":{"display":"grid"},"children":[["$","span",null,{"data-line":"","children":["$","span",null,{"children":"Vision-Action:"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"frames + state → actions"}]}],"\n",["$","span",null,{"data-line":"","children":" "}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"VLA:"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"instruction + frames + optional state → actions"}]}],"\n",["$","span",null,{"data-line":"","children":" "}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"WAM:"}]}],"\n",["$","span",null,{"data-line":"","children":["$","span",null,{"children":"frames + optional instruction/state → future world states + actions"}]}]]}]}]}]
+64:["$","p",null,{"children":"That is the cleanest way to reason about the architecture, the dataset, the loss, and the deployment loop without getting lost in model names."}]
+65:["$","hr",null,{}]
+66:["$","p",null,{"children":["$","strong",null,{"children":"References"}]}]
+67:["$","ul",null,{"children":["\n",["$","li",null,{"children":[["$","a",null,{"href":"https://github.com/devalparikh/vat-mini","children":["$","code",null,{"children":"devalparikh/vat-mini"}]}]," — compact Vision-Action Transformer implementation and interactive guide"]}],"\n",["$","li",null,{"children":["$","a",null,{"href":"https://arxiv.org/abs/2406.09246","children":"OpenVLA: An Open-Source Vision-Language-Action Model"}]}],"\n",["$","li",null,{"children":["$","a",null,{"href":"https://arxiv.org/pdf/2606.20521v1","children":"HumanScale: Egocentric Human Video Can Outperform Real-Robot Data for Embodied Pretraining"}]}],"\n"]}]
+68:["$","footer",null,{"className":"writing-article-footer","children":["$","$L19",null,{"href":"/writing","children":[["$","span",null,{"aria-hidden":"true","children":"←"}]," Back to the shelf"]}]}]
+69:["$","footer",null,{"className":"mx-auto mt-24 max-w-3xl px-5 pb-16 sm:px-6","children":["$","div",null,{"className":"flex flex-wrap items-center justify-between gap-4 border-t border-[var(--rule)] pt-6","children":[["$","p",null,{"className":"text-xs text-neutral-content","children":[2026," ","Deval Parikh"]}],["$","ul",null,{"className":"flex flex-wrap items-center gap-4","children":[["$","li","github",{"children":["$","a",null,{"href":"https://github.com/devalparikh","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"_blank","rel":"noopener noreferrer","children":["GitHub",["$","svg",null,{"viewBox":"0 0 12 12","fill":"none","stroke":"currentColor","strokeWidth":1.4,"strokeLinecap":"round","strokeLinejoin":"round","className":"size-2.5","aria-hidden":"true","children":["$","path",null,{"d":"M4 8 8 4M4.6 3.8H8.2V7.4"}]}]]}]}],["$","li","linkedin",{"children":["$","a",null,{"href":"https://www.linkedin.com/in/devalparikh1/","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"_blank","rel":"noopener noreferrer","children":["LinkedIn",["$","svg",null,{"viewBox":"0 0 12 12","fill":"none","stroke":"currentColor","strokeWidth":1.4,"strokeLinecap":"round","strokeLinejoin":"round","className":"size-2.5","aria-hidden":"true","children":["$","path",null,{"d":"M4 8 8 4M4.6 3.8H8.2V7.4"}]}]]}]}],["$","li","email",{"children":["$","a",null,{"href":"mailto:devalpp@gmail.com","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"$undefined","rel":"$undefined","children":["Email",false]}]}],["$","li","resume",{"children":["$","$L19",null,{"href":"/DevalParikhResume.pdf","className":"inline-flex items-center gap-1 text-xs text-neutral-content transition-colors duration-150 hover:text-primary","onClick":"$undefined","target":"_blank","rel":"noopener noreferrer","children":["Resume",false]}]}]]}]]}]}]
+6d:["$","header",null,{"className":"efc-head","children":[["$","div",null,{"children":[["$","span",null,{"className":"efc-kicker","children":"The three families · side by side"}],["$","h3",null,{"id":"efc-title","children":"The model name matters less than its contract."}]]}],["$","p",null,{"className":"efc-head-note","children":["same task",["$","br",null,{}],"different condition + target"]}]]}]
+6e:["$","div",null,{"className":"efc-grid","children":[["$","section","vat",{"className":"efc-family","aria-label":"Vision-Action Transformer","style":{"--efc-accent-dark":"#55bde8","--efc-accent-light":"#1f6886"},"children":[["$","div",null,{"className":"efc-family-head","children":[["$","div",null,{"className":"efc-family-label","children":[["$","i",null,{"className":"efc-dot","aria-hidden":"true"}],["$","b",null,{"children":"VAT"}]]}],["$","h4",null,{"children":"Vision-Action Transformer"}],["$","div",null,{"className":"efc-contract","aria-label":"see to act","children":[["$","span",null,{"children":"see"}],["$","svg",null,{"className":"efc-arrow","viewBox":"0 0 32 10","preserveAspectRatio":"none","aria-hidden":"true","children":["$","path",null,{"d":"M1 5H28M23 1L28 5L23 9","fill":"none","stroke":"currentColor","strokeWidth":"1.25","vectorEffect":"non-scaling-stroke"}]}],["$","span",null,{"children":"act"}]]}]]}],[["$","div","Condition on",{"className":"efc-cell","children":[["$","span",null,{"children":"Condition on"}],["$","strong",null,{"children":"Frames + robot state"}],["$","small",null,{"children":"Action history can be included."}]]}],["$","div","Predict",{"className":"efc-cell","children":[["$","span",null,{"children":"Predict"}],["$","strong",null,{"children":"Next action or action chunk"}],["$","small",null,{"children":"Continuous values or discrete classes."}]]}],["$","div","Learn from",{"className":"efc-cell","children":[["$","span",null,{"children":"Learn from"}],["$","strong",null,{"children":"Action prediction loss"}],["$","small",null,{"children":"Match the demonstrated control."}]]}]]]}],["$","section","vla",{"className":"efc-family","aria-label":"Vision-Language-Action","style":{"--efc-accent-dark":"#e69a68","--efc-accent-light":"#934b20"},"children":[["$","div",null,{"className":"efc-family-head","children":[["$","div",null,{"className":"efc-family-label","children":[["$","i",null,{"className":"efc-dot","aria-hidden":"true"}],["$","b",null,{"children":"VLA"}]]}],["$","h4",null,{"children":"Vision-Language-Action"}],["$","div",null,{"className":"efc-contract","aria-label":"see + instruct to act","children":[["$","span",null,{"children":"see + instruct"}],["$","svg",null,{"className":"efc-arrow","viewBox":"0 0 32 10","preserveAspectRatio":"none","aria-hidden":"true","children":["$","path",null,{"d":"M1 5H28M23 1L28 5L23 9","fill":"none","stroke":"currentColor","strokeWidth":"1.25","vectorEffect":"non-scaling-stroke"}]}],["$","span",null,{"children":"act"}]]}]]}],[["$","div","Condition on",{"className":"efc-cell","children":[["$","span",null,{"children":"Condition on"}],["$","strong",null,{"children":"Instruction + frames"}],["$","small",null,{"children":"Robot state may also be used."}]]}],["$","div","Predict",{"className":"efc-cell","children":[["$","span",null,{"children":"Predict"}],["$","strong",null,{"children":"Next action or action chunk"}],["$","small",null,{"children":"Language selects the task."}]]}],["$","div","Learn from",{"className":"efc-cell","children":[["$","span",null,{"children":"Learn from"}],["$","strong",null,{"children":"Action-token or continuous loss"}],["$","small",null,{"children":"Still grounded in demonstrated actions."}]]}]]]}],["$","section","wam",{"className":"efc-family","aria-label":"World-Action Model","style":{"--efc-accent-dark":"#84bd83","--efc-accent-light":"#376c3e"},"children":[["$","div",null,{"className":"efc-family-head","children":[["$","div",null,{"className":"efc-family-label","children":[["$","i",null,{"className":"efc-dot","aria-hidden":"true"}],["$","b",null,{"children":"WAM"}]]}],["$","h4",null,{"children":"World-Action Model"}],["$","div",null,{"className":"efc-contract","aria-label":"see to future + act","children":[["$","span",null,{"children":"see"}],["$","svg",null,{"className":"efc-arrow","viewBox":"0 0 32 10","preserveAspectRatio":"none","aria-hidden":"true","children":["$","path",null,{"d":"M1 5H28M23 1L28 5L23 9","fill":"none","stroke":"currentColor","strokeWidth":"1.25","vectorEffect":"non-scaling-stroke"}]}],["$","span",null,{"children":"future + act"}]]}]]}],[["$","div","Condition on",{"className":"efc-cell","children":[["$","span",null,{"children":"Condition on"}],["$","strong",null,{"children":"Frames or visual latents"}],["$","small",null,{"children":"Language and robot state can be optional."}]]}],["$","div","Predict",{"className":"efc-cell","children":[["$","span",null,{"children":"Predict"}],["$","strong",null,{"children":"Future visual states + actions"}],["$","small",null,{"children":"Model change as well as control."}]]}],["$","div","Learn from",{"className":"efc-cell","children":[["$","span",null,{"children":"Learn from"}],"$L72","$L73"]}]]]}]]}]
+6f:["$","figcaption",null,{"className":"efc-caption","children":[["$","b",null,{"children":"Read vertically for one family; scan horizontally for the change."}]," All three may use transformers and robot demonstrations."]}]
+72:["$","strong",null,{"children":"World loss + action loss"}]
+73:["$","small",null,{"children":"Later frames provide the extra signal."}]
