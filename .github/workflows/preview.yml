@@ -1,0 +1,101 @@
+name: PR preview
+
+# Builds every pull request and publishes a viewable preview that is kept
+# apart from production: it never writes to gh-pages, never runs the Pages
+# deploy, and drops CNAME so nothing claims devalparikh.me.
+#
+# - Always: the exported site is uploaded as the `site-preview` artifact.
+# - Optional: when the CLOUDFLARE_API_TOKEN secret and CLOUDFLARE_ACCOUNT_ID
+#   variable exist, it is also deployed to Cloudflare Pages at
+#   https://pr-<number>.<project>.pages.dev. See docs/writing.md.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT || 'devalparikh-preview' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Test, lint and typecheck
+        run: |
+          npm run test:map
+          npm run test:notes
+          npm run test:writing
+          npm run lint
+          npm run typecheck
+
+      - name: Build
+        env:
+          WIKI_READ_TOKEN: ${{ secrets.WIKI_READ_TOKEN }}
+        run: |
+          # Pull requests from forks get no secrets; preview their notes from
+          # the checked-in snapshot instead of failing the fresh-sync check.
+          if [ -z "$WIKI_READ_TOKEN" ]; then export CI=; fi
+          npm run build
+
+      - name: Check the exported writing pages
+        run: npm run test:writing:build
+
+      - name: Mark the build as a preview
+        run: |
+          rm -f out/CNAME
+          printf 'User-agent: *\nDisallow: /\n' > out/robots.txt
+          printf '/*\n  X-Robots-Tag: noindex\n' > out/_headers
+
+      - name: Upload preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-preview
+          path: out
+          retention-days: 14
+
+      - name: Deploy to Cloudflare Pages
+        id: cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          BRANCH: pr-${{ github.event.pull_request.number }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "Cloudflare is not configured; the preview is the site-preview artifact only."
+            exit 0
+          fi
+          npx --yes wrangler@3.114.0 pages project create "$PAGES_PROJECT" --production-branch=main >/dev/null 2>&1 || true
+          npx --yes wrangler@3.114.0 pages deploy out --project-name="$PAGES_PROJECT" --branch="$BRANCH" --commit-dirty=true
+          echo "url=https://$BRANCH.$PAGES_PROJECT.pages.dev" >> "$GITHUB_OUTPUT"
+
+      - name: Summary
+        env:
+          PREVIEW_URL: ${{ steps.cloudflare.outputs.url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          {
+            echo "## Preview"
+            if [ -n "$PREVIEW_URL" ]; then
+              echo "Live preview: $PREVIEW_URL/writing/"
+            else
+              echo "Download **site-preview** from [this run]($RUN_URL), unzip it, and run \`npx serve .\` inside it."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

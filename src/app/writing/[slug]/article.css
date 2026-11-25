@@ -1,0 +1,339 @@
+/* ==========================================================================
+   Writing articles - the imported deval-blog posts
+
+   The reading shell below is ported from deval-blog's globals.css (its
+   "Editorial article reading shell" section) so these pages keep the blog's
+   compact 645px column, 16px/15px type unit and left table of contents. The
+   vendored figures and BlogArticleLayout use the same token names this site
+   already defines (--color-base-content and friends), so they theme as-is.
+
+   Local additions, above the ported block: prose colours mapped to site
+   tokens, Shiki's dual light/dark code palette, and the nav-height offset.
+   ========================================================================== */
+
+.writing-article {
+  /* The site nav bar is h-14; the sticky contents rail sits under it. */
+  --site-nav-height: 56px;
+  padding-bottom: 2rem;
+}
+
+.writing-article .prose {
+  --tw-prose-body: var(--color-base-content);
+  --tw-prose-headings: var(--color-base-content);
+  --tw-prose-links: var(--color-base-content);
+  --tw-prose-bold: var(--color-base-content);
+  --tw-prose-counters: var(--color-neutral-content);
+  --tw-prose-bullets: var(--color-neutral-content);
+  --tw-prose-hr: var(--rule);
+  --tw-prose-quotes: var(--color-neutral-content);
+  --tw-prose-quote-borders: var(--color-primary);
+  --tw-prose-code: var(--color-base-content);
+  --tw-prose-pre-code: var(--color-base-content);
+  --tw-prose-pre-bg: var(--color-base-200);
+  --tw-prose-th-borders: var(--rule);
+  --tw-prose-td-borders: var(--rule-soft);
+}
+
+.writing-article .prose :where(code):not(:where(pre *, [class~="not-prose"] *))::before,
+.writing-article .prose :where(code):not(:where(pre *, [class~="not-prose"] *))::after,
+.writing-article .prose :where(blockquote p:first-of-type):not(:where([class~="not-prose"] *))::before,
+.writing-article .prose :where(blockquote p:last-of-type):not(:where([class~="not-prose"] *))::after {
+  content: none;
+}
+
+/* Code: rehype-pretty-code emits both one-light and one-dark-pro as CSS
+   variables; pick the one that matches the page theme. */
+.writing-article [data-rehype-pretty-code-figure] {
+  margin-block: calc(var(--blog-rhythm, 1.4rem) * 1.5);
+}
+
+.writing-article [data-rehype-pretty-code-figure] pre {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--color-base-200);
+  padding: 0.9rem 0;
+}
+
+.writing-article [data-rehype-pretty-code-figure] code {
+  display: grid;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.writing-article [data-rehype-pretty-code-figure] [data-line] {
+  padding: 0 1rem;
+}
+
+/* one-light is tuned for white; on parchment its paler tokens fall below
+   4.5:1, so each keeps its hue but is pulled toward the ink colour. */
+.writing-article [data-rehype-pretty-code-figure] code span {
+  color: color-mix(in oklab, var(--shiki-light) 58%, var(--color-base-content));
+}
+
+[data-theme="inkember"] .writing-article [data-rehype-pretty-code-figure] code span {
+  color: var(--shiki-dark);
+}
+
+.writing-article-footer {
+  width: min(var(--blog-reading-width, 645px), 100%);
+  margin: calc(var(--blog-rhythm, 1.4rem) * 3) auto 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.85rem;
+}
+
+.writing-article-footer a {
+  color: var(--color-neutral-content);
+  transition: color 150ms var(--ease-out-quint);
+}
+
+.writing-article-footer a:hover {
+  color: var(--color-base-content);
+}
+
+/* --------------------------------------------------------------------------
+   Ported from deval-blog src/app/globals.css (unchanged below this line)
+   -------------------------------------------------------------------------- */
+
+/* ===== Editorial article reading shell ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Cursor's article scale: a 16px unit on desktop, 15px below 900px. */
+.blog-article {
+  --blog-reading-width: 645px;
+  --blog-type-unit: 1rem;
+  --blog-rhythm: calc(var(--blog-type-unit) * 1.4);
+  position: relative;
+  width: 100%;
+  max-width: none;
+  margin-inline: auto;
+}
+
+.blog-article-header {
+  box-sizing: border-box;
+  width: min(var(--blog-reading-width), 100%);
+  margin-inline: auto;
+  margin-bottom: calc(var(--blog-rhythm) * 2);
+}
+
+.blog-article-back {
+  display: none;
+  color: var(--color-neutral-content);
+  font-size: var(--blog-type-unit, 1rem);
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.blog-article-back:hover {
+  color: var(--color-base-content);
+}
+
+.blog-article-date,
+.blog-article-author {
+  color: var(--color-neutral-content);
+  font-size: var(--blog-type-unit, 1rem);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: .005em;
+}
+
+.blog-article-date {
+  display: block;
+  margin-bottom: calc(var(--blog-rhythm) / 6);
+}
+
+.blog-article-title {
+  margin: 0;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: calc(var(--blog-type-unit, 1rem) * 2.25);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.blog-article-author {
+  margin: var(--blog-rhythm) 0 0;
+}
+
+.blog-article-cover {
+  margin-top: calc(var(--blog-rhythm) * 2);
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.blog-prose {
+  --tw-prose-body: var(--color-base-content);
+  --tw-prose-headings: var(--color-base-content);
+  --tw-prose-bold: var(--color-base-content);
+  --tw-prose-links: var(--color-base-content);
+  width: 100%;
+  max-width: var(--blog-reading-width, 645px);
+  margin-top: 0;
+  color: var(--color-base-content);
+  font-size: var(--blog-type-unit, 1rem);
+  line-height: 1.5;
+  letter-spacing: .005em;
+}
+
+.blog-prose > figure.not-prose {
+  width: 100%;
+  max-width: 100%;
+  margin: calc(var(--blog-rhythm, 1.4rem) * 2) 0;
+}
+
+.blog-prose :where(h2, h3, h4, h5, h6):not(:where([class~="not-prose"] *)) {
+  scroll-margin-top: 120px;
+  margin-bottom: calc(var(--blog-rhythm, 1.4rem) / 2);
+  color: var(--color-base-content);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-weight: 700;
+}
+
+.blog-prose :where(h2):not(:where([class~="not-prose"] *)) {
+  margin-top: calc(var(--blog-rhythm, 1.4rem) * 2);
+  font-size: calc(var(--blog-type-unit, 1rem) * 1.375);
+  line-height: 1.3;
+  letter-spacing: -.005em;
+}
+
+.blog-prose :where(h3):not(:where([class~="not-prose"] *)) {
+  margin-top: calc(var(--blog-rhythm, 1.4rem) * 1.5);
+  font-size: calc(var(--blog-type-unit, 1rem) * 1.125);
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.blog-prose :where(h4, h5, h6):not(:where([class~="not-prose"] *)) {
+  margin-top: var(--blog-rhythm, 1.4rem);
+  font-size: var(--blog-type-unit, 1rem);
+  line-height: 1.5;
+  letter-spacing: .005em;
+}
+
+.blog-prose :where(p, li):not(:where([class~="not-prose"] *)) {
+  color: var(--color-base-content);
+  font-size: var(--blog-type-unit, 1rem);
+  line-height: 1.5;
+  letter-spacing: .005em;
+  text-wrap: pretty;
+}
+
+.blog-prose :where(p):not(:where([class~="not-prose"] *)) {
+  margin-top: 0;
+  margin-bottom: var(--blog-rhythm, 1.4rem);
+}
+
+.blog-prose :where(ul, ol):not(:where([class~="not-prose"] *)) {
+  margin-top: 0;
+  margin-bottom: var(--blog-rhythm, 1.4rem);
+  padding-left: calc(var(--blog-type-unit, 1rem) * 1.25);
+}
+
+.blog-prose :where(ul):not(:where([class~="not-prose"] *)) {
+  list-style-type: square;
+}
+
+.blog-prose :where(li):not(:where([class~="not-prose"] *)) {
+  margin-block: 0;
+  padding-left: 0;
+}
+
+.blog-prose :where(li > p):not(:where([class~="not-prose"] *)) {
+  margin-block: calc(var(--blog-rhythm, 1.4rem) / 2);
+}
+
+.blog-prose :where(a):not(:where([class~="not-prose"] *)) {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+  text-underline-offset: 3px;
+  font-weight: inherit;
+}
+
+.blog-prose :where(a):not(:where([class~="not-prose"] *)):hover {
+  text-decoration-color: currentColor;
+}
+
+.blog-prose :where(code):not(:where(pre *, [class~="not-prose"] *)) {
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 10%, transparent);
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--color-base-content) 4%, transparent);
+  color: inherit;
+  padding: .125em .25em;
+  font-size: .875em;
+  font-weight: 400;
+}
+
+.blog-prose :where(pre):not(:where([class~="not-prose"] *)) {
+  margin-block: calc(var(--blog-rhythm, 1.4rem) * 2);
+  border-radius: 4px;
+  border-color: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+  padding: calc(var(--blog-type-unit, 1rem) * .84) calc(var(--blog-type-unit, 1rem) * .9375) calc(var(--blog-type-unit, 1rem) * 1.09);
+  font-size: calc(var(--blog-type-unit, 1rem) * .875);
+  line-height: 1.43;
+}
+
+.blog-prose :where(blockquote):not(:where([class~="not-prose"] *)) {
+  margin: 0 0 var(--blog-rhythm, 1.4rem);
+  border-left: 2px solid color-mix(in oklab, var(--color-base-content) 20%, transparent);
+  padding: 0 0 0 calc(var(--blog-type-unit, 1rem) * .9375);
+  color: var(--color-base-content);
+  font-style: italic;
+}
+
+.blog-prose :where(blockquote p):not(:where([class~="not-prose"] *)) {
+  margin-bottom: 0;
+  font-size: var(--blog-type-unit, 1rem);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.blog-prose :where(table):not(:where([class~="not-prose"] *)) {
+  margin-block: calc(var(--blog-rhythm, 1.4rem) * 2);
+  font-size: calc(var(--blog-type-unit, 1rem) * .875);
+  line-height: 1.5;
+}
+
+.blog-prose :where(hr):not(:where([class~="not-prose"] *)) {
+  margin-block: calc(var(--blog-rhythm, 1.4rem) * 2);
+}
+
+.blog-prose :where(img):not(:where([class~="not-prose"] *)) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 899px) {
+  .blog-article {
+    --blog-type-unit: .9375rem;
+  }
+}
+
+@media (min-width: 1120px) {
+  .blog-article-back {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .blog-prose :where(h2, h3, h4, h5, h6):not(:where([class~="not-prose"] *)) {
+    scroll-margin-top: 100px;
+  }
+}
+

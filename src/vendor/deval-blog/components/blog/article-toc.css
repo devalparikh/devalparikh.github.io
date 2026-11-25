@@ -1,0 +1,231 @@
+.blog-shell {
+  position: relative;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.blog-reading-column {
+  position: relative;
+  width: 100%;
+  max-width: var(--blog-reading-width, 645px);
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.blog-toc {
+  --toc-glide: 300ms;
+  --toc-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --toc-inset: 10px;
+  /* Half a one-line row: one-line rows stay pills, wrapped rows get rounded
+     corners that clear their first and last letters. */
+  --toc-radius: 14px;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.blog-toc-list {
+  position: relative;
+}
+
+/* One highlight glides between rows; its box is measured from the active link. */
+.blog-toc-highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 0;
+  height: 0;
+  border-radius: var(--toc-radius);
+  background: color-mix(in oklab, var(--color-base-content) 7%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.blog-toc-highlight[data-visible="true"] {
+  opacity: 1;
+}
+
+.blog-toc-highlight[data-ready="true"] {
+  transition:
+    transform var(--toc-glide) var(--toc-ease),
+    width var(--toc-glide) var(--toc-ease),
+    height var(--toc-glide) var(--toc-ease),
+    opacity 140ms var(--toc-ease);
+}
+
+.blog-toc ul {
+  display: grid;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.blog-toc a {
+  position: relative;
+  z-index: 1;
+  display: block;
+  /* Wrapped lines sit closer than neighbouring rows, so a long title reads as
+     one entry. */
+  padding: 5px var(--toc-inset);
+  border-radius: var(--toc-radius);
+  line-height: 1.35;
+  color: color-mix(in oklab, var(--color-base-content) 50%, transparent);
+  text-decoration: none;
+  transition: color 140ms var(--toc-ease);
+}
+
+.blog-toc a[aria-current="location"] {
+  color: var(--color-base-content);
+}
+
+/* Touch taps leave :hover stuck on a row that is not the active one. */
+@media (hover: hover) {
+  .blog-toc a:hover {
+    color: var(--color-base-content);
+  }
+}
+
+/* Subheaders step in by their own box, so the highlight indents with them. */
+.blog-toc li[data-level="3"] a {
+  margin-left: 12px;
+  font-size: 12.5px;
+  color: color-mix(in oklab, var(--color-base-content) 42%, transparent);
+}
+
+.blog-toc li[data-level="3"] a[aria-current="location"] {
+  color: var(--color-base-content);
+}
+
+@media (hover: hover) {
+  .blog-toc li[data-level="3"] a:hover {
+    color: var(--color-base-content);
+  }
+}
+
+.blog-toc a:focus-visible,
+.blog-toc button:focus-visible {
+  outline: 2px solid var(--color-base-content);
+  outline-offset: 2px;
+}
+
+.blog-toc-rail {
+  display: none;
+}
+
+.blog-toc-mobile {
+  position: sticky;
+  z-index: 20;
+  top: var(--site-nav-height, 64px);
+  width: 100%;
+  max-width: var(--blog-reading-width, 645px);
+  margin: 0 auto 32px;
+  background: var(--color-base-100);
+  font-size: 12px;
+}
+
+.blog-toc-mobile > button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-base-content);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.blog-toc-mobile > button span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.blog-toc-mobile > button svg {
+  flex: none;
+  transition: transform 150ms ease;
+}
+
+.blog-toc-mobile > button[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.blog-toc-mobile > button[aria-expanded="true"] {
+  position: relative;
+  z-index: 2;
+  justify-content: flex-end;
+  width: 32px;
+  margin-left: auto;
+}
+
+.blog-toc-mobile nav {
+  position: absolute;
+  z-index: 1;
+  inset-inline: calc(var(--toc-inset) * -1) 0;
+  top: 0;
+  max-height: min(60dvh, 480px);
+  padding: 9px 32px 12px 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-base-100);
+}
+
+.blog-toc-mobile nav[hidden] {
+  display: none;
+}
+
+.blog-toc-mobile nav a {
+  padding-block: 6px;
+}
+
+.blog-toc-mobile nav li[data-level="3"] a {
+  font-size: 11.5px;
+}
+
+@media (min-width: 1120px) {
+  .blog-toc-rail {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    display: block;
+    width: min(220px, calc((100% - var(--blog-reading-width, 645px)) / 2 - 40px));
+  }
+
+  .blog-toc-desktop {
+    /* Row text keeps the rail's left edge; each row's inset hangs outside it. */
+    margin-inline: calc(var(--toc-inset) * -1);
+    position: sticky;
+    top: calc(var(--site-nav-height, 64px) + 56px);
+    max-height: calc(100dvh - var(--site-nav-height, 64px) - 80px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .blog-toc-mobile {
+    display: none;
+  }
+
+  .beta-editorial .blog-toc-rail {
+    display: none;
+  }
+
+  .beta-editorial .blog-toc-mobile {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-toc a,
+  .blog-toc-highlight[data-ready="true"],
+  .blog-toc-mobile > button svg {
+    transition: none;
+  }
+}

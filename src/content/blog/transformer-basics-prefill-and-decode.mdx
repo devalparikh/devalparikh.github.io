@@ -1,0 +1,260 @@
+---
+title: "Transformer basics: prefill, decode, and the KV cache"
+summary:
+  "Follow a prompt through token embeddings, hidden states, attention, and the KV cache. Then see
+  how a text embedding is a different output."
+date: "2026-09-19T15:00:00-04:00"
+hideCoverImage: true
+category: "tech"
+kind: "knowledge"
+author: "Deval, with AI-assisted editing"
+tags:
+  - Transformer architecture
+  - Inference
+  - Embeddings
+---
+
+In a typical text-generating Transformer, **prefill processes the prompt once**. After that,
+**decoding processes one new token at a time**, reusing calculations stored in the KV cache.
+
+Both use the same model. What changes is how much input needs processing.
+
+To see what happens inside, follow this prompt: **“The capital of France is”**. In this example, the
+model chooses “Paris,” then a period, then an ending token. We will keep the token boundaries simple
+so the sequence is easy to follow.
+
+## Token embeddings are the starting point
+
+A tokenizer converts the text into token IDs. Each ID selects a row from a learned table. That row
+is the token's **embedding**, a vector of numbers.
+
+For our five-token example, we start with five vectors. A vector might have thousands of
+coordinates; it is not a single score. The same token ID starts with the same lookup vector, before
+position and context are incorporated.
+
+The model also needs information about token order. Different architectures handle position
+differently. For example, Llama uses rotary position embeddings inside attention.
+[Llama implementation](https://github.com/meta-llama/llama/blob/main/llama/model.py).
+
+<ArticleDetails summary="Are tokens words? And what does tokenizer.encode() mean?">
+
+A token can be a word, part of a word, punctuation, or another text unit. Spaces can affect the
+token IDs too. The five word-sized tokens used here are a simplified example.
+
+A tokenizer's `encode()` function converts text to IDs. Its `decode()` function converts IDs back to
+text. These names are separate from a Transformer encoder architecture and the model's
+autoregressive decoding loop.
+[Tokenizer operations](https://huggingface.co/docs/tokenizers/api/tokenizer).
+
+</ArticleDetails>
+
+## Hidden states build from one layer to the next
+
+Each Transformer layer takes the current vectors and produces updated vectors. These intermediate
+representations are called <TransformerTerm name="hidden" />. The output of layer 1 becomes the
+input to layer 2, which becomes the input to layer 3, and so on.
+
+The model keeps **one hidden state per token position**. Five prompt tokens still have five vectors
+after a layer. Attention lets information move between positions while those positions remain
+separate.
+
+<TransformerStatesExplorer />
+
+The **final hidden state of the last token** is the vector at “is” after the final layer. It
+contains information gathered from the allowed context, including “France.” The language-model head
+uses that vector to produce <TransformerTerm name="logits" /> for possible next tokens. Those scores
+become a distribution from which the next token is selected.
+
+This explains two phrases that can sound almost identical. “Final hidden states” can mean the entire
+sequence of vectors after the last layer. “The final hidden state of the last token” selects just
+the last position from that sequence.
+[Model output shapes](https://huggingface.co/docs/transformers/main/en/main_classes/output).
+
+<ArticleDetails summary="Does a later layer receive every earlier hidden state?">
+
+The next layer receives the latest representation. It does not receive a separate list of all
+earlier layers' outputs. Layer 3 builds on layer 2, which already incorporates changes from layer 1.
+
+Residual connections let a block add its updates to the representation it received. The earlier
+information continues through that accumulated vector. A model can also return intermediate states
+for inspection, but returning them is different from feeding all of them into each layer.
+
+</ArticleDetails>
+
+## What happens inside a layer?
+
+Two main operations update the representations:
+
+- **Attention** lets a position combine information from the positions it is allowed to read.
+- The **feed-forward network**, also called an <TransformerTerm name="mlp" />, transforms each
+  position's features. Within that layer, the same network is applied separately to every position.
+
+Residual connections add those updates back into the running representation. Normalization helps
+keep the calculations well behaved. These operations repeat through the stack.
+[Transformer architecture](https://arxiv.org/html/1706.03762v7).
+
+Attention creates three projections of the current representations:
+
+| Projection | Role                                                            |
+| ---------- | --------------------------------------------------------------- |
+| Query, Q   | Compared with keys to determine what this position attends to.  |
+| Key, K     | Used to score how strongly another position should attend here. |
+| Value, V   | The information combined using the attention weights.           |
+
+Q, K, and V are learned numeric vectors. The model compares queries with keys, turns the scores into
+weights, and uses those weights to mix values. Multiple attention heads perform these operations in
+parallel, then their results are combined.
+
+<TransformerAttentionExplorer />
+
+In a **decoder-only language model**, the attention mask is causal: each position can read itself
+and earlier positions. “France” can read “The capital of France,” while the later “is” is blocked.
+At the final position, “is” can read the whole prompt.
+
+A typical **Transformer encoder**, such as BERT, uses bidirectional attention. A position can read
+the supplied tokens on both sides. Both architectures produce contextual hidden states. The
+attention rule distinguishes these two architectures here. [BERT](https://arxiv.org/abs/1810.04805).
+
+<ArticleDetails summary="A little closer to the actual block">
+
+A common modern decoder block first normalizes its input, applies attention, and adds the result
+back to the input. It then normalizes that updated representation, applies the feed-forward network,
+and adds that result back as well. The next block receives the resulting vectors. Exact
+normalization and feed-forward designs vary.
+
+Position information also affects attention. With rotary position embeddings, rotations are applied
+to queries and keys according to token position. This is why “add a position vector to every token
+embedding” is only one possible implementation.
+[Llama block](https://github.com/meta-llama/llama/blob/main/llama/model.py),
+[RoPE](https://arxiv.org/abs/2104.09864).
+
+</ArticleDetails>
+
+## Prefill reads the prompt; decode extends it
+
+### Prefill: process the prompt
+
+During **prefill**, the model processes the known prompt positions together within each layer. The
+layers still run in order. A causal mask controls what each position can read, even though all
+prompt tokens are already available.
+
+Every attention layer calculates keys and values for its prompt positions and saves them in that
+layer's <TransformerTerm name="cache" />. After the final layer, the last position supplies the
+scores that select **the first output token**. Prefill has already done the model work needed to
+choose “Paris.”
+
+<TransformerCacheExplorer />
+
+### Decode: process the selected token
+
+The next pass feeds **Paris's token ID** through the embedding lookup and the same Transformer
+layers. At each attention layer, its query reads the saved keys and values, along with its own
+position. Its new keys and values join the cache. Its final hidden state produces the scores for the
+next token, here a period.
+[Generation loop](https://github.com/meta-llama/llama/blob/main/llama/generation.py).
+
+Notice the timing: **selecting Paris does not put Paris into the cache**. The cache gets Paris's K/V
+when the following pass processes Paris. In the animation, “FIRST TOKEN” shows five cached prompt
+positions. “DECODE” shows six cached positions and a newly selected period.
+
+The loop continues until an ending token or another stopping condition, such as an output limit.
+Selecting an ending token lets the application stop without running that token through another pass.
+[Stopping controls](https://huggingface.co/docs/transformers/main/en/main_classes/text_generation).
+
+<ArticleDetails summary="Why can the old calculations be reused?">
+
+Causal attention means an earlier position's representation cannot depend on tokens that arrive
+later. Its stored keys and values therefore remain usable. Each new position needs its own
+calculations, but the model can reuse earlier K/V instead of recomputing them.
+
+The cache stores these layer-specific projections. It is not a single vector for the prompt, nor a
+saved copy of every intermediate result. New queries still read the growing history, so a long
+context continues to cost attention work and memory.
+[Cache mechanics](https://huggingface.co/docs/transformers/v5.15.1/cache_explanation).
+
+</ArticleDetails>
+
+<ArticleDetails summary="What is parallel, and what has to wait?">
+
+During prefill, all prompt tokens are known, so many positions can be processed together. During
+ordinary decoding, the next token must be selected before it can become the input for the following
+pass. That is the sequential dependency.
+
+Supervised training is different: the target sequence is already available. The model can compute
+predictions at many positions together while masking future tokens. Learning a next-token objective
+does not require generating every training example one token at a time.
+[Transformer training](https://arxiv.org/html/1706.03762v7).
+
+Serving systems may split prefill into chunks, batch several sequences, or use techniques such as
+speculative decoding. Those change execution details. The diagrams here show the ordinary cached
+generation loop.
+
+</ArticleDetails>
+
+## Whose cache is it?
+
+The useful scope is **one logical history per sequence, per attention layer**.
+
+Layer 1 stores the keys and values it calculated. Layer 2 stores its own. Every new position in that
+sequence extends those histories. An unrelated request has a separate logical history, even when the
+server batches both requests on the same hardware.
+
+<ArticleDetails summary="What does that look like in memory?">
+
+For a conventional cache, each layer has a key tensor and a value tensor. A common shape is:
+
+`[batch, KV heads, cached positions, head dimension]`
+
+The batch dimension separates sequences. The position dimension grows as tokens are processed. Each
+cached position holds multiple vector coordinates for each KV head. There may be fewer KV heads than
+query heads, as in grouped-query attention. Physical layouts and cache policies vary.
+[Cache layout](https://huggingface.co/docs/transformers/v5.15.1/cache_explanation),
+[Llama attention](https://github.com/meta-llama/llama/blob/main/llama/model.py).
+
+</ArticleDetails>
+
+On the next chat turn, previous messages can be included in the model's new context. If the serving
+system still has a compatible cache for the exact prefix, it can reuse that work and process only
+the new suffix. If it cannot reuse the cache, it must process that context again.
+
+Two requests with an identical prefix can sometimes share cached blocks too. For example, the same
+long document can precede two different questions. This is **prefix caching**, a serving
+optimization. It saves repeated prefill work; newly generated tokens still require decoding. The
+model has not acquired a permanent memory of the conversation.
+[Prefix caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/).
+
+## When the output is a text embedding
+
+So far, the model has kept a sequence of contextual vectors and used the final position to predict
+the next token. It has not explicitly pooled the prompt into one semantic-search vector.
+
+A typical dense **embedding model** intentionally produces a vector for an entire text or chunk. It
+starts with token embeddings and contextual hidden states too. Then it pools or selects those states
+to produce its output vector.
+
+<TransformerOutputComparison />
+
+Common choices include averaging token states, selecting a special token, or selecting the final
+token's state. Training makes the resulting vectors useful for comparing texts. Simply averaging an
+arbitrary language model's states does not establish that the result will work well for semantic
+search.
+[Pooling options](https://www.sbert.net/docs/package_reference/sentence_transformer/modules.html),
+[Sentence-BERT](https://arxiv.org/abs/1908.10084).
+
+An embedding model often uses an encoder architecture, but it can also use a decoder. For example,
+Qwen3-Embedding uses a decoder-derived model and selects the final token's hidden state to form a
+normalized text vector. Architecture describes how representations are computed; the training
+objective and output operation determine what we use them for.
+[Qwen3-Embedding](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B).
+
+| Name                | What it refers to                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| Token embedding     | The starting vector selected by a token ID.                                                |
+| Hidden state        | A token position's representation as it passes through the model.                          |
+| Final hidden states | The sequence of representations after the last layer.                                      |
+| KV cache            | Stored keys and values for processed positions at each attention layer.                    |
+| Text embedding      | A model's output vector for a text or chunk, trained for a task such as similarity search. |
+
+These distinctions also explain how a model can return
+[decision probabilities without generating a text answer](/writing/jev-and-system-one-models/). The
+internal representations can support several kinds of output.

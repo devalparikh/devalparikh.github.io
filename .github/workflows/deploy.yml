@@ -39,6 +39,7 @@ jobs:
         run: |
           npm run test:map
           npm run test:notes
+          npm run test:writing
           npm run lint
           npm run typecheck
 
@@ -48,6 +49,9 @@ jobs:
         env:
           WIKI_READ_TOKEN: ${{ secrets.WIKI_READ_TOKEN }}
         run: npm run build
+
+      - name: Check the exported writing pages
+        run: npm run test:writing:build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4

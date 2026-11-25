@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* `.prose` base styles for the imported writing articles (see app/writing/[slug]/article.css). */
+@plugin "@tailwindcss/typography";
 
 /* ==========================================================================
    Design tokens
@@ -17,6 +19,9 @@
   --color-primary: #9b6b3e;
   --color-neutral: #d4cfc7;
   --color-neutral-content: #6b6560;
+  /* Status colours the imported deval-blog figures read. */
+  --color-success: #5a8a6e;
+  --color-error: #b05555;
 
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
@@ -33,9 +38,35 @@
   --rule-soft: color-mix(in oklab, var(--color-base-content) 8%, transparent);
   --wash: color-mix(in oklab, var(--color-base-content) 7%, transparent);
   --noise-opacity: 0.035;
+
+  /* Writing covers - printed artwork, so the same in both themes. `paper`,
+     `ink` and `clay` are the parchment tokens; the rest are flat riso-style
+     grounds, warmed to sit beside them. Assigned by hand in content/writing.ts. */
+  --cover-paper: #faf8f5;
+  --cover-ink: #1a1815;
+  --cover-clay: #9b6b3e;
+  --cover-ember: #c4461f;
+  --cover-violet: #6a48d4;
+  --cover-teal: #2b6a6c;
+  --cover-rose: #f2bccb;
+  --cover-lime: #dbe97a;
+  --cover-fern: #37704a;
+  --cover-cobalt: #3451cc;
+  --cover-saffron: #f0c548;
+  --cover-oxblood: #9c2f29;
+
+  /* The bookshelf is always a dark room, whichever theme the page is in. */
+  --shelf-wall: #121114;
+  --shelf-wall-text: #e8e4df;
+  --shelf-wall-muted: #a29d97;
+  --shelf-plank: #2a2420;
+  --shelf-plank-edge: #3b322c;
+  --shelf-shadow: rgb(0 0 0 / 0.5);
 }
 
 [data-theme="inkember"] {
+  --color-success: #7baa8e;
+  --color-error: #c97272;
   --color-base-100: #08080a;
   --color-base-200: #111114;
   --color-base-300: #161619;

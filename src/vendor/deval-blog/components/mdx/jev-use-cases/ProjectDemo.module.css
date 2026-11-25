@@ -1,0 +1,57 @@
+.figure, .links {
+  --ink: var(--color-base-content);
+  --bg: var(--color-base-100);
+  --border: color-mix(in srgb, var(--ink) 17%, var(--bg));
+  --muted: color-mix(in srgb, var(--ink) 62%, var(--bg));
+  color: var(--ink);
+}
+.figure { margin: 2em 0 2.8em; scroll-margin-top: 125px; }
+.links { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0 0 22px; font-size: 12px; line-height: 1.6; color: var(--muted); }
+.figure a, .links a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.media { overflow: hidden; border: 1px solid var(--border); border-radius: 4px; }
+.media video, .media img { display: block; width: 100%; height: auto; }
+.media video { background: #111; }
+.figure figcaption { margin-top: 12px; font: 12px/1.5 var(--font-dm-sans), sans-serif; color: var(--muted); }
+.mediaError { padding: 16px; font-size: 13px; line-height: 1.6; }
+.mediaError button { display: block; margin-top: 8px; }
+.figure button { cursor: pointer; }
+.figure button:disabled { opacity: .5; cursor: default; }
+.figure button:focus-visible, .figure input:focus-visible, .figure summary:focus-visible, .figure pre:focus-visible, .figure a:focus-visible, .links a:focus-visible { outline: 2px solid #407bed; outline-offset: 3px; }
+.lab { padding: 20px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); }
+.eyebrow, .choices legend, .pastePreview label { display: block; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.source { font-size: 15px; line-height: 1.8; margin: 7px 0 20px; }
+.source mark { background: color-mix(in srgb, #269c70 20%, var(--bg)); color: var(--ink); border-radius: 2px; }
+.choices { min-width: 0; margin: 0 0 16px; padding: 0; border: 0; }
+.choices > div { display: flex; flex-wrap: wrap; gap: 0 18px; margin-top: 3px; }
+.choices label { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; font-size: 13px; cursor: pointer; }
+.choices input { appearance: none; display: grid; place-content: center; width: 14px; height: 14px; margin: 0; border: 1px solid var(--muted); border-radius: 50%; background: transparent; cursor: pointer; }
+.choices input::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); visibility: hidden; }
+.choices input:checked { border-color: var(--ink); }
+.choices input:checked::before { visibility: visible; }
+@media (forced-colors: active) { .choices input { appearance: auto; } .choices input::before { content: none; } }
+.choices label:has(input:checked) span { font-weight: 600; }
+.pastePreview { padding: 10px 13px 12px; border: 1px solid var(--border); border-radius: 3px; }
+.pastePreview output { display: block; margin-top: 3px; font-size: 16px; line-height: 1.7; overflow-wrap: anywhere; }
+.pastePreview output[data-empty="true"] { color: var(--muted); font-size: 14px; }
+.emptyNote { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 8px 0 0; }
+.resultMeta { margin-top: 10px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.actions button, .mediaError button { border: 1px solid var(--border); border-radius: 3px; background: var(--bg); color: var(--ink); padding: 8px 12px; font-size: 12px; min-height: 40px; }
+.actions button:hover:not(:disabled) { background: color-mix(in srgb, var(--ink) 5%, var(--bg)); }
+.status { margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); }
+.live { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 12px; font-size: 12px; }
+.live summary, .trace summary { width: fit-content; cursor: pointer; color: var(--muted); line-height: 1.7; padding: 3px 0; }
+.live[open] > summary { margin-bottom: 12px; }
+.live .choices { margin-bottom: 0; }
+.trace { margin-top: 6px; font-size: 12px; }
+.trace ol { margin: 10px 0 0; padding-left: 20px; line-height: 1.7; color: var(--muted); }
+.trace p { margin: 18px 0 8px; }
+.trace pre { max-height: 260px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: 11px/1.6 ui-monospace, monospace; padding: 12px; border: 1px solid var(--border); margin: 8px 0 16px; }
+.graphResult { display: block; font-size: 14px; overflow-wrap: anywhere; }
+.graph { display: block; width: 100%; height: auto; margin: 0 0 16px; }
+.graph text { fill: var(--ink); font: 12px var(--font-dm-sans), sans-serif; }
+.graph rect { fill: var(--bg); stroke: var(--border); }
+.graph path { fill: none; stroke: var(--border); stroke-width: 2; }
+.graph [data-selected="true"] rect { stroke: #269c70; fill: color-mix(in srgb, #269c70 10%, var(--bg)); }
+.graph path[data-selected="true"] { stroke: #269c70; }
+@media (max-width: 500px) { .lab { padding: 16px; } .links { gap: 6px 14px; } }

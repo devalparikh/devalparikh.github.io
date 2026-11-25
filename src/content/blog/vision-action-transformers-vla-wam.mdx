@@ -1,0 +1,285 @@
+---
+title: "Vision-Action Transformers vs. VLA vs. World-Action Models"
+summary: "The practical difference is what conditions the robot policy and what it is trained to predict: actions, language-conditioned actions, or actions plus future world states."
+date: "2026-07-13T12:00:00-04:00"
+image: "/img/writing/vision-action-transformers-vla-wam/cover.webp"
+kind: "thought"
+author: "Deval, with AI-assisted editing"
+tags:
+  - Robotics
+  - Transformers
+  - World Models
+---
+
+The shortest useful distinction is:
+
+```text
+Vision-Action: see → act
+
+VLA: see + understand an instruction → act
+
+WAM: see + optional instruction
+     → learn how the world changes
+     → act
+```
+
+All three can learn from robot demonstrations. The practical difference is **what conditions the policy** and **what the model must predict during training**.
+
+<EmbodiedArchitectureExplorer />
+
+## Start with the shared data unit: a trajectory
+
+A robot-learning dataset is usually organized as trajectories, not isolated images.
+
+```text
+trajectory =
+  (observation₀, robot state₀, action₀),
+  (observation₁, robot state₁, action₁),
+  ...
+```
+
+An observation can be one RGB frame, several camera views, or a short history of frames. Robot state can include joint positions, end-effector pose, gripper state, and other proprioception.
+
+Training code samples short windows from those trajectories. The model sees the window ending at time `t`, then predicts the action taken **after that observation**. Previous actions may also be included, but they are optional rather than a defining input for every architecture.
+
+That shared setup matters because the three model families can look deceptively similar from the outside. They all consume visual context and eventually control a robot. The difference appears inside the forward pass and the loss.
+
+## 1. Vision-Action Transformer: predict actions from what the robot sees
+
+A Vision-Action Transformer is the most direct version of the loop.
+
+```text
+[frames t−3 → t] + robot stateₜ
+                 ↓
+            Transformer
+                 ↓
+        predicted actionₜ
+                 ↓
+      compare with real actionₜ
+```
+
+### Forward-pass input
+
+- Current frame plus a short history of recent frames
+- Current robot state
+- Optionally, previous actions
+
+### Forward-pass output
+
+The next action or an action chunk, for example:
+
+```text
+[move x, move y, move z, rotate, gripper]
+```
+
+The action may be continuous values, discrete classes, or a short sequence. That representation changes the exact loss, but not the basic objective: predict the demonstrated control command from the current visual and robot context.
+
+### Training
+
+1. Sample short windows from multiple trajectories.
+2. Run each window through the transformer.
+3. Compare the predicted action with the action the operator took after the current observation.
+4. Backpropagate the action loss.
+5. Let the optimizer update the weights for that batch.
+
+I built a small version of this loop in [`vat-mini`](https://github.com/devalparikh/vat-mini). It started as a discrete GridWorld sandbox and now runs the same causal-policy idea on RoboMimic Can images with a continuous 7-DoF action head. RGB frames and shifted previous controls become timestep tokens; the transformer can read the available history, but never future frames or the action it is currently learning to predict.
+
+The GIF below is a **closed-loop simulator rollout** after a 10-epoch `make robomimic-can` training run (10,000 training windows, 1,000 validation windows, and a sequence length of 12). This is a stronger reality check than replaying held-out actions: the policy executes its own predictions, sees the resulting camera frame, and has to keep controlling from the state it created.
+
+<MotionControlledGif
+  animatedSrc="/img/writing/vision-action-transformers-vla-wam/robomimic-can-rollout.gif"
+  posterSrc="/img/writing/vision-action-transformers-vla-wam/robomimic-can-rollout-poster.png"
+  alt="VAT Mini closed-loop RoboMimic Can simulation rollout, with a robot arm controlling a red can"
+  caption="Closed-loop RoboMimic Can rollout from"
+  sourceHref="https://github.com/devalparikh/vat-mini"
+  sourceLabel="VAT Mini"
+  width={252}
+  height={252}
+/>
+
+The repository also includes an interactive learning workbench for tracing the tensor contract, causal attention, and the different training and inference paths back to the Python implementation.
+
+<Callout type="info">
+  **Name warning:** “Vision-Action Transformer” is a useful descriptive label, not a strict industry standard. A transformer policy can gain language conditioning or a world-modeling head and begin to overlap with the next two categories.
+</Callout>
+
+## 2. VLA: add language as a first-class condition
+
+A Vision-Language-Action model answers a more general question:
+
+> Given what the robot sees, what the user asked for, and any additional robot state the policy uses, what should it do next?
+
+```text
+"Put the cup on the coaster"
+              +
+      [frames t−3 → t]
+              +
+    optional robot stateₜ
+              ↓
+             VLA
+              ↓
+      actions t → t+k
+```
+
+### Forward-pass input
+
+- Language instruction
+- Current or recent frames
+- Robot state or proprioception, when the architecture uses it
+- Optionally, previous actions
+
+The instruction is often attached to an entire trajectory. A training batch can therefore mix windows from many tasks, scenes, robots, and instructions.
+
+### Forward-pass output
+
+The next robot action or action chunk. Language changes the condition, not the basic requirement that the system eventually emit low-level controls.
+
+### Training
+
+The demonstrated action remains the target. The exact loss depends on how actions are represented:
+
+- **Tokenized actions:** next-token cross-entropy over discrete action tokens
+- **Continuous actions:** regression, diffusion, or flow-matching objectives
+
+For a concrete tokenized example, [OpenVLA](https://arxiv.org/abs/2406.09246) maps an image and language instruction to a 7D robot action. It discretizes each action dimension into tokens and trains with next-token prediction, evaluating cross-entropy only on the action tokens.
+
+During an update, gradients can flow through the action head, the transformer, and whichever vision or language components are being fine-tuned. Some systems freeze parts of the pretrained backbone; others train more of the stack end to end.
+
+The core objective is still compact:
+
+```text
+vision + language + optional robot state
+                ↓
+             action
+```
+
+## 3. WAM: predict actions and how the world evolves
+
+A World-Action Model adds another learning target: the future world.
+
+```text
+optional instruction
++
+frames t−3 → t
++
+optional robot stateₜ
+        ↓
+       WAM
+       / \
+      /   \
+future frames   future actions
+ t+1 → t+k       t → t+k
+```
+
+Instead of learning only which action follows the current observation, a WAM jointly models future visual states and actions. Video prediction supplies a dense signal about object motion, contact, geometry, and the consequences of control.
+
+### Forward-pass input
+
+- Current or recent frames, or their visual latents
+- Language instruction, when the model is language-conditioned
+- Robot state and action history, when the architecture uses them
+
+### Forward-pass output
+
+- Predicted future visual states or video
+- Predicted future actions
+
+### Training
+
+A generic WAM objective combines both branches:
+
+```text
+Ltotal = λworld · Lworld + λaction · Laction
+```
+
+The world loss compares predicted future observations with later frames from the trajectory. The action loss compares predicted actions with demonstrated actions. Backpropagation updates shared representations and any specialized video or action components.
+
+The recent [*HumanScale: Egocentric Human Video Can Outperform Real-Robot Data for Embodied Pretraining* paper](https://arxiv.org/pdf/2606.20521v1) uses an autoregressive WAM with a Mix-of-Transformers architecture. It predicts future video observations followed by subsequent actions, then uses that fixed architecture to compare 5,000 hours of egocentric-human-video pretraining with 5,000 hours of real-robot pretraining.
+
+### WAM does not imply one fixed inference path
+
+“Imagine, then act” is the easiest mental model, but it is not universal.
+
+Some WAMs generate future video during inference and then decode the corresponding actions. Others co-train with video prediction because it shapes stronger representations, but skip expensive future-video generation in the live control loop. The HumanScale paper explicitly contrasts these patterns in its related work, including Fast-WAM-style systems that keep video supervision during training while avoiding iterative video rollout at test time.
+
+So the safest definition is:
+
+> A WAM learns future world states and actions jointly. Whether it renders those future states during deployment is an architectural choice.
+
+## One-glance comparison
+
+<EmbodiedFamilyComparison />
+
+The comparison is less about whether a transformer appears in the diagram—they can all use transformers—and more about the contract around it.
+
+- **VAT:** visual control policy
+- **VLA:** language-conditioned visual control policy
+- **WAM:** policy trained to model both control and world evolution
+
+## Training and inference are different views of the same model
+
+During **training**, the model has demonstrated targets. It can compare its prediction with what actually happened, calculate a loss, backpropagate gradients, and update its weights.
+
+During **inference**, those targets are absent. The model receives the current condition, predicts an action, executes it, observes the changed world, and repeats.
+
+```text
+training:
+observation → prediction → compare with target → update weights
+
+inference:
+observation → prediction → execute → new observation → repeat
+```
+
+<BehaviorCloningLoop />
+
+This is why offline action accuracy is not enough. A model can predict expert actions well on held-out windows and still fail in a closed-loop rollout as small errors compound and move the robot into unfamiliar states.
+
+## Which architecture should you reach for?
+
+### Use a focused Vision-Action Transformer when
+
+- The task set is narrow and language is unnecessary.
+- You want a small, understandable imitation-learning baseline.
+- Latency and implementation simplicity matter more than broad semantic generalization.
+
+### Use a VLA when
+
+- One policy must follow many natural-language instructions.
+- Semantic knowledge about objects and tasks matters.
+- You want to reuse vision-language pretraining instead of learning every concept from robot demonstrations alone.
+
+### Use a WAM when
+
+- Modeling physical change is part of the learning objective.
+- Dense video supervision can improve the representation.
+- The extra training and, in some designs, inference compute is justified by the task.
+
+These are not mutually exclusive endpoints. A system can start as a language-conditioned action policy, add a future-video objective, and become WAM-like without replacing every component.
+
+## The bottom line
+
+Do not distinguish these models by the word “transformer.” Distinguish them by two questions:
+
+1. **What information conditions the forward pass?**
+2. **What targets must the model predict?**
+
+```text
+Vision-Action:
+frames + state → actions
+
+VLA:
+instruction + frames + optional state → actions
+
+WAM:
+frames + optional instruction/state → future world states + actions
+```
+
+That is the cleanest way to reason about the architecture, the dataset, the loss, and the deployment loop without getting lost in model names.
+
+---
+
+**References**
+
+- [`devalparikh/vat-mini`](https://github.com/devalparikh/vat-mini) — compact Vision-Action Transformer implementation and interactive guide
+- [OpenVLA: An Open-Source Vision-Language-Action Model](https://arxiv.org/abs/2406.09246)
+- [HumanScale: Egocentric Human Video Can Outperform Real-Robot Data for Embodied Pretraining](https://arxiv.org/pdf/2606.20521v1)

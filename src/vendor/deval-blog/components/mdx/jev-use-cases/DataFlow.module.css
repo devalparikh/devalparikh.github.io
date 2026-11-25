@@ -1,0 +1,21 @@
+.loop {
+  --ink: var(--color-base-content);
+  --bg: var(--color-base-100);
+  --border: color-mix(in srgb, var(--ink) 17%, var(--bg));
+  --muted: color-mix(in srgb, var(--ink) 62%, var(--bg));
+  margin-top: 8px;
+}
+.transition { margin: 0 0 16px; }
+.batchControl { display: grid; grid-template-columns: auto minmax(80px, 1fr); align-items: center; gap: 8px 18px; margin: 0 0 18px; font-size: 12px; }
+.batchControl label { display: flex; gap: 10px; }
+.batchControl strong { font-weight: 500; font-variant-numeric: tabular-nums; }
+.batchControl input { appearance: none; width: 100%; min-width: 0; height: 40px; background: transparent; cursor: pointer; }
+.batchControl input::-webkit-slider-runnable-track { height: 2px; background: var(--border); }
+.batchControl input::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; margin-top: -6px; border-radius: 50%; background: var(--ink); }
+.batchControl input::-moz-range-track { height: 2px; background: var(--border); }
+.batchControl input::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--ink); }
+.batchControl input:focus-visible { outline: 2px solid var(--muted); outline-offset: 3px; }
+.loopEnd { margin-top: 18px; padding: 0 0 0 14px; border-left: 2px solid var(--border); }
+.loopEnd p { margin: 8px 0; }
+.loopEnd strong { font-weight: 500; }
+.transition, .loopEnd { font-size: 13px; line-height: 1.65; }

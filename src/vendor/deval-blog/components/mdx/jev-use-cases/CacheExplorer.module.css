@@ -1,0 +1,27 @@
+.figure {
+  --ink: var(--color-base-content);
+  --bg: var(--color-base-100);
+  --border: color-mix(in srgb, var(--ink) 17%, var(--bg));
+  --muted: color-mix(in srgb, var(--ink) 64%, var(--bg));
+  margin: 2.8em 0;
+  color: var(--ink);
+}
+.modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--border); border-radius: 4px 4px 0 0; }
+.modes button { min-height: 48px; padding: 8px 5px; font: 11px/1.5 ui-monospace, monospace; color: var(--muted); cursor: pointer; }
+.modes button + button { border-left: 1px solid var(--border); }
+.modes button[aria-pressed="true"] { color: var(--ink); background: color-mix(in srgb, #407bed 10%, var(--bg)); box-shadow: inset 0 -2px #407bed; }
+.modes button:focus-visible, .control select:focus-visible { outline: 2px solid #407bed; outline-offset: -2px; }
+.canvas { border: 1px solid var(--border); border-top: 0; border-radius: 0 0 4px 4px; }
+.control { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding: 12px; border-bottom: 1px solid var(--border); color: var(--muted); font: 11px/1.5 ui-monospace, monospace; }
+.control select { color: var(--ink); background: var(--bg); border: 1px solid var(--border); border-radius: 3px; min-height: 36px; padding: 6px; max-width: 100%; }
+.canvas svg { display: block; width: 100%; height: auto; margin-top: 12px; overflow: visible; font: 14px ui-monospace, monospace; }
+.canvas text { fill: var(--ink); }
+.canvas .small { font-size: 12px; }
+.canvas .label { font-size: 15px; }
+.neutral { fill: color-mix(in srgb, var(--ink) 3%, var(--bg)); stroke: var(--border); }
+.reuse { fill: color-mix(in srgb, #269c70 13%, var(--bg)); stroke: #269c70; }
+.compute { fill: color-mix(in srgb, #bf873b 12%, var(--bg)); stroke: #bf873b; }
+.idle { fill: none; stroke: var(--border); stroke-dasharray: 3 5; }
+.route { fill: none; stroke: var(--muted); stroke-width: 1.25; }
+.summary { margin: 0; padding: 12px 16px; border-top: 1px solid var(--border); font-size: 13px; line-height: 1.6; }
+.figure figcaption { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.5; }
