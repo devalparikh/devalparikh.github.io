@@ -23,6 +23,7 @@ import {
 import { formatWordCount } from "@/lib/word-count";
 import { BookCover, type CoverPost } from "./BookCover";
 import { FloorLamp, OliveTree, ShelfDecor, type ShelfDecorKind } from "./ShelfDecor";
+import { ShelfStage, useShelfRows } from "./ShelfStage";
 import "./bookshelf.css";
 
 export interface ShelfItem extends CoverPost {
@@ -79,6 +80,7 @@ export function Bookshelf({ books, filters, elsewhere, elsewhereTitle }: Bookshe
   /** A touch tap selected this book; the next tap on it opens it. */
   const [armed, setArmed] = useState<string | null>(null);
   const timer = useRef<number | undefined>(undefined);
+  const listRef = useRef<HTMLUListElement>(null);
   const lastPointer = useRef<string>("mouse");
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
@@ -86,6 +88,7 @@ export function Bookshelf({ books, filters, elsewhere, elsewhereTitle }: Bookshe
   const visible = books.filter((book) => filterId === ALL_FILTER.id || book.categories.includes(filterId));
   const external = filterEntries(elsewhere, filterId);
   const shown = books.find((book) => book.slug === active) ?? null;
+  const rows = useShelfRows(listRef, `${view}|${visible.map((book) => book.slug).join()}`);
 
   function look(slug: string, delay = HOVER_INTENT_MS) {
     window.clearTimeout(timer.current);
@@ -133,7 +136,8 @@ export function Bookshelf({ books, filters, elsewhere, elsewhereTitle }: Bookshe
                 {visible.length === 0 ? (
                   <p className="shelf-empty">No books on this shelf yet.</p>
                 ) : (
-                  <ul className="shelf-books">
+                  <ul ref={listRef} className="shelf-books" data-stage={rows ? "3d" : "flat"}>
+                    {rows && <ShelfStage rows={rows} active={active} />}
                     {visible.map((book, index) => {
                       const geometry = bookGeometry(book.words);
                       const style = {
@@ -146,7 +150,7 @@ export function Bookshelf({ books, filters, elsewhere, elsewhereTitle }: Bookshe
                       } as CSSProperties;
                       const isActive = active === book.slug;
                       return [
-                        <li key={book.slug} className="shelf-slot" style={style}>
+                        <li key={book.slug} className="shelf-slot" data-slug={book.slug} style={style}>
                           <Link
                             href={href(book.slug)}
                             className="book"

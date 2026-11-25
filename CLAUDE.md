@@ -147,8 +147,13 @@ The full runbook is `docs/writing.md`.
 - **Shelf** - `components/writing/Bookshelf.tsx` and `bookshelf.css`: a
   furnished room (built-in bookcase, lit planks, objects from
   `ShelfDecor.tsx`, day oak / night walnut via `--room-*`, `--case-*` and
-  `--decor-*` tokens), four views (Thickness default), hover-intent loops, tap-to-preview on touch,
-  no motion under reduced motion or Save-Data. Sizes come from build-time
+  `--decor-*` tokens). The case interior is real 3D under one shared
+  perspective (`ShelfStage.tsx`): never give a book its own `perspective`,
+  or it stops agreeing with the shelf it stands on. Things in the case sit at
+  a depth (`--z`) and the list itself passes pointer events through,
+  since it is the case front. Four views (Thickness default), hover-intent
+  loops, tap-to-preview on touch, no motion under reduced motion or
+  Save-Data. Sizes come from build-time
   word counts (`lib/word-count.ts`, `lib/book-geometry.ts`).
 
 ## Photography

@@ -77,6 +77,8 @@
   --case-led: rgb(255 214 160 / 0.34);
   --case-led-strip: rgb(255 240 214 / 0.95);
   --plank-shadow: rgb(20 12 6 / 0.55);
+  /* Where things touch: shelf and foot, panel and shelf. */
+  --contact-shadow: rgb(22 12 4 / 0.72);
   --decor-ceramic: #ece5d9;
   --decor-ceramic-shade: #c7bba8;
   --decor-clay: #b8714f;
@@ -119,6 +121,7 @@
   --case-led: rgb(255 186 112 / 0.42);
   --case-led-strip: rgb(255 222 178 / 0.95);
   --plank-shadow: rgb(0 0 0 / 0.7);
+  --contact-shadow: rgb(0 0 0 / 0.82);
   --decor-ceramic: #d6cdbf;
   --decor-ceramic-shade: #9c9182;
   --decor-clay: #9a5a3d;

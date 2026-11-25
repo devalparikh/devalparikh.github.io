@@ -78,6 +78,22 @@ light; inkember is walnut at lamp-light. Every surface reads the `--room-*`,
 are cached noise tiles, so nothing is filtered per frame. Phones keep two
 objects so the case stays scannable.
 
+Inside the case is real 3D (`ShelfStage.tsx`). The case front is the
+screen plane and the case is `--depth` deep. One perspective, set on the case
+(eye level with the middle shelf), projects the back panel, both side walls,
+the ceiling, every shelf (top, lip and underside, the LED strip in its
+underside) and every book and object. Each of those stands at its own depth
+(`--z`) on the shelf. So contact, occlusion and parallax come from geometry:
+upper shelves show their undersides and lower ones their tops, a high shelf's
+lip hides the feet of what stands behind it, and turned books meet the shelf
+where it really is. Contact shadows are footprints lying on the shelf, soft
+in their own gradient because the shelf is seen nearly edge-on, and each
+object leaves a soft shadow on the back panel, offset away from the floor
+lamp. Face-out books and the print lean back against the panel. Rows are
+measured after layout; until then (and without JS) the flat planks stand in,
+on the same standing line. Phones use a flatter, shallower case with thinner
+shelves.
+
 Views: Same size, Scaled to length (sqrt of words), **Thickness** (default;
 spine depth linear in words) and Shelf (spines). The choice is remembered per
 browser. Geometry is in `src/lib/book-geometry.ts`.
