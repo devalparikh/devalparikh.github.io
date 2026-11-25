@@ -1,7 +1,7 @@
 :HL["/_next/static/chunks/0jfhgzwh0n1p-.css","style"]
 :HL["/_next/static/media/660acf689794c992-s.p.2_mbdogr7ni8i.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/_next/static/media/edb99fec956915f8-s.p.32sris142tqlb.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-:HL["/_next/static/chunks/1vhf1a2485x-w.css","style"]
+:HL["/_next/static/chunks/3iqxszp98pt4e.css","style"]
 2:[["children",{"s":"__PAGE__","h":160}]]
 1:[["children",{"s":"photography","h":96,"c":"$Q2"}]]
-0:{"b":"Ghg3fOHUef2RCV6H7xGqT","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"NQlabvugoU2POmjf3dVJi","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
