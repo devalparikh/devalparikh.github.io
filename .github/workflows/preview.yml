@@ -1,0 +1,60 @@
+name: PR preview
+
+# Builds every pull request and publishes a viewable preview that is kept
+# apart from production: it never writes to gh-pages, never runs the Pages
+# deploy, and drops CNAME so nothing claims devalparikh.me.
+#
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Test, lint and typecheck
+        run: |
+          npm run test:map
+          npm run test:notes
+          npm run test:writing
+          npm run lint
+          npm run typecheck
+
+      - name: Build
+        run: env -u CI npm run build
+
+      - name: Check the exported writing pages
+        run: npm run test:writing:build
+
+      - name: Mark the build as a preview
+        run: |
+          rm -f out/CNAME
+          printf 'User-agent: *\nDisallow: /\n' > out/robots.txt
+          printf '/*\n  X-Robots-Tag: noindex\n' > out/_headers
+
+      - name: Upload preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-preview
+          path: out
+          retention-days: 14

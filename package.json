@@ -16,26 +16,34 @@
     "previews": "node scripts/fetch-previews.mjs",
     "notes:sync": "node scripts/sync-notes.mjs",
     "test:map": "node --experimental-strip-types --test scripts/map-touch.test.mjs scripts/town-wheels.test.mjs",
-    "test:notes": "node --experimental-strip-types --test scripts/notes.test.mjs scripts/notes-navigation.test.mjs"
+    "test:notes": "node --experimental-strip-types --test scripts/notes.test.mjs scripts/notes-navigation.test.mjs",
+    "sync:blog": "node scripts/sync-blog.mjs",
+    "test:writing": "node --experimental-strip-types --test scripts/writing.test.mjs",
+    "test:writing:build": "node --test scripts/writing-build.test.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "github-slugger": "^2.0.0",
     "js-yaml": "4.3.2",
     "next": "16.4.5",
+    "next-mdx-remote": "^6.0.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "rehype-pretty-code": "^0.14.3",
     "rehype-sanitize": "^6.0.0",
     "rehype-stringify": "^10.0.1",
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
+    "shiki": "^4.0.2",
     "three": "^0.187.0",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.19",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -50,6 +58,9 @@
   "overrides": {
     "@emnapi/core": "^1.11.3",
     "@emnapi/runtime": "^1.11.3",
-    "@emnapi/wasi-threads": "^1.2.3"
+    "@emnapi/wasi-threads": "^1.2.3",
+    "@tailwindcss/typography": {
+      "postcss-selector-parser": "^6.1.5"
+    }
   }
 }

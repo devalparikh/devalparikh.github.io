@@ -1,0 +1,166 @@
+.term > button {
+  display: inline;
+  border: 0;
+  border-radius: 2px;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline dotted;
+  text-decoration-color: color-mix(in srgb, var(--color-primary) 75%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  cursor: help;
+  transition: background-color 120ms ease;
+}
+/* Touch taps leave :hover stuck, so only real pointers get the tint. */
+@media (hover: hover) {
+  .term > button:hover {
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  }
+}
+.term > button:focus-visible,
+.dialog button:focus-visible,
+.details > summary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+.dialog {
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 24px;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--color-base-content) 20%, transparent);
+  border-radius: 4px;
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+  font:
+    15px/1.5 var(--font-dm-sans),
+    sans-serif;
+}
+.dialog::backdrop {
+  background: rgb(0 0 0 / 0.35);
+}
+/* Phones: the explanation rises from the bottom edge, within thumb reach. */
+@media (max-width: 639px) {
+  .dialog {
+    width: 100%;
+    max-width: 100%;
+    max-height: min(80dvh, 640px);
+    margin: auto 0 0;
+    padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+    border-width: 1px 0 0;
+    border-radius: 12px 12px 0 0;
+  }
+}
+.definition {
+  margin: 0;
+}
+.dialog .definition {
+  margin: 16px 0;
+}
+.preview {
+  margin: 12px 0 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-base-content) 14%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--color-base-content) 3%, var(--color-base-100));
+}
+.preview svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.dialog .preview {
+  margin-bottom: 16px;
+}
+.related {
+  display: grid;
+  gap: 2px;
+  margin: 12px 0 0;
+  font-size: 13px;
+}
+.related > span {
+  color: color-mix(in srgb, var(--color-base-content) 55%, transparent);
+  font-size: 11px;
+}
+.related a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.dialog .related {
+  margin-bottom: 16px;
+}
+.card {
+  position: absolute;
+  z-index: 60;
+  padding: 14px 14px 12px;
+  border: 1px solid color-mix(in srgb, var(--color-base-content) 18%, transparent);
+  border-radius: 6px;
+  background: var(--color-base-100);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.18);
+  color: var(--color-base-content);
+  font:
+    14px/1.5 var(--font-dm-sans),
+    sans-serif;
+}
+.card[data-placed="false"] {
+  visibility: hidden;
+}
+.cardTitle {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+.dialogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+}
+.dialogHeader h2 {
+  margin: 0;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 600;
+}
+.dialogHeader button {
+  border: 0;
+  padding: 4px 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.dialog p {
+  margin: 16px 0;
+}
+.dialog a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.details {
+  margin: 1.4em 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-base-content) 15%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-base-content) 15%, transparent);
+}
+.details > summary {
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.details > div {
+  padding-bottom: 12px;
+}
+.details > div > :first-child {
+  margin-top: 4px;
+}
+.details > div > :last-child {
+  margin-bottom: 4px;
+}
+.dialog .details {
+  margin-bottom: 0;
+}

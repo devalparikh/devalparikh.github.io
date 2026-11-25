@@ -1,0 +1,39 @@
+.figure {
+  --ink: var(--color-base-content);
+  --bg: var(--color-base-100);
+  --paper: color-mix(in srgb, var(--ink) 2%, var(--bg));
+  --border: color-mix(in srgb, var(--ink) 17%, var(--bg));
+  --muted: color-mix(in srgb, var(--ink) 58%, var(--bg));
+  --blue: #407bed;
+  --green: #269c70;
+  --amber: #bf873b;
+  margin: 12px 0 0;
+}
+.svg { display: block; width: 100%; height: auto; fill: var(--ink); font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
+.svg text { dominant-baseline: middle; }
+.frame { fill: var(--paper); stroke: var(--border); }
+.rule { stroke: var(--border); }
+.dot { fill: var(--border); }
+.url { font-size: 11px; fill: var(--muted); }
+.heading { font: 600 16px var(--font-dm-sans), sans-serif; }
+.control { fill: var(--bg); stroke: var(--border); }
+.button { fill: color-mix(in srgb, var(--ink) 7%, var(--bg)); stroke: var(--border); }
+.placeholder { fill: var(--muted); }
+.link { fill: var(--muted); text-decoration: underline; font-size: 12px; }
+.box { fill: none; stroke: var(--blue); stroke-width: 1.25; stroke-dasharray: 3 3; }
+.badge { fill: var(--blue); }
+.badgeText { fill: #fff; font-size: 12px; font-weight: 600; }
+[data-state="changed"] .box { stroke: var(--amber); }
+[data-state="changed"] .badge { fill: var(--amber); }
+[data-state="chosen"] .box { stroke: var(--green); stroke-width: 2.5; stroke-dasharray: none; }
+[data-state="chosen"] .badge { fill: var(--green); }
+[data-state="ignored"] .box { stroke: var(--muted); stroke-dasharray: 2 4; }
+[data-state="ignored"] .badge { fill: var(--muted); }
+.caption { font-size: 11px; fill: var(--muted); }
+.mapping { font-size: 12px; }
+.mapping[data-state="chosen"] { fill: var(--green); font-weight: 600; }
+.index { fill: var(--blue); }
+.mapping[data-state="chosen"] .index { fill: var(--green); }
+.result { font-size: 12.5px; }
+.chosenText { fill: var(--green); font-weight: 600; }
+.ignoredText { fill: var(--muted); }

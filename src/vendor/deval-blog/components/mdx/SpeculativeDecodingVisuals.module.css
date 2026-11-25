@@ -1,0 +1,762 @@
+.figure {
+  --sd-field: color-mix(in oklab, var(--color-base-200) 68%, var(--color-base-100));
+  --sd-surface: color-mix(in oklab, var(--color-base-content) 3%, var(--color-base-100));
+  --sd-line: color-mix(in oklab, var(--color-base-content) 15%, transparent);
+  --sd-line-strong: color-mix(in oklab, var(--color-base-content) 30%, transparent);
+  --sd-ink: var(--color-base-content);
+  --sd-muted: var(--color-neutral-content);
+  --sd-accent: var(--color-primary);
+  --sd-ok: var(--color-success);
+  --sd-no: var(--color-error);
+  width: 100%;
+  margin: 2.75rem 0;
+  overflow: clip;
+  border: 1px solid var(--sd-line);
+  border-radius: 1.15rem;
+  background: var(--sd-field);
+  color: var(--sd-ink);
+  box-shadow: 0 1.8rem 5rem color-mix(in oklab, var(--color-base-content) 9%, transparent);
+}
+
+.figureHeader {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1.35rem 1.45rem 1.2rem;
+  border-bottom: 1px solid var(--sd-line);
+  background: var(--sd-surface);
+}
+
+.figureHeader h3 {
+  margin: 0;
+  color: var(--sd-ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-weight: 720;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.figureHeader p {
+  max-width: 38rem;
+  margin: 0;
+  color: var(--sd-muted);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.svgFrame {
+  padding: clamp(0.75rem, 2.8vw, 1.35rem);
+}
+
+.svgFrame svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.figure figcaption {
+  padding: 0.9rem 1.45rem 1rem;
+  border-top: 1px solid var(--sd-line);
+  background: var(--sd-surface);
+  color: var(--sd-muted);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.comparisonSvg,
+.roundSvg,
+.exactSvg {
+  color: var(--sd-ink);
+}
+
+.svgSectionLabel,
+.modelName,
+.roundModel text:first-of-type,
+.targetCheck text:first-of-type,
+.barLabel {
+  fill: var(--sd-ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 760;
+}
+
+.svgSectionNote,
+.modelResult,
+.roundModel text:last-of-type,
+.targetCheck text:last-of-type {
+  fill: var(--sd-muted);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 620;
+}
+
+.modelBox,
+.roundModel rect {
+  fill: var(--sd-surface);
+  stroke: var(--sd-line-strong);
+  stroke-width: 1.25;
+}
+
+.serialPass {
+  opacity: 0.36;
+}
+
+.comparisonSvg[data-active="true"] .serialPass {
+  animation: serial-pass 4.4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+  animation-delay: calc(var(--pass-order) * 0.72s);
+}
+
+.serialLink,
+.draftLink,
+.roundFlowLine,
+.resultFlow {
+  fill: none;
+  stroke: var(--sd-line-strong);
+  stroke-linecap: round;
+  stroke-width: 1.5;
+}
+
+.serialLink {
+  stroke-dasharray: 4 5;
+}
+
+.rowRule,
+.additionLine {
+  fill: none;
+  stroke: var(--sd-line);
+  stroke-width: 1;
+}
+
+.draftModel .modelBox {
+  fill: color-mix(in oklab, var(--sd-accent) 8%, var(--sd-surface));
+  stroke: color-mix(in oklab, var(--sd-accent) 55%, var(--sd-line));
+}
+
+.draftGuess rect {
+  fill: color-mix(in oklab, var(--sd-accent) 10%, var(--sd-surface));
+  stroke: color-mix(in oklab, var(--sd-accent) 50%, var(--sd-line));
+  stroke-width: 1.25;
+}
+
+.draftGuess text {
+  fill: var(--sd-ink);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 14px;
+  font-weight: 760;
+}
+
+.comparisonSvg[data-active="true"] .draftGuess {
+  animation: draft-guess 4.4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+  animation-delay: calc(0.2s + var(--pass-order) * 0.22s);
+}
+
+.verifyBand rect,
+.targetCheck rect {
+  fill: color-mix(in oklab, var(--sd-accent) 6%, var(--sd-surface));
+  stroke: color-mix(in oklab, var(--sd-accent) 46%, var(--sd-line));
+  stroke-width: 1.3;
+}
+
+.verifyBand text {
+  fill: var(--sd-ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 680;
+}
+
+.verifySweep,
+.checkSweep {
+  fill: none;
+  stroke: var(--sd-accent);
+  stroke-linecap: round;
+  stroke-width: 4;
+  opacity: 0;
+}
+
+.comparisonSvg[data-active="true"] .verifySweep {
+  animation: verify-sweep 4.4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+
+@keyframes serial-pass {
+  0%, 12%, 78%, 100% { opacity: 0.34; }
+  18%, 42% { opacity: 1; }
+}
+
+@keyframes draft-guess {
+  0%, 5% { opacity: 0.2; }
+  14%, 78% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+@keyframes verify-sweep {
+  0%, 36% { opacity: 0; transform: translateX(0); }
+  42% { opacity: 1; transform: translateX(0); }
+  66% { opacity: 1; transform: translateX(475px); }
+  72%, 100% { opacity: 0; transform: translateX(475px); }
+}
+
+.phaseControls {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding: 0.8rem 1.1rem;
+  border-bottom: 1px solid var(--sd-line);
+  background: var(--sd-surface);
+}
+
+.phaseControls button,
+.roundButtons button {
+  min-height: 2.75rem;
+  border: 1px solid var(--sd-line);
+  border-radius: 0.68rem;
+  background: transparent;
+  color: var(--sd-muted);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 720;
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+
+.phaseControls button[aria-current="step"] {
+  border-color: var(--sd-accent);
+  background: color-mix(in oklab, var(--sd-accent) 11%, var(--sd-field));
+  color: var(--sd-ink);
+}
+
+.phaseControls button[data-complete="true"] {
+  border-color: color-mix(in oklab, var(--sd-ok) 50%, var(--sd-line));
+  color: var(--sd-ink);
+}
+
+.phaseControls button:active,
+.roundButtons button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.phaseControls button:focus-visible,
+.roundButtons button:focus-visible,
+.term:focus-visible,
+.proof summary:focus-visible {
+  outline: 2px solid var(--sd-accent, var(--color-primary));
+  outline-offset: 3px;
+}
+
+.roundModel rect {
+  fill: color-mix(in oklab, var(--sd-accent) 8%, var(--sd-surface));
+  stroke: color-mix(in oklab, var(--sd-accent) 52%, var(--sd-line));
+}
+
+.svgToken rect {
+  fill: color-mix(in oklab, var(--sd-accent) 9%, var(--sd-surface));
+  stroke: color-mix(in oklab, var(--sd-accent) 50%, var(--sd-line));
+  stroke-width: 1.4;
+  transition: fill 220ms ease, stroke 220ms ease, opacity 220ms ease;
+}
+
+.svgToken text {
+  fill: var(--sd-ink);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 14px;
+  font-weight: 760;
+}
+
+.svgToken path {
+  fill: none;
+  stroke: transparent;
+  stroke-linecap: round;
+  stroke-width: 2;
+  transition: stroke 180ms ease;
+}
+
+.svgToken[data-state="checking"] rect {
+  fill: color-mix(in oklab, var(--sd-accent) 15%, var(--sd-surface));
+  stroke: var(--sd-accent);
+}
+
+.svgToken[data-state="checking"] path {
+  stroke: var(--sd-accent);
+  stroke-dasharray: 0.22 0.12;
+  animation: token-check 760ms linear infinite;
+}
+
+.svgToken[data-state="accepted"] rect,
+.svgToken[data-state="committed"] rect {
+  fill: color-mix(in oklab, var(--sd-ok) 13%, var(--sd-surface));
+  stroke: color-mix(in oklab, var(--sd-ok) 72%, var(--sd-line));
+}
+
+.svgToken[data-state="rejected"] rect {
+  fill: color-mix(in oklab, var(--sd-no) 12%, var(--sd-surface));
+  stroke: color-mix(in oklab, var(--sd-no) 82%, var(--sd-line));
+}
+
+.svgToken[data-state="rejected"] path {
+  stroke: var(--sd-no);
+}
+
+.svgToken[data-state="corrected"] rect {
+  fill: color-mix(in oklab, var(--sd-accent) 16%, var(--sd-surface));
+  stroke: var(--sd-accent);
+}
+
+.svgToken[data-state="corrected"] path {
+  stroke: var(--sd-accent);
+}
+
+.roundSvg[data-phase="guess"] .svgToken {
+  animation: round-draft-in 540ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  animation-delay: calc(var(--token-order) * 90ms);
+}
+
+.targetCheck {
+  opacity: 0.24;
+  transition: opacity 220ms ease;
+}
+
+.targetCheck[data-active="true"] {
+  opacity: 1;
+}
+
+.roundSvg[data-phase="check"] .checkSweep {
+  animation: round-check-sweep 1.2s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+
+.resultFlow {
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.resultFlow[data-visible="true"] {
+  opacity: 1;
+}
+
+.finalSentence {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 240ms ease, transform 240ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.finalSentence[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.finalSentence text:first-of-type {
+  fill: var(--sd-muted);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 680;
+}
+
+.finalSentence text:nth-of-type(2) {
+  fill: var(--sd-ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 26px;
+  font-weight: 740;
+  letter-spacing: -0.035em;
+}
+
+.finalSentence text:last-of-type {
+  fill: var(--sd-accent);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 11px;
+  font-weight: 680;
+}
+
+@keyframes token-check {
+  to { stroke-dashoffset: -0.34; }
+}
+
+@keyframes round-draft-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes round-check-sweep {
+  0% { opacity: 0; transform: translateX(0); }
+  14% { opacity: 1; }
+  84% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(436px); }
+}
+
+.roundReadout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  min-height: 4.5rem;
+  padding: 0.8rem 1.1rem;
+  border-top: 1px solid var(--sd-line);
+  background: var(--sd-surface);
+}
+
+.roundReadout p {
+  margin: 0;
+  color: var(--sd-ink);
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.roundButtons {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.roundButtons button {
+  min-width: 4.5rem;
+  padding: 0.45rem 0.7rem;
+}
+
+.roundButtons button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.probabilitySegment rect {
+  stroke: var(--sd-surface);
+  stroke-width: 2;
+}
+
+.probabilitySegment[data-tone="strong"] rect {
+  fill: color-mix(in oklab, var(--sd-accent) 78%, var(--sd-surface));
+}
+
+.probabilitySegment[data-tone="medium"] rect {
+  fill: color-mix(in oklab, var(--sd-accent) 54%, var(--sd-surface));
+}
+
+.probabilitySegment[data-tone="light"] rect {
+  fill: color-mix(in oklab, var(--sd-accent) 28%, var(--sd-surface));
+}
+
+.probabilitySegment text,
+.repairSegment text {
+  fill: var(--sd-ink);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 11px;
+  font-weight: 760;
+  pointer-events: none;
+}
+
+.barLabel {
+  font-size: 12px;
+}
+
+.probabilityGap {
+  fill: transparent;
+  stroke: var(--sd-line-strong);
+  stroke-dasharray: 5 5;
+  stroke-width: 1.5;
+}
+
+.repairSegment rect {
+  fill: color-mix(in oklab, var(--sd-accent) 54%, var(--sd-surface));
+  stroke: var(--sd-accent);
+  stroke-width: 1.5;
+}
+
+.repairSegment,
+.finalProbability {
+  opacity: 0.32;
+}
+
+.exactSvg[data-active="true"] .repairSegment {
+  animation: repair-in 3.8s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+
+.exactSvg[data-active="true"] .finalProbability {
+  animation: final-mix 3.8s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+
+@keyframes repair-in {
+  0%, 25% { opacity: 0.25; transform: translateY(-8px); }
+  38%, 82% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0.25; transform: translateY(-8px); }
+}
+
+@keyframes final-mix {
+  0%, 48% { opacity: 0.24; }
+  62%, 90% { opacity: 1; }
+  100% { opacity: 0.24; }
+}
+
+.term {
+  position: relative;
+  display: inline;
+  border-radius: 0.2rem;
+  cursor: help;
+  outline: none;
+}
+
+.termLabel {
+  border-bottom: 1px dotted color-mix(in oklab, var(--color-primary) 74%, transparent);
+  color: var(--color-base-content);
+  font-weight: 650;
+}
+
+.termTooltip {
+  position: absolute;
+  z-index: 40;
+  bottom: calc(100% + 0.65rem);
+  left: 50%;
+  width: max-content;
+  max-width: min(18rem, calc(100vw - 2.5rem));
+  padding: 0.65rem 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 18%, transparent);
+  border-radius: 0.65rem;
+  background: var(--color-base-200);
+  box-shadow: 0 1rem 2.5rem color-mix(in oklab, var(--color-base-content) 18%, transparent);
+  color: var(--color-base-content);
+  font-size: 0.74rem;
+  font-weight: 520;
+  line-height: 1.45;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0.35rem);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.term:hover .termTooltip,
+.term:focus-visible .termTooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.proof {
+  margin: 1.5rem 0 2.5rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 15%, transparent);
+  border-radius: 0.9rem;
+  background: color-mix(in oklab, var(--color-base-content) 3%, var(--color-base-100));
+}
+
+.proof summary {
+  padding: 1rem 1.15rem;
+  color: var(--color-base-content);
+  font-size: 0.82rem;
+  font-weight: 720;
+  cursor: pointer;
+}
+
+.proof > div {
+  padding: 0 1.15rem 1.15rem;
+  border-top: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+}
+
+.proof p {
+  margin: 1rem 0 0;
+  color: var(--color-neutral-content);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.proof code {
+  color: var(--color-base-content);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.76rem;
+}
+
+.proof pre {
+  margin: 0.9rem 0 0;
+  overflow-x: auto;
+  padding: 0.85rem 1rem;
+  border-radius: 0.65rem;
+  background: var(--color-base-200);
+  line-height: 1.6;
+}
+
+.glossary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 1.8rem 0 3rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 14%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--color-base-content) 3%, var(--color-base-100));
+}
+
+.glossary div {
+  min-height: 7rem;
+  padding: 1.15rem 1.2rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+}
+
+.glossary div:nth-child(odd) {
+  border-right: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+}
+
+.glossary div:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.glossary dt {
+  color: var(--color-base-content);
+  font-size: 0.82rem;
+  font-weight: 760;
+}
+
+.glossary dd {
+  margin: 0.65rem 0 0;
+  color: var(--color-neutral-content);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .phaseControls button:hover,
+  .roundButtons button:hover:not(:disabled) {
+    border-color: color-mix(in oklab, var(--sd-accent) 60%, var(--sd-line));
+    color: var(--sd-ink);
+  }
+}
+
+@media (max-width: 1059px) {
+  .termTooltip {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .figure {
+    margin-block: 2.2rem;
+    border-radius: 0.95rem;
+  }
+
+  .figureHeader {
+    padding: 1.1rem;
+  }
+
+  .figure figcaption {
+    padding-inline: 1.1rem;
+  }
+
+  .svgSectionLabel,
+  .modelName,
+  .roundModel text:first-of-type,
+  .targetCheck text:first-of-type,
+  .barLabel {
+    font-size: 20px;
+  }
+
+  .svgSectionNote,
+  .modelResult,
+  .roundModel text:last-of-type,
+  .targetCheck text:last-of-type,
+  .verifyBand text,
+  .finalSentence text:first-of-type,
+  .finalSentence text:last-of-type,
+  .probabilitySegment text,
+  .repairSegment text {
+    font-size: 17px;
+  }
+
+  .draftGuess text,
+  .svgToken text {
+    font-size: 21px;
+  }
+
+  .finalSentence text:nth-of-type(2) {
+    font-size: 34px;
+  }
+
+  .phaseControls {
+    gap: 0.28rem;
+    padding: 0.65rem;
+  }
+
+  .phaseControls button {
+    min-height: 2.6rem;
+    padding-inline: 0.2rem;
+    font-size: 0.65rem;
+  }
+
+  .roundReadout {
+    grid-template-columns: 1fr;
+    padding: 0.9rem 1rem;
+  }
+
+  .roundButtons {
+    width: 100%;
+  }
+
+  .roundButtons button {
+    flex: 1;
+  }
+
+  .glossary {
+    grid-template-columns: 1fr;
+  }
+
+  .glossary div,
+  .glossary div:nth-child(odd),
+  .glossary div:nth-last-child(-n + 2) {
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  }
+
+  .glossary div:last-child {
+    border-bottom: 0;
+  }
+}
+
+@media (forced-colors: active) {
+  .figure,
+  .proof,
+  .glossary {
+    border-color: CanvasText;
+  }
+
+  .modelBox,
+  .roundModel rect,
+  .draftGuess rect,
+  .verifyBand rect,
+  .targetCheck rect,
+  .svgToken rect,
+  .probabilitySegment rect,
+  .repairSegment rect {
+    fill: Canvas;
+    stroke: CanvasText;
+  }
+
+  .svgToken[data-state="accepted"] rect,
+  .svgToken[data-state="committed"] rect {
+    stroke: Highlight;
+    stroke-width: 3;
+  }
+
+  .svgToken[data-state="rejected"] rect {
+    stroke-dasharray: 5 3;
+  }
+
+  .phaseControls button[aria-current="step"] {
+    border-color: Highlight;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comparisonSvg *,
+  .roundSvg *,
+  .exactSvg *,
+  .phaseControls button,
+  .roundButtons button,
+  .termTooltip {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .serialPass,
+  .draftGuess,
+  .repairSegment,
+  .finalProbability {
+    opacity: 1;
+  }
+
+  .verifySweep,
+  .checkSweep {
+    display: none;
+  }
+}

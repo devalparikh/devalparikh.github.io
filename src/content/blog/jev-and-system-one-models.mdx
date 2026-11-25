@@ -1,0 +1,155 @@
+---
+title: "Jev and System One models"
+summary: "Why Jev can make decision-heavy software much faster and cheaper, how shared prefill and decision training work, and what people are building with it."
+date: "2026-09-19T12:00:00-04:00"
+hideCoverImage: true
+category: "tech"
+kind: "knowledge"
+author: "Deval, with AI-assisted editing"
+tags:
+  - AI models
+  - Inference
+  - Machine learning
+---
+
+Jev can make small decisions inside software much faster and cheaper than a general-purpose LLM call. Think of a browser agent choosing its next click, a game character reacting to an obstacle, or a database judging thousands of rows. Those decisions repeat often enough that the cost and delay of each call matter.
+
+You give Jev context and questions with defined answers. It returns choices, scores, and probabilities. TypeSafe calls this category **System One models** and released Jev in early access on September 15, 2026. The focus is fast judgment inside a program. [Introduction](https://docs.typesafe.ai/introduction), [release](https://typesafe.ai/blog/introducing-system-one-models-and-jev).
+
+## Why use it over an LLM?
+
+The gains can be large. Here is one side-by-side demonstration published by TypeSafe:
+
+| Reported result | Jev | GPT-5.6 Terra |
+| --- | --- | --- |
+| Response time | 0.114 seconds | 8.566 seconds |
+| Cost of the call | $0.000081 | $0.013880 |
+
+That is about **75 times less waiting and 171 times lower call cost** in that run. The current Jev API price is $0.042 per million input tokens, with no output-token charge. [Demo results](https://typesafe.ai/), [pricing](https://docs.typesafe.ai/models).
+
+This was a company-run demonstration with a short input and GPT-5.6 Terra returning probabilities at its default reasoning setting. It shows the scale of the possible gain for a suitable task. The multiplier changes with the model, input, and output you compare. [Demo conditions](https://typesafe.ai/blog/introducing-system-one-models-and-jev).
+
+Imagine routing 100 incoming tickets to the right team. If every call took the time and cost in that demo, this is how the two queues would progress.
+
+<JevBatchComparison />
+
+The useful consequence is that you can afford to ask more questions, more often. An agent can check several conditions at every step. An interface can make a judgment while the user is still interacting. A job that examines a large collection can spend much less on each item.
+
+## Where the saved work comes from
+
+An ordinary text model starts with <JevTerm name="prefill">prefill</JevTerm>: it processes the prompt, stores reusable attention information in a <JevTerm name="cache" />, and predicts the first output token. Then **decoding** feeds the chosen token through the model to predict the next. Each step reuses the cache and adds the newest token's information. **The prompt does not need a full prefill again for every output token.** [Cache mechanics](https://huggingface.co/docs/transformers/main/cache_explanation).
+
+The loop ends when the model selects an end-of-sequence or end-of-turn token, or when the serving code reaches a stop condition or output limit. A JSON answer goes through this loop too: keys, values, and punctuation arrive as tokens. [Generation controls](https://huggingface.co/docs/transformers/main/en/main_classes/text_generation).
+
+<ArticleDetails summary="Follow the generation loop more closely">
+
+At each layer, the newest token's query attends to stored keys and values. That token still passes through the whole model. Caching saves earlier calculations; it leaves a model step for each new token in ordinary decoding.
+
+<JevTokenLoop />
+
+The token can be chosen by taking the highest score or by sampling. Selecting an ending token means the model has learned to finish the sequence there. A length limit can stop an unfinished answer. [Generation settings](https://huggingface.co/docs/transformers/main/en/main_classes/text_generation).
+
+</ArticleDetails>
+
+Suppose a ticket says, “CSV export is empty. JSON export works.” The application needs the responsible team, impact level, and probability that the message reports an export failure. Those answers can be computed independently from the same ticket.
+
+For a decision model, the output can be a set of scores for those answers. The model evaluates the questions, reads out their probabilities, and finishes. There is no need to generate a JSON string through repeated decode steps. Jev uses parallel decision outputs, which is central to its speed and cost advantage. [TypeSafe's sampling comparison](https://typesafe.ai/blog/introducing-system-one-models-and-jev).
+
+<JevInferenceExplorer />
+
+Switch to **Direct label scores** and the two computation paths become similar. A language model already produces next-token scores. For a question whose answers are A, B, and C, code can read those three scores and convert them to probabilities. It can skip text generation entirely. [Direct scoring](https://docs.vllm.ai/en/latest/serving/online_serving/generative_scoring/).
+
+**The next distinction is training.** A conventional language model's scores come from learning text and its subsequent post-training. Jev's RLCD training specifically targets decisions and calibrated probabilities. Both can use a fast readout; the diagram alone cannot establish which makes better decisions. We will get to that training below.
+
+Size is a separate choice. An SLM is a small language model; it can generate text or score labels directly. A decision model can also be small. The useful comparison is the work each model performs and the quality of the decisions it learned.
+
+## What shared prefill means
+
+There are two places to reuse input work: across the tokens of one answer, as above, and across several questions about the same input.
+
+For the ticket example, prefill can process the ticket and question definitions once. Three short question endings then branch from that shared cache: which team, what impact, and whether an export failed. The model evaluates those endings together and produces one distribution per question. This is **shared prefill**. Each branch still needs computation, but none needs to reread the ticket from scratch or wait for another branch's answer.
+
+This is the mechanism in [Niels Rogge's explanation](https://x.com/NielsRogge/status/2100239244501430438), also available in [his LinkedIn post](https://www.linkedin.com/posts/niels-rogge-a3b7a3127_curious-how-the-viral-jev-model-by-typesafe-activity-7506034328301264896-w5Az). It follows Harsha Gundala's open implementation. That code uses an existing Qwen2.5 model, its Transformer layers, and its <JevTerm name="head">language-model head</JevTerm>.
+
+The head produces <JevTerm name="logits">logits</JevTerm>, or raw vocabulary scores. Code keeps the scores for the allowed answers and applies softmax to get probabilities that sum to one. It can return those probabilities or select the highest one, then assemble the JSON itself. [Implementation](https://huggingface.co/harshatheg/Qwen-2.5-1B-RLCD/blob/main/core/engine_mlx.py).
+
+This gives us a concrete architecture to learn from. It is an example of how parallel decisions can work; Jev's exact internal design remains unpublished. Despite “RLCD” in the repository name, Harsha's published code is an inference engine using Qwen2.5-1.5B-Instruct, rather than a published RLCD training recipe. [Model card](https://huggingface.co/harshatheg/Qwen-2.5-1B-RLCD). TypeSafe confirms that Jev ingests state once and evaluates questions in parallel. [Jev documentation](https://docs.typesafe.ai/models).
+
+<ArticleDetails summary="What happens in each branch?">
+
+The shared pass caches the context and schema. The next pass batches the field-specific suffixes through the same Transformer, with each branch attending to the cached prefix and its own suffix. The final suffix position's hidden state goes through the existing vocabulary head. There is no need to add a separate neural head for every field.
+
+For distinct single-token answer labels, this is one shared prefill followed by one batched suffix pass. Labels that span several tokens or share a starting token need extra handling. Mapping options to distinct label tokens keeps this teaching example simple. [Engine code](https://huggingface.co/harshatheg/Qwen-2.5-1B-RLCD/blob/main/core/engine_torch.py).
+
+Parallel fields work when their answers can be judged from the supplied context. If one decision needs the result of another, the application has to make that dependency explicit in a later step.
+
+Ordinary LLM servers can also cache shared prefixes. This saves input work while leaving any text-decoding loop in place. [Prefix caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/).
+
+</ArticleDetails>
+
+## How the training differs
+
+A language model first learns from text, commonly by predicting the next token. Post-training then shapes what it is useful for. In the published InstructGPT pipeline, supervised fine-tuning teaches it from example responses, then reinforcement learning uses human preferences between responses. Reasoning models can also train against verifiable outcomes, such as whether an answer is correct. Recipes vary. [InstructGPT](https://arxiv.org/abs/2203.02155), [DeepSeek-R1](https://arxiv.org/abs/2501.12948).
+
+TypeSafe describes Jev's path as a pretrained language model followed by <JevTerm name="rlcd" />: Reinforcement Learning for Calibrated Decisions. The target includes the probability distribution over decisions. The model should learn both which answers fit and how much probability to assign them. [Training outline](https://docs.typesafe.ai/introduction/machine-learning-primer).
+
+<JevTrainingComparison />
+
+There is a concrete open example of decision training in [Jared Palmer's Kev](https://github.com/jaredpalmer/kev). It starts with Qwen2.5-0.5B, adds trainable LoRA adapters and a small readout that scores the supplied options, and trains on labeled decisions. A training record supplies context, a question, options, and the target answer. Cross-entropy loss pushes probability toward that target.
+
+Kev's question branches also share the state while staying isolated from sibling questions. Harsha's example changes the inference path of an existing instruct model. Kev changes trainable weights and adds an option-scoring head. These are separate choices.
+
+<ArticleDetails summary="What does training on a decision look like?">
+
+For the ticket, a labeled example might identify engineering as the right team. The model produces a probability for every team. Cross-entropy loss is lower when it assigns more probability to the correct team, and much higher when it is confidently wrong. Training updates the model's trainable parameters to reduce that loss across examples.
+
+This differs from supervising every token in a written answer. The feedback goes directly to the distribution over the supplied choices. Kev demonstrates this supervised approach; TypeSafe describes Jev's post-training as reinforcement learning. Jev's full reward and update recipe has not been released. [Kev training](https://github.com/jaredpalmer/kev), [Jev training objective](https://docs.typesafe.ai/introduction/machine-learning-primer).
+
+</ArticleDetails>
+
+<ArticleDetails summary="How could reinforcement learning improve the probabilities?">
+
+The paper [Rewarding Doubt](https://arxiv.org/html/2503.02623v6) gives a concrete example. A model answers a question and estimates the probability that its answer is correct. A judge checks the answer. The reward depends on both correctness and confidence.
+
+For a claimed probability `p`, the underlying reward is `log(p)` when correct and `log(1 − p)` when wrong. At 90% confidence, that is about `−0.11` for a correct answer and `−2.30` for an incorrect one. Confident mistakes carry a much larger penalty. Across many examples, this gives the model a reason to learn when confidence is justified.
+
+The researchers train with PPO, holding the answer fixed while optimizing the confidence tokens. This is a published example of calibration-focused reinforcement learning on a generative LLM. It helps explain the kind of objective involved; Jev's RLCD recipe may differ. It also shows that calibration training and the choice to generate text are independent.
+
+</ArticleDetails>
+
+For Jev, TypeSafe says it creates its training data in-house. As of September 19, the reviewed public sources do not give the base model, parameter count, data mixture, or exact reward formula. Those details remain open. [Launch FAQ](https://typesafe.ai/blog/introducing-system-one-models-and-jev).
+
+There is also a training-versus-inference distinction. During supervised language-model training, the target text is already known, so predictions at many positions can be computed together while hiding future tokens from each position. During generation, the next input token has to be chosen first. The sequential loop above describes inference. [Transformer architecture](https://arxiv.org/abs/1706.03762).
+
+## Why the probabilities matter
+
+Fast decisions are more useful when software can tell which ones deserve review. If a model assigns 80% probability to many events, roughly 80% should occur. That is the calibration target. A model can choose the right answer frequently and still assign probabilities that are too high.
+
+<JevCalibrationExplorer />
+
+The diagram holds 20 invented outcomes fixed and changes the forecast. Sixteen outcomes are true, giving an observed rate of 80%. A 95% forecast sits 15 percentage points above that sample's rate. A real calibration evaluation needs many examples across probability ranges and tasks.
+
+This is where decision training can matter beyond a faster serving method. Reading an ordinary model's label scores gives you numbers, but does not establish that those numbers match real outcome rates. For an application, the useful result is more correct automatic decisions at an acceptable error rate, with fewer cases sent for review. [Calibration research](https://proceedings.mlr.press/v70/guo17a.html).
+
+## What people are building
+
+**A browser agent with faster action selection.** [Browser Use's Jev experiment](https://github.com/browser-use/jev-ultrafast) turns the current page into numbered controls. One request chooses the operation and candidate targets together; code executes the appropriate action. A separate small LLM provides text when typing is needed. This combines fast repeated decisions with generation where the task needs it. The repo includes a seven-second Google Flights search recording, with [timing boundaries](https://github.com/browser-use/jev-ultrafast/blob/main/docs/performance.md) that exclude initial navigation and later verification.
+
+**Mario controlled through a decision loop.** [Faadil Shaik's controller](https://github.com/fhshaik/typesafe-mario) converts emulator state into nearby obstacles, motion, and hazards. Jev chooses among seven controller actions while other questions assess jump usefulness and danger. Code calculates exact timing, including whether a jump must start now. The model receives structured telemetry. Faster decisions let the loop react more frequently as the world changes.
+
+**Semantic conditions inside SQL.** [pg-jev](https://github.com/realZachi/pg-jev) lets a query ask whether text meets a condition such as a customer threatening to cancel. Several rows share a request, with one judgment per row. SQL can then filter and group the results. Cheap repeated judgments make this a more practical query operation. Batching has a limit: the maintainer reports worse accuracy when increasing batches from 20 to 40 or 80 rows.
+
+**A picture assembled from hundreds of choices.** [This pixel-art experiment](https://github.com/Wizhill05/typesafe-image-diffusion) assigns one question to each pixel on a 16×16 canvas. Each question chooses among 16 colors. Later rounds reconsider pixels using their previous colors and nearby pixels. The result is an image assembled from parallel decisions. It is a creative use of the interface, with substantial input-token overhead; the project name does not mean Jev was trained as an image diffusion model.
+
+The broader possibility is to put a small judgment inside a loop that previously felt too slow or expensive. A command palette could repeatedly rank available actions as you type. A game character could reconsider whether to help, retreat, or follow whenever its surroundings change. Those are applications worth trying; their usefulness still depends on the quality of the decisions.
+
+## When I would choose each approach
+
+| Need | Starting point |
+| --- | --- |
+| Frequent judgments, defined answer choices, low latency, many questions over shared context | Try Jev and measure accuracy, latency, and cost on the actual workflow. |
+| Writing, coding, explanations, or a task that benefits from extended reasoning | Use a generative or reasoning model. |
+| Stable labels, enough training examples, local execution, or control of the serving stack | Compare a small classifier or an open model with direct label scoring. |
+| A workflow that mixes quick decisions and generated work | Use Jev for the repeated decisions and an LLM for the generated work. |
+
+Hold the task and acceptable error rate steady, then measure how much time and money each approach needs.

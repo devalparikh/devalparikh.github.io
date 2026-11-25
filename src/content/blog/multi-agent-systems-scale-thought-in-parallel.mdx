@@ -1,0 +1,111 @@
+---
+title: "Multi-agent systems scale thought in parallel"
+summary:
+  "Notes from Noam Brown's interview with Dwarkesh Patel: several agents can finish a task sooner by
+  splitting the work, at the cost of more total compute."
+date: "2026-09-18T12:00:00-04:00"
+hideCoverImage: true
+category: "tech"
+kind: "knowledge"
+author: "Deval, with AI-assisted editing"
+tags:
+  - Multi-agent systems
+  - AI agents
+  - Inference
+  - Coordination
+---
+
+These are my notes and takeaways from Dwarkesh Patel's interview with Noam Brown, a researcher at
+OpenAI:
+[OpenAI researcher on agent swarms & recursive self-improvement](https://youtu.be/6AgOfiZOWiY).
+Timestamps link to the part of the video each point comes from.
+
+The main idea is that several agents working at once can finish a task sooner than one agent working
+alone. Each agent takes part of the problem, and their results are combined at the end.
+
+You pay for that speed. The agents use more tokens in total, some work gets repeated, and
+coordinating them takes effort. What you get back is less time waiting for the answer.
+
+<ParallelWorkExplorer />
+
+## How much faster it gets
+
+On some benchmarks, four agents finished about twice as fast as one agent and used about twice the
+compute. Going to 16 agents still helped, but each added agent helped a little less
+([3:41](https://youtu.be/6AgOfiZOWiY?t=221)).
+
+The results OpenAI has shown only go up to about 16 agents. Brown mentioned a run with 10,000
+agents, but it didn't show how much better 10,000 agents are than 1,000
+([4:32](https://youtu.be/6AgOfiZOWiY?t=272)).
+
+## Some tasks split better than others
+
+It depends on whether the task breaks into pieces that agents can work on separately
+([4:12](https://youtu.be/6AgOfiZOWiY?t=252)):
+
+- Web research splits cleanly. Each agent reads different sources.
+- Math benefits from agents trying different approaches and checking each other's work.
+- A novel is hard to split. Voice, plot, and cause and effect run through the whole book, so
+  chapters written separately don't fit together.
+
+Multiple agents help most when there are many useful pieces to work on and combining the results is
+quick.
+
+## Let agents message each other
+
+Most multi-agent setups use a tree. A coordinator hands out tasks, each agent works alone, and each
+sends its answer back. That works, but an agent can't ask another agent for missing context, notice
+that two agents are doing the same work, or question a result that conflicts with its own. Every one
+of those cases needs more coordinator code.
+
+The interview describes a simpler setup with fewer fixed rules. Any agent can send a message to any
+other agent, and the message lands in the recipient's context. The agents learn how to coordinate
+instead of following a plan written in advance ([9:17](https://youtu.be/6AgOfiZOWiY?t=557)).
+
+<CoordinationExplorer />
+
+This didn't work well at first. Early systems got stuck in a pattern where every agent solved the
+whole task on its own ([15:03](https://youtu.be/6AgOfiZOWiY?t=903)). Messages could also interrupt
+an agent in the middle of a long chain of reasoning. Stronger base models and training agents to
+work as a team made direct messaging more useful ([19:42](https://youtu.be/6AgOfiZOWiY?t=1182),
+[43:10](https://youtu.be/6AgOfiZOWiY?t=2590)).
+
+## The base model does most of the work
+
+Brown warned against giving the multi-agent setup most of the credit for the reported Millennium
+Prize result. He estimated it deserved less than 10% of the credit. Most of it goes to a strong
+general-purpose model that can reason through long problems
+([5:44](https://youtu.be/6AgOfiZOWiY?t=344)).
+
+Adding agents spreads out work the model can already do. It doesn't give the model abilities it
+lacks.
+
+## Agents can agree with each other and still be wrong
+
+Agents can work well together and still pursue the wrong goal. The same messages that spread a
+correction can spread a shortcut, an exploit, or a bad assumption. More agents get better at
+whatever goal they share, but that does nothing to fix the goal. Brown treats agents cooperating
+with each other and agents staying aligned with people as separate problems
+([42:52](https://youtu.be/6AgOfiZOWiY?t=2572)).
+
+So test the team as a whole, as well as each agent on its own. Agents that can message each other,
+split up work, and find paths the evaluator didn't anticipate can fail in new ways
+([42:52](https://youtu.be/6AgOfiZOWiY?t=2572)). Agents that run for days are also hard to evaluate
+today, which adds to the risk ([1:03:18](https://youtu.be/6AgOfiZOWiY?t=3798)).
+
+## Takeaways
+
+- Use multiple agents when a task splits into parts that can be worked on separately.
+- Expect each added agent to help a little less than the last, and total token cost to go up.
+- Give agents a simple way to message each other before building a fixed coordinator tree.
+- Track repeated work and the time spent combining results, along with final accuracy.
+- Most of the capability comes from the base model.
+- Test how the agents behave as a group. Cooperation can amplify a wrong goal.
+
+## Source
+
+- [OpenAI researcher on agent swarms & recursive self-improvement](https://youtu.be/6AgOfiZOWiY),
+  Dwarkesh Patel's interview with Noam Brown.
+
+These notes repeat what Brown said in the interview. I haven't independently checked the unpublished
+systems and results he describes.

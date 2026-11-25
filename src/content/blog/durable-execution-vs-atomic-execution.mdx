@@ -1,0 +1,100 @@
+---
+title: "Durable execution and atomic execution"
+summary: "A queue retries the job. A durable workflow remembers its progress. A transaction commits related changes together."
+date: "2026-09-02"
+hideCoverImage: true
+category: "tech"
+kind: "article"
+tags:
+  - distributed systems
+  - durable execution
+  - transactions
+  - temporal
+  - system design
+---
+
+**Durable execution** lets a workflow continue after the process running it crashes. **Atomic execution** makes a group of changes all-or-nothing.
+
+A checkout may need both. It must recover after a crash, and each inventory update must keep the stock count and reservation together.
+
+## A queue retries the job
+
+Suppose a worker creates a thumbnail. Put the job in a durable message queue and acknowledge it only after saving the image. If the worker crashes before acknowledging, the queue can deliver the job to another worker.
+
+That worker starts the job again. For a fixed source image and output path, regenerating the same thumbnail is fine. The job survives even though the worker's memory does not.
+
+<QueueRecoveryDiagram />
+
+This requires persistent messages, the broker's durability settings, and acknowledgement after completion. Delivery can happen more than once. [RabbitMQ's reliability guide](https://www.rabbitmq.com/docs/reliability).
+
+Now make the job longer: get a manager's approval, charge $120, then confirm the purchase. A worker receives approval and crashes. Redelivering the original message does not tell the next worker that approval already happened. Without saved progress, it may ask again.
+
+## Durable execution remembers progress
+
+A durable execution engine, such as Temporal, saves workflow events and step results outside the worker. After a crash, another worker reconstructs the workflow from that history and continues the unfinished work.
+
+If the approval reached that history, recovery reuses it and proceeds to payment. The manager does not need to approve again.
+
+<DurableConceptDiagram />
+
+The engine also tracks waits, timers, callbacks, and retries. A workflow can wait days for approval without keeping a worker running. You can build this with a database and queue yourself; an engine supplies the recovery machinery, at the cost of another service and its execution rules. [Temporal workflows](https://docs.temporal.io/workflow-execution).
+
+<ArticleDetails summary="What does resuming actually mean?">
+
+Temporal uses **replay**. It runs workflow code against recorded events, supplying saved results for completed operations. This rebuilds the workflow's state.
+
+External work runs in **activities**, such as calling the payment provider. Replay reuses a recorded activity result instead of calling that service again. An activity with no recorded result may run again.
+
+The engine does not save every instruction or local variable. Workflow code must follow the engine's replay rules, and code changes must remain compatible with existing histories. [Event history](https://docs.temporal.io/encyclopedia/event-history), [workflow constraints](https://docs.temporal.io/workflow-definition#deterministic-constraints).
+
+</ArticleDetails>
+
+## Retries and compensation
+
+Suppose the payment provider charges $120, then the worker crashes before recording the result. The workflow still sees an unfinished payment and retries it.
+
+Make that operation **idempotent**: repeating it has the same effect as doing it once. Send the same payment key on every attempt, and use a provider that enforces it. Two requests then produce one charge. [Activity retries](https://docs.temporal.io/activity-definition#idempotency).
+
+An **idempotency key** identifies one operation, such as `purchase_123/payment`. A new purchase gets a new key. Respect the provider's retention limits; for a late retry, you may need to look up the original payment. [Stripe's key contract](https://docs.stripe.com/api/idempotent_requests).
+
+If payment succeeds but fulfillment permanently fails, the workflow can issue a refund. A **saga** coordinates steps and compensating actions like this. The customer can see a charge while the order remains unfulfilled.
+
+With **eventual consistency**, systems may disagree temporarily but converge as recovery completes. Retries and compensation can provide that recovery. A durable engine can remember a pending refund through another crash. It cannot make a permanent failure succeed; you still define retries, fallbacks, and when a person must intervene. [Saga pattern](https://microservices.io/patterns/data/saga.html).
+
+## Atomic execution commits all or nothing
+
+Transfer $40 between two accounts in one database. Alice starts with $100; Bob starts with $0.
+
+With separate commits, Alice can lose $40 before Bob receives it. Even if the second write eventually succeeds, there is a window when the stored balances total only $60. A crash can leave them that way.
+
+One transaction commits both balance changes together, or neither. That guarantee is **atomicity**. With isolation that hides uncommitted writes, a reader taking one consistent snapshot sees either `$100 / $0` or `$60 / $40`.
+
+<AtomicConceptDiagram />
+
+The writes can run in sequence internally. Their commit is all-or-nothing. [PostgreSQL transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html).
+
+Atomicity alone does not imply **strong consistency**, which concerns the ordering and visibility of operations. For transactions, **strict serializability** means they behave as if they ran one at a time, respecting real-time order. Atomicity by itself does not prevent stale replica reads or unsafe concurrent decisions. [Consistency models](https://jepsen.io/consistency/models/strict-serializable).
+
+Across two separate systems, both must participate in a shared transaction protocol to make their updates atomic. [Two-phase commit](https://www.postgresql.org/docs/current/sql-prepare-transaction.html) coordinates that decision across participating databases. Calling two APIs in sequence does not do this. Many external APIs cannot join your transaction; retries and sagas then allow intermediate states.
+
+## The difference
+
+| Need | Example | Mechanism |
+| --- | --- | --- |
+| Retry lost work | Regenerate a thumbnail after a crash | Durable queue |
+| Keep completed progress | Reuse approval and continue to payment | Durable execution |
+| Keep changes together | Debit Alice and credit Bob, or do neither | Atomic transaction |
+
+A workflow can recover and still leave systems temporarily inconsistent. A transaction can prevent a partial commit and still need application code to retry after an abort.
+
+## Use them together
+
+For a checkout:
+
+1. An inventory transaction reduces stock and creates the matching reservation together.
+2. A durable workflow coordinates approval, reservation, payment, and confirmation. Each external operation handles retries safely.
+3. If checkout cannot finish, the workflow tracks the required refund or reservation release until resolved.
+
+If confirming the order must also trigger fulfillment, use a **transactional outbox**. Save the confirmation and an event row in one local transaction. A relay delivers the event later and retries after crashes; the receiver handles duplicates. [Outbox pattern](https://microservices.io/patterns/data/transactional-outbox.html).
+
+The order and event row commit atomically. Fulfillment catches up later. Local transactions protect related data; durable execution carries the work across services and crashes.

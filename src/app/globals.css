@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* `.prose` base styles for the imported writing articles (see app/writing/[slug]/article.css). */
+@plugin "@tailwindcss/typography";
 
 /* ==========================================================================
    Design tokens
@@ -17,6 +19,9 @@
   --color-primary: #9b6b3e;
   --color-neutral: #d4cfc7;
   --color-neutral-content: #6b6560;
+  /* Status colours the imported deval-blog figures read. */
+  --color-success: #5a8a6e;
+  --color-error: #b05555;
 
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
@@ -33,9 +38,108 @@
   --rule-soft: color-mix(in oklab, var(--color-base-content) 8%, transparent);
   --wash: color-mix(in oklab, var(--color-base-content) 7%, transparent);
   --noise-opacity: 0.035;
+
+  /* Writing covers - printed artwork, so the same in both themes. `paper`,
+     `ink` and `clay` are the parchment tokens; the rest are flat riso-style
+     grounds, warmed to sit beside them. Assigned by hand in content/writing.ts. */
+  --cover-paper: #faf8f5;
+  --cover-ink: #1a1815;
+  --cover-clay: #9b6b3e;
+  --cover-ember: #c4461f;
+  --cover-violet: #6a48d4;
+  --cover-teal: #2b6a6c;
+  --cover-rose: #f2bccb;
+  --cover-lime: #dbe97a;
+  --cover-fern: #37704a;
+  --cover-cobalt: #3451cc;
+  --cover-saffron: #f0c548;
+  --cover-oxblood: #9c2f29;
+
+  /* The writing room: a built-in bookcase against a limewashed wall. Day is
+     white oak in window light; inkember turns it into walnut at lamp-light.
+     Everything in the room (wood, wall, objects) is drawn from these. */
+  --room-wall: #e4d9c8;
+  --room-wall-shade: #cbbca6;
+  --room-window: rgb(255 240 212 / 0.62);
+  --room-vignette: rgb(66 46 28 / 0.28);
+  --room-lamp: rgb(255 214 158 / 0.34);
+  --room-floor: #b88f63;
+  --room-floor-dark: #8f6a45;
+  --room-baseboard: #efe7da;
+  --room-rug: #d9cdb9;
+  --room-rug-line: #c5b59c;
+  --room-focus: #fff6e6;
+  --case-wood: #b48a5c;
+  --case-wood-light: #d3ae7f;
+  --case-wood-dark: #7d5a38;
+  --case-panel: #43342a;
+  --case-panel-deep: #2b211b;
+  --case-led: rgb(255 214 160 / 0.34);
+  --case-led-strip: rgb(255 240 214 / 0.95);
+  --plank-shadow: rgb(20 12 6 / 0.55);
+  /* Where things touch: shelf and foot, panel and shelf. */
+  --contact-shadow: rgb(22 12 4 / 0.72);
+  --decor-ceramic: #ece5d9;
+  --decor-ceramic-shade: #c7bba8;
+  --decor-clay: #b8714f;
+  --decor-stone: #9a9184;
+  --decor-stem: #6d5b44;
+  --decor-leaf: #7f9277;
+  --decor-leaf-dark: #56704f;
+  --decor-leaf-light: #a2b394;
+  --decor-brass: #bf9653;
+  --decor-linen: #d6cab4;
+  --decor-linen-2: #9c8a6e;
+  --decor-linen-3: #6f6252;
+  --decor-paper: #f4eee2;
+  --decor-lamp-shade: #f1e5cf;
+  --decor-bark: #5c4634;
+  --decor-moss: #6f7f4e;
+  --decor-glaze: #4a5a62;
+  --shelf-shadow: rgb(0 0 0 / 0.5);
 }
 
 [data-theme="inkember"] {
+  --color-success: #7baa8e;
+  --color-error: #c97272;
+
+  --room-wall: #342d27;
+  --room-wall-shade: #211c18;
+  --room-window: rgb(140 160 200 / 0.07);
+  --room-vignette: rgb(0 0 0 / 0.38);
+  --room-lamp: rgb(255 184 110 / 0.3);
+  --room-floor: #4a3626;
+  --room-floor-dark: #2c2016;
+  --room-baseboard: #3a322b;
+  --room-rug: #4a4137;
+  --room-rug-line: #3a322a;
+  --case-wood: #5e412c;
+  --case-wood-light: #85603f;
+  --case-wood-dark: #3b281a;
+  --case-panel: #1c1511;
+  --case-panel-deep: #110c09;
+  --case-led: rgb(255 186 112 / 0.42);
+  --case-led-strip: rgb(255 222 178 / 0.95);
+  --plank-shadow: rgb(0 0 0 / 0.7);
+  --contact-shadow: rgb(0 0 0 / 0.82);
+  --decor-ceramic: #d6cdbf;
+  --decor-ceramic-shade: #9c9182;
+  --decor-clay: #9a5a3d;
+  --decor-stone: #7d756a;
+  --decor-stem: #5c4b37;
+  --decor-leaf: #6a7c62;
+  --decor-leaf-dark: #44583f;
+  --decor-leaf-light: #8a9c7c;
+  --decor-brass: #b38a47;
+  --decor-linen: #b9ad97;
+  --decor-linen-2: #7f6f58;
+  --decor-linen-3: #574b3e;
+  --decor-paper: #ddd5c6;
+  --decor-lamp-shade: #f3dcb2;
+  --decor-bark: #4a3828;
+  --decor-moss: #55623c;
+  --decor-glaze: #36444b;
+  --shelf-shadow: rgb(0 0 0 / 0.65);
   --color-base-100: #08080a;
   --color-base-200: #111114;
   --color-base-300: #161619;

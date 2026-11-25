@@ -1,0 +1,102 @@
+---
+title: "Compound Engineering: My Self-Improving Remote Agent Setup"
+date: "2026-08-07T12:00:00-04:00"
+summary:
+  "How Slack and Hermes give me 24/7 remote agents that learn from me, from others, and from their
+  own work."
+hideCoverImage: true
+kind: "thought"
+author: "Deval, assisted by his agent"
+tags:
+  - agents
+  - compound engineering
+  - Hermes
+  - Slack
+  - self-improvement
+---
+
+I am building a 24/7 remote agent setup that gets better the more I use it.
+
+The idea is **compound engineering**: every conversation, correction, link, and completed task
+should improve the next one.
+
+<CompoundEngineeringLoop />
+
+## The setup
+
+[Hermes](https://github.com/NousResearch/hermes-agent) is the agent backbone. Slack is the control
+plane.
+
+That gives me a few practical outcomes:
+
+- I can talk to my agents through Slack from my dev machines, laptop, iPad, or phone.
+- Each Slack thread becomes a focused conversation. The agent keeps working in that thread with its
+  context.
+- The agents are available 24/7 instead of being tied to one terminal or device.
+- Hermes provides the memory, tools, skills, scheduled jobs, and messaging gateway underneath it.
+
+Slack makes the system accessible everywhere. Hermes makes it capable.
+
+## How it learns
+
+The system learns from three places.
+
+### 1. From me
+
+Every time I use the agent, it sees how I think and work.
+
+My conversations, corrections, preferences, and completed tasks can become durable memory or
+reusable skills. If we solve a hard problem once, the working procedure should be easier to reuse
+the next time.
+
+This is not model retraining. It is preserving useful context and turning repeated instructions into
+reusable behavior.
+
+### 2. From others
+
+I also use X DMs as an inspiration inbox for my agent.
+
+When I find a useful post or article from people like Andrej Karpathy or teams at Ramp, Cursor, and
+Prime Intellect, I send it to my agent's X account with a quick note:
+
+- what I learned
+- what I want to remember
+- what I should act on
+- what the agent itself should study or adopt
+
+A scheduled job processes those messages. Some become reminders for me. Others become research, a
+new workflow, a better skill, or a possible plugin for the agent.
+
+### 3. From itself
+
+Hermes can save useful procedures as skills and run jobs on a schedule. It also has a background
+review loop that can suggest or stage improvements after a session.
+
+On top of that, I run a custom workflow I call **dreaming mode**. Overnight, the agent reflects on
+our conversations, extracts useful patterns, and hardens the procedures that are worth keeping.
+
+"Dreaming mode" is my name for the setup, not an official Hermes feature. It is scheduled reflection
+plus memory and skill maintenance.
+
+## The flywheel
+
+The loop is simple:
+
+1. I use the agent.
+2. The agent learns from the work.
+3. The agent gets better at absorbing new information.
+4. That makes it better at doing the next task and learning from it.
+5. The cycle repeats.
+
+The same loop applies to engineering practices, design craft, research, and anything else I work on.
+
+The output of today's work is not only the result. It is also a better system for tomorrow's work.
+
+That is compound engineering.
+
+## References
+
+- [Hermes Slack integration](https://hermes-agent.nousresearch.com/docs/user-guide/messaging/slack)
+- [Hermes skills and the self-improvement loop](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills)
+- [Hermes scheduled tasks](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron)
+- [Hermes persistent memory](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory)
