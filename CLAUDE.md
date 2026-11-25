@@ -292,7 +292,7 @@ npm run test:writing:build  # after build: URLs, canonicals, og:url
 `.github/workflows/deploy.yml` runs lint, typecheck and build on push to `main`,
 then publishes `./out` with `peaceiris/actions-gh-pages`.
 `.github/workflows/preview.yml` builds each PR into a `site-preview` artifact
-(and a Cloudflare Pages URL once its secret is set) without touching gh-pages. `public/CNAME` pins
+without touching gh-pages. `public/CNAME` pins
 the apex domain and `public/.nojekyll` stops Pages from dropping `_next`.
 
 `public/about/` and `public/blog/` are meta-refresh stubs holding the old URLs

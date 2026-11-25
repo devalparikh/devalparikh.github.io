@@ -20,7 +20,7 @@
  *    themselves.
  */
 import { createHash } from "node:crypto";
-import { existsSync, statSync } from "node:fs";
+import { existsSync, realpathSync, statSync } from "node:fs";
 import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import yaml from "js-yaml";
@@ -41,6 +41,16 @@ const SHELL_FILES = ["src/components/BlogArticleLayout.tsx", "src/components/blo
 
 const MEDIA = /\.(?:png|jpe?g|gif|webp|avif|svg|mp4|webm|mov|json)$/i;
 const SOURCE_EXTENSIONS = ["", ".ts", ".tsx", ".js", ".mjs", ".css", "/index.ts", "/index.tsx"];
+
+function sourcePath(root, relative) {
+  const absolute = path.resolve(root, relative);
+  const canonicalRoot = realpathSync(root);
+  if (!absolute.startsWith(path.resolve(root) + path.sep) ||
+      (existsSync(absolute) && realpathSync(absolute) !== path.join(canonicalRoot, relative))) {
+    throw new Error(`Unsafe snapshot path: ${relative}`);
+  }
+  return absolute;
+}
 
 /* ------------------------------------------------------------------ MDX -- */
 
@@ -101,6 +111,9 @@ export function setFrontmatterValue(source, key, value) {
 /** Maps an upstream public asset path to where this site serves it. */
 export function assetTarget(assetPath) {
   const match = /^\/(?:blog|images)\/(.+)$/.exec(assetPath);
+  if (match && !match[1].split("/").every(part => /^[A-Za-z0-9_-][A-Za-z0-9_.-]*$/.test(part))) {
+    throw new Error(`Unsafe asset path: ${assetPath}`);
+  }
   return match ? `/img/writing/${match[1]}` : null;
 }
 
@@ -153,11 +166,12 @@ export function resolveImport(blogRoot, fromFile, specifier) {
   else if (specifier.startsWith(".")) base = path.join(path.dirname(fromFile), specifier);
   else return null;
   base = path.normalize(base);
+  if (!base.startsWith("src" + path.sep)) throw new Error(`Unsafe module path: ${specifier}`);
   const override = Object.keys(OVERRIDES).find((key) => path.normalize(key) === base.replace(/\.(tsx?|mjs|js)$/, ""));
   if (override) return { override };
   for (const extension of SOURCE_EXTENSIONS) {
     const candidate = base + extension;
-    const absolute = path.join(blogRoot, candidate);
+    const absolute = sourcePath(blogRoot, candidate);
     if (existsSync(absolute) && statSync(absolute).isFile()) return { file: candidate };
   }
   throw new Error(`Cannot resolve "${specifier}" imported by ${fromFile}`);
@@ -185,7 +199,7 @@ export async function importClosure(blogRoot, seeds) {
     if (files.has(file)) continue;
     files.add(file);
     if (file.endsWith(".css")) continue;
-    const source = await readFile(path.join(blogRoot, file), "utf8");
+    const source = await readFile(sourcePath(blogRoot, file), "utf8");
     for (const specifier of listImports(source)) {
       const resolved = resolveImport(blogRoot, file, specifier);
       if (!resolved) packages.add(specifier.split("/").slice(0, specifier.startsWith("@") ? 2 : 1).join("/"));
@@ -216,7 +230,7 @@ const sha256 = (text) => createHash("sha256").update(text).digest("hex");
  */
 export async function importSnapshot({ blogRoot, siteRoot, posts, commit, committedAt, reencodeImage }) {
   const slugs = new Set(posts.map((post) => post.slug));
-  const index = parseComponentIndex(await readFile(path.join(blogRoot, "src/components/mdx/index.ts"), "utf8"));
+  const index = parseComponentIndex(await readFile(sourcePath(blogRoot, "src/components/mdx/index.ts"), "utf8"));
   const contentDir = path.join(siteRoot, "src/content/blog");
   const vendorDir = path.join(siteRoot, "src/vendor/deval-blog");
   const assetDir = path.join(siteRoot, "public/img/writing");
@@ -228,8 +242,11 @@ export async function importSnapshot({ blogRoot, siteRoot, posts, commit, commit
   const coverJobs = [];
 
   for (const post of posts) {
+    if (![post.category, post.slug].every(value => typeof value === "string" && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))) {
+      throw new Error("Invalid post category or slug");
+    }
     const relative = `content/posts/${post.category}/${post.slug}.mdx`;
-    const absolute = path.join(blogRoot, relative);
+    const absolute = sourcePath(blogRoot, relative);
     if (!existsSync(absolute)) throw new Error(`deval-blog has no ${relative}. The filename must match the slug "${post.slug}".`);
     let source = dropFrontmatterKey(await readFile(absolute, "utf8"), "canonicalUrl");
 
@@ -239,7 +256,7 @@ export async function importSnapshot({ blogRoot, siteRoot, posts, commit, commit
     const cover = frontmatterValue(source, "image");
     if (cover && reencodeImage && /\.(png|jpe?g)$/i.test(cover)) {
       source = setFrontmatterValue(source, "image", `${assetTarget(cover).replace(/\.\w+$/, ".webp")}`);
-      coverJobs.push([path.join(blogRoot, "public", cover), path.join(siteRoot, "public", assetTarget(cover).replace(/\.\w+$/, ".webp"))]);
+      coverJobs.push([sourcePath(blogRoot, "public" + cover), path.join(siteRoot, "public", assetTarget(cover).replace(/\.\w+$/, ".webp"))]);
     }
 
     const rewritten = rewriteAssets(source);
@@ -287,7 +304,7 @@ export async function importSnapshot({ blogRoot, siteRoot, posts, commit, commit
   for (const file of closure.files) {
     const target = path.join(vendorDir, file.replace(/^src\//, ""));
     await mkdir(path.dirname(target), { recursive: true });
-    let source = await readFile(path.join(blogRoot, file), "utf8");
+    let source = await readFile(sourcePath(blogRoot, file), "utf8");
     if (!file.endsWith(".css")) source = rewriteImports(blogRoot, file, source);
     const rewritten = rewriteAssets(source);
     rewritten.assets.forEach((asset) => assets.add(asset));
@@ -311,7 +328,7 @@ export async function importSnapshot({ blogRoot, siteRoot, posts, commit, commit
   await writeFile(path.join(vendorDir, "components/mdx/index.ts"), indexSource);
 
   for (const asset of [...assets].sort()) {
-    const from = path.join(blogRoot, "public", asset);
+    const from = sourcePath(blogRoot, "public" + asset);
     if (!existsSync(from)) throw new Error(`Missing asset in deval-blog: public${asset}`);
     const to = path.join(siteRoot, "public", assetTarget(asset));
     await mkdir(path.dirname(to), { recursive: true });

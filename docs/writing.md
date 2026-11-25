@@ -121,14 +121,7 @@ checks as the deploy, verifies the exported writing pages, strips `CNAME`,
 adds `noindex`, and uploads the site as the `site-preview` artifact. It has
 `contents: read` only and never touches `gh-pages` or the Pages deploy.
 
-For a live URL per PR (`https://pr-<n>.devalparikh-preview.pages.dev`), add:
-
-1. A Cloudflare account (free) and an API token with **Cloudflare Pages: Edit**.
-2. Repo secret `CLOUDFLARE_API_TOKEN` and repo variable `CLOUDFLARE_ACCOUNT_ID`
-   (optionally `CLOUDFLARE_PAGES_PROJECT`, default `devalparikh-preview`).
-
-The workflow creates the Pages project on first run. Without them the
-deploy step is skipped and the artifact is the preview.
+Preview builds use the checked-in notes snapshot. Download the artifact and serve it locally.
 
 ## Verify
 

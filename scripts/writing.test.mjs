@@ -5,6 +5,7 @@ import {
   dropFrontmatterKey,
   findUsedComponents,
   parseComponentIndex,
+  resolveImport,
   rewriteAssets,
   rewriteHref,
   rewriteLinks,
@@ -28,6 +29,11 @@ const AGREED_SLUGS = [
 ];
 
 /* -------------------------------------------------------------- importer -- */
+
+test("rejects paths outside the imported asset and module trees", () => {
+  assert.throws(() => rewriteAssets('![image](/blog/../../private.png)'), /Unsafe asset/);
+  assert.throws(() => resolveImport(".", "src/module.ts", "../private"), /Unsafe module/);
+});
 
 test("finds the MDX components a post renders, ignoring code", () => {
   const mdx = [
