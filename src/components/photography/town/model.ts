@@ -36,6 +36,7 @@ export function model() {
     pool: new T.PlaneGeometry(1, 1).rotateX(-Math.PI / 2),
     box: new T.BoxGeometry(1, 1, 1),
     leaf: new T.IcosahedronGeometry(0.53, 1),
+    bead: new T.SphereGeometry(0.5, 8, 6),
     round: new T.SphereGeometry(0.5, 14, 10),
     drum: new T.CylinderGeometry(0.5, 0.5, 1, 16),
     cone: new T.ConeGeometry(0.5, 1, 12),
@@ -44,6 +45,7 @@ export function model() {
   // At map scale a head or lantern is only a few pixels wide. Share simpler
   // profiles for those batches, keeping their original silhouettes up close.
   const mapProfiles = new Map<T.BufferGeometry, T.BufferGeometry>([
+    [shapes.bead, new T.SphereGeometry(0.5, 6, 4)],
     [shapes.round, new T.SphereGeometry(0.5, 9, 6)],
     [shapes.drum, new T.CylinderGeometry(0.5, 0.5, 1, 10)],
   ]);
@@ -165,6 +167,7 @@ export function model() {
   const bulb = new T.MeshStandardMaterial({ color: "#e0d4b3", emissive: "#ffd490", emissiveIntensity: 0 });
   const finishes = new Map<string, T.Material>([
     ["teslaTrim", carTrim], ["carreraTrim", carTrim], ["ferrariTrim", carTrim], ["jeepTrim", carTrim],
+    ["teslaWheel", carTrim], ["carreraWheel", carTrim], ["ferrariWheel", carTrim], ["jeepWheel", carTrim],
     ["pool", pool], ["round-bulb", bulb], ["box-bulb", bulb],
     ["box-floodlit", illustratedMaterial(true, undefined, false, false, true)],
     ["drum-floodlit", illustratedMaterial(false, undefined, false, false, true)],
@@ -216,6 +219,9 @@ export function model() {
     ry = 0,
     rz = 0,
   ) {
+    // Finger joints, fruit and facial features occupy only a few pixels even in
+    // the close-up. Reserve the smooth sphere profile for larger silhouettes.
+    if (shape === "round" && typeof color === "string" && color !== "bulb" && Math.max(w, h, d) <= 0.22) shape = "bead";
     const geometry = shape in shapes ? shapes[shape as keyof typeof shapes] : shapes.box;
     if (!(shape in shapes) && !finishes.has(shape)) {
       const material = illustratedMaterial(true, shape as Surface);

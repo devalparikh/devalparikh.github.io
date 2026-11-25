@@ -72,3 +72,37 @@ export function shopCat(m: Model, x: number, y: number, z: number) {
     tail.rotation.y = 0.31 * Math.sin(t * 1.43);
   });
 }
+
+// A bird forages between two spots. Both hops finish on the paving, with the
+// wings folding back against the body before it puts its beak down again.
+export function foragingBird(m: Model, x: number, y: number, z: number, phase: number, plumage: string, period: number) {
+  const bird = m.group(x, y, z);
+  bird.userData.moving = true;
+  const breast = m.group(0, 0.093, 0, bird);
+  m.form("round", 0, 0.045, 0, 0.14, 0.145, 0.24, plumage, breast);
+  m.form("round", 0, 0.126, 0.077, 0.105, 0.12, 0.105, plumage, breast);
+  m.form("cone", 0, 0.124, 0.144, 0.04, 0.082, 0.042, "#ae8b59", breast, Math.PI / 2);
+  m.form("leaf", 0, 0.062, -0.146, 0.088, 0.044, 0.185, "#5c6261", breast, 0.22);
+  const wings = [-1, 1].map(side => {
+    const wing = m.group(side * 0.052, 0.089, 0.017, breast);
+    m.form("leaf", side * 0.025, -0.013, -0.038, 0.064, 0.10, 0.19, "#68716e", wing, -0.22);
+    m.form("round", side * 0.055, 0.148, 0.091, 0.015, 0.018, 0.019, ink, breast);
+    m.beam([side * 0.032, 0.10, 0], [side * 0.042, 0.016, 0.014], 0.019, "#ab846e", bird);
+    return wing;
+  });
+  m.choreographies.push(t => {
+    const clock = (t + phase) % period;
+    const leg = clock < period / 2 ? clock : clock - period / 2;
+    const reverse = clock >= period / 2;
+    const u = Math.min(1, leg / 0.97);
+    const glide = u * u * (3 - 2 * u);
+    const hop = Math.sin(u * Math.PI) ** 2;
+    const toward = reverse ? 1 - glide : glide;
+    bird.position.set(x + 0.39 * toward, y + 0.24 * hop, z + 0.17 * toward);
+    const pivot = Math.min(1, Math.max(0, (leg - period / 2 + 0.48) / 0.48));
+    bird.rotation.y = 1.16 + Math.PI * (Number(reverse) + pivot * pivot * (3 - 2 * pivot));
+    breast.rotation.x = (1 - hop) * (0.1 + 0.88 * Math.max(0, Math.cos(t * 3.48 + phase)) ** 5);
+    for (const [i, wing] of wings.entries())
+      wing.rotation.z = (i ? 1 : -1) * hop * (1.03 + 0.56 * Math.sin(14 * leg));
+  });
+}

@@ -92,22 +92,14 @@ const rubber = "#292c30",
 
 // A turned section includes the tyre shoulder, sidewall, rim lip and dish.
 // The spare uses the same wheel rotated onto the tailgate.
-function wheel(
-  m: Coachwork,
-  kind: RoadCar | "jeep",
-  x: number,
-  r: number,
-  track: number,
-  side: number,
-  spare = false,
-) {
+function wheel(m: Coachwork, kind: RoadCar | "jeep", r: number, spare = false) {
   const truck = kind === "jeep",
     aero = kind === "tesla";
   const width = truck ? 0.067 : 0.05;
   const at = (u: number, v: number, depth: number): Point =>
-    spare ? [-0.87 - depth, 0.439 + v, u] : [x + u, r + v, side * (track + depth)];
+    spare ? [-0.87 - depth, 0.439 + v, u] : [u, v, depth];
   const point = (rad: number, t: number, d: number) => at(rad * r * Math.cos(t), rad * r * Math.sin(t), d);
-  const axial: Point = spare ? [-1, 0, 0] : [0, 0, side];
+  const axial: Point = spare ? [-1, 0, 0] : [0, 0, 1];
   const rim = truck ? 0.57 : 0.72;
   const lathe: [number, number, Finish][] = [
     [0.12, -width, rubber],
@@ -131,8 +123,7 @@ function wheel(
       points.push(point(a, t, da), point(b, t, db));
       if (i < count) {
         const n = i * 2;
-        if (side === 1) indices.push(n, n + 2, n + 1, n + 1, n + 2, n + 3);
-        else indices.push(n, n + 1, n + 2, n + 1, n + 3, n + 2);
+        indices.push(n, n + 2, n + 1, n + 1, n + 2, n + 3);
       }
     }
     m.surface(points, indices, color);
@@ -240,11 +231,10 @@ function cabin(m: Coachwork, sections: Cabin[], kind: RoadCar | "jeep") {
 }
 
 function sportsCar(m: Coachwork, kind: RoadCar) {
-  const { body, axles, radius } = profiles[kind];
+  const { body } = profiles[kind];
   shell(m, kind);
   cabin(m, profiles[kind].cabin, kind);
   for (const s of [-1, 1]) {
-    for (const x of axles) wheel(m, kind, x, radius, sectionAt(body, x)[3] - 0.052, s);
     const sidePanel = (points: number[][], color: Finish) =>
       m.panel(
         points.map(([x, y, z]): Point => [x, y, s * z]),
@@ -660,8 +650,7 @@ function sportsCar(m: Coachwork, kind: RoadCar) {
 
 // Two-door JL Sport with the black removable hardtop and five-spoke wheels.
 function wrangler(m: Coachwork) {
-  const axle = 0.555,
-    r = 0.183;
+  const { axles, radius } = jeepAxles;
   // Narrow hood between separate raised front wings. The tub tucks behind
   // the tyres so daylight shows under the short front and rear overhangs.
   m.box([-0.18, 0.339, 0], [1.29, 0.243, 0.624]);
@@ -706,8 +695,7 @@ function wrangler(m: Coachwork) {
     faceLamp(0.861, 0.456, 0.255, 0.061, "#161c20");
     faceLamp(0.865, 0.456, 0.255, 0.049, lens);
     faceLamp(0.917, 0.274, 0.313, 0.025, "#bbbcb1");
-    for (const x of [-axle, axle]) {
-      wheel(m, "jeep", x, r, 0.356, s);
+    for (const x of axles) {
       // Angular arch lip with a broad horizontal top surface.
       const outer = [
         [-0.245, 0.238],
@@ -760,9 +748,17 @@ function wrangler(m: Coachwork) {
     m.box([0.708, 0.485, s * 0.286], [0.026, 0.059, 0.017], dark);
     m.box([-0.025, 0.211, s * 0.387], [0.608, 0.024, 0.055], dark);
   }
-  wheel(m, "jeep", 0, r, 0.356, 1, true);
+  wheel(m, "jeep", radius, true);
   m.box([-0.881, 0.61, 0], [0.036, 0.058, 0.035], rubber);
   m.box([-0.893, 0.644, 0], [0.033, 0.018, 0.08], red);
+}
+
+const jeepAxles = { axles: [-0.555, 0.555], radius: 0.183 };
+export function runningGear(kind: RoadCar | "jeep") {
+  const { radius, axles } = kind === "jeep" ? jeepAxles : profiles[kind];
+  return { radius, axles: axles.map(x => ({
+    x, track: kind === "jeep" ? 0.356 : sectionAt(profiles[kind].body, x)[3] - 0.052,
+  })) };
 }
 
 export function carShapes() {
@@ -770,11 +766,13 @@ export function carShapes() {
     const model = new Coachwork();
     if (kind === "jeep") wrangler(model);
     else sportsCar(model, kind);
-    return [model.paint.geometry(false), model.trim.geometry(true)] as const;
+    const rim = new Coachwork();
+    wheel(rim, kind, runningGear(kind).radius);
+    return [model.paint.geometry(false), model.trim.geometry(true), rim.trim.geometry(true)] as const;
   }
-  const [teslaBody, teslaTrim] = build("tesla");
-  const [carreraBody, carreraTrim] = build("carrera");
-  const [ferrariBody, ferrariTrim] = build("ferrari");
-  const [jeepBody, jeepTrim] = build("jeep");
-  return { teslaBody, teslaTrim, carreraBody, carreraTrim, ferrariBody, ferrariTrim, jeepBody, jeepTrim };
+  const [teslaBody, teslaTrim, teslaWheel] = build("tesla");
+  const [carreraBody, carreraTrim, carreraWheel] = build("carrera");
+  const [ferrariBody, ferrariTrim, ferrariWheel] = build("ferrari");
+  const [jeepBody, jeepTrim, jeepWheel] = build("jeep");
+  return { teslaBody, teslaTrim, teslaWheel, carreraBody, carreraTrim, carreraWheel, ferrariBody, ferrariTrim, ferrariWheel, jeepBody, jeepTrim, jeepWheel };
 }
