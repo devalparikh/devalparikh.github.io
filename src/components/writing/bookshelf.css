@@ -339,35 +339,6 @@
    Shelf
    ========================================================================== */
 
-.shelf-views {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 2px;
-  padding: 2px;
-  border: 1px solid var(--rule);
-  border-radius: 7px;
-}
-
-.shelf-views button {
-  padding: 0.32rem 0.6rem;
-  border-radius: 5px;
-  color: var(--color-neutral-content);
-  font-size: 0.72rem;
-  cursor: pointer;
-  transition: background-color 150ms var(--ease-out-quint), color 150ms var(--ease-out-quint);
-}
-
-.shelf-views button:hover {
-  color: var(--color-base-content);
-  background: var(--wash);
-  transition-duration: 0ms;
-}
-
-.shelf-views button[aria-pressed="true"] {
-  color: var(--color-base-100);
-  background: var(--color-base-content);
-}
-
 .shelf {
   --cover-w: clamp(108px, 25vw, 168px);
   --cover-h: calc(var(--cover-w) * 1.5);
@@ -385,10 +356,6 @@
   --tex-plaster: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='640'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.00625 0.00625' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0 0 0 -0.22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   --tex-grain-h: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='64'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0025 0.0625' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0 0 0 -0.34'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   --tex-grain-v: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='800'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0625 0.0025' numOctaves='3' seed='8' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0 0 0 -0.34'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-.shelf[data-view="spines"] {
-  --row: calc(var(--cover-h) + 34px);
 }
 
 /* ---- The room: limewashed wall, window light, a lamp, a floor ---------- */
@@ -424,18 +391,21 @@
   z-index: 2;
   display: none;
   bottom: calc(var(--floor-h) * 0.3);
-  filter: drop-shadow(6px 10px 10px var(--plank-shadow));
 }
 
+/* Grounded by the contact shadow drawn at its foot. The soft shadow it
+   leaves on the wall falls to the left, away from the floor lamp, the way
+   the things on the shelves cast theirs - never downward, which would lift
+   the basket off the floor. */
 .room-tree {
   left: max(8px, calc(50% - 760px));
   width: 170px;
-  height: min(420px, 70%);
+  height: min(476px, 78%);
+  filter: drop-shadow(-10px 0 12px color-mix(in oklab, var(--plank-shadow) 55%, transparent));
 }
 
 .room-lamp {
   overflow: visible;
-  filter: none;
   right: max(14px, calc(50% - 730px));
   width: 108px;
   height: min(400px, 68%);
@@ -668,6 +638,7 @@
 .shelf .d-lamp-glow { fill: var(--room-lamp); }
 .shelf .d-lamp-weave { fill: var(--decor-linen-2); opacity: 0.12; }
 .shelf .d-shade { fill: black; opacity: 0.16; }
+.shelf .d-contact { fill: var(--contact-shadow); }
 .shelf .d-gloss-fill { fill: white; opacity: 0.3; }
 .shelf .d-gloss { stroke: white; opacity: 0.32; }
 .shelf .d-stem { stroke: var(--decor-stem); }
@@ -684,10 +655,6 @@
 .shelf .d-frame-edge { stroke: black; opacity: 0.25; }
 .shelf .d-shade-stroke { stroke: black; opacity: 0.2; }
 
-.shelf[data-view="spines"] .shelf-books {
-  gap: 0 3px;
-}
-
 /* Phones keep the vase and the bonsai; four objects make the case
    too tall to scan. */
 @media (max-width: 639px) {
@@ -700,14 +667,13 @@
   }
 }
 
-.shelf[data-view="spines"] .shelf-decor {
-  margin-inline: calc(var(--gap) * 0.6);
-}
-
+/* Each book is turned a little so its spine - as thick as the post is long -
+   shows on the left. */
 .book {
   position: relative;
   display: block;
-  width: var(--cover-w);
+  width: calc(var(--cover-w) * 0.92 + var(--thick) * 0.5);
+  padding-left: calc(var(--thick) * 0.42);
   border-radius: 3px;
   outline-offset: 5px;
   perspective: 1100px;
@@ -743,6 +709,7 @@
   position: relative;
   display: block;
   transform-style: preserve-3d;
+  transform: rotateY(24deg);
   transition: transform 320ms var(--ease-out-quint);
 }
 
@@ -750,21 +717,29 @@
   position: relative;
   display: block;
   border-radius: 1.5% 2.5% 2.5% 1.5%;
-  box-shadow: 0 10px 18px -6px var(--shelf-shadow), 0 2px 4px var(--shelf-shadow);
+  transform: translateZ(calc(var(--thick) / 2));
+  box-shadow: 14px 12px 18px -8px var(--shelf-shadow);
   transition: box-shadow 320ms var(--ease-out-quint);
 }
 
 .book-spine {
   position: absolute;
   top: 0;
-  display: none;
+  left: calc(var(--thick) * -1);
+  display: flex;
+  width: var(--thick);
+  height: 100%;
+  padding: 6px 0;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   overflow: hidden;
+  transform-origin: 100% 50%;
+  transform: translateZ(calc(var(--thick) / 2)) rotateY(-90deg);
   background: var(--g);
   color: var(--k1);
   font-family: "Helvetica Neue", Helvetica, var(--font-inter-tight), Arial, sans-serif;
+  font-size: min(calc(var(--thick) * 0.42), 11px);
 }
 
 /* The same grain as the covers. */
@@ -791,88 +766,13 @@
 .book-spine-issue,
 .book-spine-mark {
   color: var(--t);
+  font-size: min(calc(var(--thick) * 0.32), 8px);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 
 .book:is(:hover, [data-active="true"]) .book-object {
-  transform: translateY(-10px);
-}
-
-.book:is(:hover, [data-active="true"]) .book-front {
-  box-shadow: 0 22px 26px -10px var(--shelf-shadow), 0 4px 8px var(--shelf-shadow);
-}
-
-/* Scaled to length: the whole cover grows with the square root of length. */
-.shelf[data-view="scaled"] .book {
-  width: calc(var(--cover-w) * var(--scale));
-}
-
-/* Thickness: the book turns a little so its spine - as thick as the post is
-   long - shows on the left. */
-.shelf[data-view="thickness"] .book {
-  width: calc(var(--cover-w) * 0.92 + var(--thick) * 0.5);
-  padding-left: calc(var(--thick) * 0.42);
-}
-
-.shelf[data-view="thickness"] .book-object {
-  transform: rotateY(24deg);
-}
-
-.shelf[data-view="thickness"] .book:is(:hover, [data-active="true"]) .book-object {
   transform: translateY(-10px) rotateY(12deg);
-}
-
-.shelf[data-view="thickness"] .book-front {
-  transform: translateZ(calc(var(--thick) / 2));
-  box-shadow: 14px 12px 18px -8px var(--shelf-shadow);
-}
-
-.shelf[data-view="thickness"] .book-spine {
-  display: flex;
-  left: calc(var(--thick) * -1);
-  width: var(--thick);
-  height: 100%;
-  padding: 6px 0;
-  transform-origin: 100% 50%;
-  transform: translateZ(calc(var(--thick) / 2)) rotateY(-90deg);
-  font-size: min(calc(var(--thick) * 0.42), 11px);
-}
-
-.shelf[data-view="thickness"] .book-spine-issue,
-.shelf[data-view="thickness"] .book-spine-mark {
-  font-size: min(calc(var(--thick) * 0.32), 8px);
-}
-
-/* Shelf: spines out, as wide as the post is long. */
-.shelf[data-view="spines"] .book {
-  width: var(--spine);
-  perspective: none;
-}
-
-.shelf[data-view="spines"] .book-front {
-  display: none;
-}
-
-.shelf[data-view="spines"] .book-spine {
-  position: relative;
-  display: flex;
-  width: 100%;
-  height: calc(var(--cover-h) * (0.82 + 0.18 * var(--scale)));
-  padding: 9px 0 8px;
-  border-radius: 2px;
-  box-shadow: 0 2px 3px -1px var(--shelf-shadow), 4px 0 8px -4px var(--shelf-shadow);
-  font-size: min(calc(var(--spine) * 0.36), 15px);
-}
-
-.shelf[data-view="spines"] .book-spine-issue,
-.shelf[data-view="spines"] .book-spine-mark {
-  margin: 4px 0;
-  font-size: 9px;
-}
-
-.shelf[data-view="spines"] .book:is(:hover, [data-active="true"]) .book-object {
-  transform: translateY(-14px);
 }
 
 .shelf-empty {
@@ -930,9 +830,247 @@
   text-underline-offset: 3px;
 }
 
-.shelf-caption-hint {
+/* The card below is standing in for the caption: keep its size, hide it. */
+.shelf-caption[data-covered="true"] {
+  visibility: hidden;
+}
+
+/* ---- The preview card (ShelfPreviewCard.tsx) ---------------------------
+
+   The caption, lifted onto the screen when the real one is out of view. It
+   rises from the bottom edge like a book drawn off the shelf - the wood lip
+   along its top is the plank it came from - and sinks back when dismissed.
+   A short delay on the way out lets a pointer cross the gap between two
+   books without the card dropping and rising again. */
+
+.shelf-card {
+  --card-gutter: max(12px, env(safe-area-inset-left), env(safe-area-inset-right));
+  --card-offset: calc(env(safe-area-inset-bottom) + 12px);
+  position: fixed;
+  z-index: 40;
+  left: 0;
+  right: 0;
+  bottom: var(--card-offset);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "thumb body close"
+    "thumb open open";
+  align-items: start;
+  column-gap: 14px;
+  row-gap: 10px;
+  width: min(34rem, 100% - 2 * var(--card-gutter));
+  margin-inline: auto;
+  padding: 16px 12px 14px 14px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background-color: color-mix(in oklab, var(--color-base-100) 94%, transparent);
+  box-shadow:
+    0 24px 48px -24px color-mix(in oklab, var(--color-base-content) 55%, transparent),
+    0 2px 8px -4px color-mix(in oklab, var(--color-base-content) 25%, transparent);
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  color: var(--color-base-content);
+  /* Read back by the layout hook as the card's distance from the edge. */
+  scroll-margin-bottom: var(--card-offset);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(18px) scale(0.985);
+  transform-origin: 50% 100%;
+  transition:
+    opacity 200ms var(--ease-out-quint) 90ms,
+    transform 260ms var(--ease-out-quint) 90ms,
+    visibility 0s linear 350ms;
+}
+
+.shelf-card[data-dock="top"] {
+  top: calc(var(--shelf-card-top, 3.5rem) + 12px);
+  bottom: auto;
+  transform: translateY(-18px) scale(0.985);
+  transform-origin: 50% 0;
+}
+
+.shelf-card[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition:
+    opacity 260ms var(--ease-out-quint),
+    transform 420ms var(--ease-out-quint),
+    visibility 0s;
+}
+
+/* A hover preview is a caption, not a control: the pointer stays on the book. */
+.shelf-card[data-interactive="false"] {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "thumb body";
+  align-items: center;
+  padding-right: 16px;
+  pointer-events: none !important;
+}
+
+.shelf-card-lip {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--case-wood-dark), var(--case-wood) 8%, var(--case-wood-light) 50%, var(--case-wood) 92%, var(--case-wood-dark));
+}
+
+.shelf-card-thumb {
+  grid-area: thumb;
+  width: 52px;
+  border-radius: 2px;
+  box-shadow: 6px 8px 14px -8px var(--shelf-shadow);
+}
+
+.shelf-card-body {
+  grid-area: body;
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.shelf-card-title {
+  display: -webkit-box;
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-wrap: balance;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.shelf-card-summary {
+  display: -webkit-box;
+  margin-top: 3px;
+  overflow: hidden;
   color: var(--color-neutral-content);
   font-size: 0.8rem;
+  line-height: 1.45;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.shelf-card-open {
+  grid-area: open;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 36px;
+  padding: 0 0.95rem;
+  border-radius: 999px;
+  background: var(--color-base-content);
+  color: var(--color-base-100);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.shelf-card-arrow {
+  transition: transform 220ms var(--ease-out-quint);
+}
+
+.shelf-card-open:hover .shelf-card-arrow {
+  transform: translateX(3px);
+}
+
+.shelf-card-close {
+  grid-area: close;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: -8px -4px 0 0;
+  border-radius: 999px;
+  color: var(--color-neutral-content);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.shelf-card-close:hover {
+  background-color: var(--wash);
+  color: var(--color-base-content);
+}
+
+.shelf-card-close svg {
+  width: 16px;
+  height: 16px;
+}
+
+:is(.shelf-card-open, .shelf-card-close):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Short screens: one line - which book, and the way in. */
+.shelf-card[data-variant="compact"] {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: "body open close";
+  align-items: center;
+  column-gap: 8px;
+  width: min(30rem, 100% - 2 * var(--card-gutter));
+  padding: 9px 8px 9px 14px;
+  border-radius: 12px;
+}
+
+.shelf-card[data-variant="compact"][data-interactive="false"] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "body";
+}
+
+.shelf-card[data-variant="compact"] :is(.shelf-card-thumb, .shelf-card-summary, .shelf-card-open-long) {
+  display: none;
+}
+
+.shelf-card[data-variant="compact"] .shelf-caption-meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shelf-card[data-variant="compact"] .shelf-card-open {
+  min-height: 34px;
+  padding: 0 0.8rem;
+}
+
+.shelf-card[data-variant="compact"] .shelf-card-title {
+  display: block;
+  margin-top: 0;
+  overflow: hidden;
+  font-size: 0.85rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shelf-card[data-variant="compact"] .shelf-card-close {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shelf-card,
+  .shelf-card[data-dock="top"] {
+    transform: none;
+    transition:
+      opacity 140ms linear,
+      visibility 0s linear 140ms;
+  }
+
+  .shelf-card[data-open="true"] {
+    transition:
+      opacity 140ms linear,
+      visibility 0s;
+  }
+
+  .shelf-card-arrow {
+    transition: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1244,9 +1382,7 @@
 
 /* Light on the books from the strip above and in front: tops catch it,
    bottoms fall off. A painted-on drop shadow would contradict the shelf. */
-.shelf-books[data-stage="3d"] .book-front,
-.shelf-books[data-stage="3d"] .book:is(:hover, [data-active="true"]) .book-front,
-.shelf[data-view="thickness"] .shelf-books[data-stage="3d"] .book-front {
+.shelf-books[data-stage="3d"] .book-front {
   box-shadow: 0 0 0 0.5px color-mix(in oklab, var(--cover-ink) 30%, transparent);
 }
 
@@ -1271,7 +1407,7 @@
 }
 
 /* A turned book's spine faces away from both lights. */
-.shelf[data-view="thickness"] .shelf-books[data-stage="3d"] .book-spine::before {
+.shelf-books[data-stage="3d"] .book-spine::before {
   background: linear-gradient(
     to bottom,
     color-mix(in oklab, var(--plank-shadow) 10%, transparent),
@@ -1280,8 +1416,8 @@
   );
 }
 
-/* Thickness: turned books stand a little off the back panel. */
-.shelf[data-view="thickness"] .shelf-books[data-stage="3d"] :is(.shelf-slot:not(.shelf-decor), .stage-foot[data-kind="book"]) {
+/* Turned books stand a little off the back panel. */
+.shelf-books[data-stage="3d"] :is(.shelf-slot:not(.shelf-decor), .stage-foot[data-kind="book"]) {
   --z: calc(var(--depth) * -1 + 46px + var(--thick) * 0.5);
   /* The footprint of the turned book itself: as wide as the cover, as deep
      as the post is long, turned with it. */
@@ -1292,46 +1428,6 @@
   --foot-x: calc(var(--thick) * 0.21);
   --foot-rot: 24deg;
   --sil-w: calc(var(--cover-w) * 0.86);
-}
-
-/* Same size and scaled: face-out books lean back against the panel, as
-   face-out books do. Hovering still lifts them straight up. */
-.shelf:is([data-view="same"], [data-view="scaled"]) .shelf-books[data-stage="3d"] :is(.shelf-slot:not(.shelf-decor), .stage-foot[data-kind="book"]) {
-  --z: calc(var(--depth) * -1 + 26px + var(--thick));
-  --foot-w: calc(var(--cover-w) * var(--scale-w, 1));
-  --foot-d: calc(var(--thick) + 4px);
-  --foot-c: calc(var(--thick) * -0.5);
-  --sil-w: calc(var(--cover-w) * var(--scale-w, 1) * 0.94);
-}
-
-.shelf[data-view="scaled"] .shelf-books[data-stage="3d"] :is(.shelf-slot:not(.shelf-decor), .stage-foot[data-kind="book"]) {
-  --scale-w: var(--scale);
-  --sil-h: calc(var(--cover-h) * var(--scale));
-}
-
-.shelf:is([data-view="same"], [data-view="scaled"]) .shelf-books[data-stage="3d"] .book-object {
-  transform-origin: 50% 100%;
-  transform: rotateX(6deg);
-}
-
-.shelf:is([data-view="same"], [data-view="scaled"]) .shelf-books[data-stage="3d"] .book:is(:hover, [data-active="true"]) .book-object {
-  transform: translateY(-10px);
-}
-
-/* Shelf: spines out at the front of the shelf, the books running back
-   almost to the panel. */
-.shelf[data-view="spines"] .shelf-books[data-stage="3d"] :is(.shelf-slot:not(.shelf-decor), .stage-foot[data-kind="book"]) {
-  /* Never in front of the case, even where the case is shallower than a book. */
-  --z: min(-6px, calc(var(--depth) * -1 + var(--cover-w) + 8px));
-  --foot-w: var(--spine);
-  --foot-d: calc(var(--cover-w) * 0.96);
-  --foot-c: calc(var(--cover-w) * -0.48);
-  --sil-w: var(--spine);
-  --sil-h: calc(var(--cover-h) * (0.82 + 0.18 * var(--scale)));
-}
-
-.shelf[data-view="spines"] .shelf-books[data-stage="3d"] .book-spine {
-  box-shadow: none;
 }
 
 /* Objects, each at its own depth. */

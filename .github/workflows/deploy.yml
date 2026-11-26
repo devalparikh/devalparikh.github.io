@@ -38,6 +38,7 @@ jobs:
       - name: Lint and typecheck
         run: |
           npm run test:map
+          npm run test:nav
           npm run test:notes
           npm run test:writing
           npm run lint

@@ -26,7 +26,7 @@ export interface ShelfItem {
   /** "book", or the object's kind - picks the footprint in bookshelf.css. */
   kind: string;
   slug?: string;
-  /** The slot's own size variables (--thick, --scale, --spine). */
+  /** The slot's own size variables (--thick). */
   vars: Record<string, string>;
 }
 
@@ -39,7 +39,7 @@ export interface ShelfRows {
   items: ShelfItem[];
 }
 
-const SIZE_VARS = ["--thick", "--scale", "--spine"];
+const SIZE_VARS = ["--thick"];
 
 function slotVars(slot: HTMLElement) {
   const vars: Record<string, string> = {};

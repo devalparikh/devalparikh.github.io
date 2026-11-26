@@ -122,8 +122,13 @@ into component state.
 
 ### Overlays
 
-The drawer and the lightbox render through `<Portal>` into `document.body`;
-otherwise the sticky nav bar paints over them.
+The drawer, the lightbox and the shelf's preview card render through
+`<Portal>` into `document.body`; otherwise the sticky nav bar paints over them.
+
+The nav's "More" menu is placed against the viewport each time it opens
+(`lib/menu-placement.ts`, tested in `test:nav`): end-aligned under its
+trigger on desktop, start-aligned or clamped to the gutters on phones,
+flipped above when there is no room below, and never outside the safe areas.
 
 ## Writing
 
@@ -151,10 +156,16 @@ The full runbook is `docs/writing.md`.
   perspective (`ShelfStage.tsx`): never give a book its own `perspective`,
   or it stops agreeing with the shelf it stands on. Things in the case sit at
   a depth (`--z`) and the list itself passes pointer events through,
-  since it is the case front. Four views (Thickness default), hover-intent
-  loops, tap-to-preview on touch, no motion under reduced motion or
-  Save-Data. Sizes come from build-time
-  word counts (`lib/word-count.ts`, `lib/book-geometry.ts`).
+  since it is the case front. One view - turned books whose spine is as
+  thick as the post is long - with hover-intent loops, tap-to-preview on
+  touch (second tap opens), no motion under reduced motion or Save-Data,
+  and no text on the shelf until a book is picked. Thickness comes from
+  build-time word counts (`lib/word-count.ts`, `lib/book-geometry.ts`).
+- **Preview** - the picked book's detail shows in the caption under the
+  shelf while that is fully on screen; otherwise `ShelfPreviewCard.tsx`
+  raises it as a card from the bottom edge, or a one-line bar where the card
+  would cover more than a third of the screen or hide the book. The decision
+  is the pure `lib/shelf-preview.ts`, tested in `test:writing`.
 
 ## Photography
 
@@ -283,7 +294,8 @@ npm run lint
 npm run typecheck
 npm run photos     # rebuild derived images and the manifest
 npm run sync:blog  # refresh the writing snapshot from deval-blog, open a PR
-npm run test:writing        # importer, content, contrast, word counts
+npm run test:nav            # "More" menu placement
+npm run test:writing        # importer, content, contrast, word counts, shelf preview
 npm run test:writing:build  # after build: URLs, canonicals, og:url
 ```
 
