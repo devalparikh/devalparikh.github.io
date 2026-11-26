@@ -94,7 +94,7 @@ interface Entry {
 const TERMS = {
   draft: {
     term: "Draft model",
-    definition: "A much smaller model that guesses the next few tokens. It uses the same tokenizer as the big model, because guesses are checked token by token.",
+    definition: "A much smaller model that guesses the next few tokens. Both models use the same tokenizer so serving code can check each token.",
   },
   target: {
     term: "Target model",
@@ -125,7 +125,7 @@ const TERMS = {
   },
   projection: {
     term: "Output projection",
-    definition: "The last step of the model. It turns a token's final vector into a score for every token in the vocabulary.",
+    definition: "The model's final step turns a token's final vector into a score for every token in the vocabulary.",
     related: { href: `${BASICS}#hidden-states-build-from-one-layer-to-the-next`, title: "Transformer basics: hidden states" },
   },
   teacher: {
@@ -134,12 +134,12 @@ const TERMS = {
   },
   bidirectional: {
     term: "Bidirectional model",
-    definition: "A model whose tokens see later tokens as well as earlier ones, like BERT or a Vision Transformer's encoder. It can revise an earlier word, but it can't reuse a KV cache this way.",
+    definition: "A model whose tokens see later tokens as well as earlier ones, like BERT or a Vision Transformer's encoder. It can revise its reading of an earlier word, but it can't reuse a KV cache this way.",
     related: { href: VIT, title: "How Vision Transformers are trained and used" },
   },
   bandwidth: {
     term: "Memory-bandwidth bound",
-    definition: "When a step's time is set by moving data from memory rather than by the math. A one-token decode step is like this.",
+    definition: "Reading the weights from memory takes longer than the math, so memory sets the speed. A one-token decode step works this way.",
   },
   acceptance: {
     term: "Acceptance rate",

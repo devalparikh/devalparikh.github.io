@@ -42,7 +42,7 @@ export function SpeedupCalculator() {
           />
         </div>
 
-        <div className="sdv-chart" role="group" aria-label="Guesses per round. Choose a bar to see the expected speedup for that k.">
+        <div className="sdv-chart" role="group" aria-label="Choose a bar to see expected speedup by guesses per round.">
           <div className="sdv-bars">
             <div className="sdv-chart-grid" aria-hidden="true">
               {GRID.map((line) => (

@@ -33,7 +33,7 @@ function stepsFor(requests: number) {
       label: "Inside a pass",
       span: 3.4,
       text: busy
-        ? `The check pass now holds ${check.positions} positions, and its math outlasts the weight read.`
+        ? `The check covers ${check.positions} positions. The math takes longer than reading the weights.`
         : "The math for five positions finishes while the weights are still loading.",
     },
     {
@@ -196,7 +196,7 @@ export function PassTimeline() {
       narrow={{ w: 360, h: 266 }}
       label={`Timing for the round that writes on the floor. Normal decoding: three big-model passes, about ${ms(lanes.normal.total)}. Speculative decoding: four small-model passes and one big-model pass, about ${ms(lanes.speculative.total)}.`}
       toolbar={<Modes label="Load" options={MODES} value={id} onChange={setId} />}
-      caption={<>Rough laptop numbers, not a benchmark: a 27B model at 4 bits (16 GB), a 1.5B draft, 300 GB/s and about 10 trillion operations per second.</>}
+      caption={<>Rough laptop estimates, not measurements: a 27B model at 4 bits (16 GB), a 1.5B draft, 300 GB/s and about 10 trillion operations per second.</>}
     />
   );
 }

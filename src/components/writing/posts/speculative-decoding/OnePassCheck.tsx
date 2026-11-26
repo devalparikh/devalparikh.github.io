@@ -29,12 +29,12 @@ function narration(scenario: Scenario) {
         : `${matched(round.accepted)} In slot ${round.accepted + 1}, the big model predicts ${q(scenario.predictions[round.accepted])} and the draft guessed ${q(scenario.draft[round.accepted])}.`;
   const keep =
     round.accepted === k
-      ? `The round keeps all ${k} guesses, plus the free extra token ${q(own)}.`
+      ? `The round keeps all ${k} guesses, plus the extra token ${q(own)}.`
       : round.accepted === 0
         ? `The round keeps only the big model's ${q(own)}, the same as one decode step.`
         : `The round keeps ${kept.map(q).join(" and ")}, then the big model's ${q(own)}. The later slots are dropped.`;
   return buildSteps([
-    { id: "draft", label: "Draft", span: 3, text: `The small model guesses ${k} tokens, one quick pass each.` },
+    { id: "draft", label: "Draft", span: 3, text: `The small model guesses ${k} tokens, one per quick pass.` },
     { id: "pass", label: "One pass", span: 3.2, text: `The big model reads ${q(PROMPT[PROMPT.length - 1])} and the guesses in one prefill pass. It predicts the next token at every position.` },
     { id: "compare", label: "Compare", span: 3.6, text: compare },
     { id: "keep", label: "Keep", span: 3.4, text: keep },

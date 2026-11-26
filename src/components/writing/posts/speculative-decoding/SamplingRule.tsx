@@ -53,7 +53,7 @@ export function SamplingRule() {
         </div>
       </div>
       <figcaption id="sdv-sampling-caption" className="sdv-caption">
-        Out of 100 runs of slot 3, the guess survives {outcome.keptTotal} times. All {outcome.rejected} replacements
+        On average, out of 100 runs of slot 3, the guess survives {outcome.keptTotal} times. All {outcome.rejected} replacements
         are “floor”, so the totals match the big model&apos;s 50, 30 and 20.
       </figcaption>
     </figure>

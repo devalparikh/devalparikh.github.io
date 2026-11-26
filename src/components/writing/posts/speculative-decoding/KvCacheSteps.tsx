@@ -13,8 +13,8 @@ const fix = round.kept[round.kept.length - 1];
 
 const STEPS = buildSteps([
   { id: "pass1", label: "First pass", span: 3.4, text: `Normal decoding writes three entries. The speculative pass also writes the four guesses, seven in all.` },
-  { id: "check", label: "Check", span: 3.2, text: `Normal decoding needs a second pass for ${q("on")}. The speculative side checks: ${q("on")} and ${q("the")} match, ${q("mat")} doesn't.` },
-  { id: "cut", label: "Truncate", span: 3.2, text: `Normal decoding's third pass writes ${q("the")}. The speculative side cuts ${q("mat")} and ${q(".")}.` },
+  { id: "check", label: "Check", span: 3.2, text: `Normal decoding needs a second pass for ${q("on")}. Serving code compares guesses: ${q("on")} and ${q("the")} match. ${q("mat")} doesn't.` },
+  { id: "cut", label: "Truncate", span: 3.2, text: `Normal decoding's third pass writes ${q("the")}. The runtime drops ${q("mat")} and ${q(".")}.` },
   { id: "same", label: "Same cache", span: 3.4, text: `Both caches hold ${q("The cat sat on the")}, and ${q(fix)} comes next. Normal decoding took three passes, speculative decoding one.` },
 ]);
 

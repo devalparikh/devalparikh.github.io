@@ -30,14 +30,14 @@ function stepsFor(mode: Mode) {
         ? `${q("the")} sees ${q("The cat sat on the")}. It can't see ${q("mat")}.`
         : `Each token sees only itself and the tokens before it. ${q("sat")} sees all three.`,
     },
-    { id: "layers", label: "Next layers", span: 3, text: "Each next layer does the same with the vectors from the layer below." },
+    { id: "layers", label: "Next layers", span: 3, text: "Each layer repeats this with the vectors from the layer below." },
     { id: "predict", label: "Predict", span: 3, text: "After the last layer, the output projection gives a next-token prediction at every position." },
     {
       id: "keep",
       label: "Keep",
       span: 3,
       text: draft
-        ? `The predictions from ${q("sat")} on are compared with the guesses. ${q("first")} and ${q("is")} are discarded.`
+        ? `Serving code compares the guesses with predictions from ${q("sat")} onward. It drops ${q("first")} and ${q("is")}.`
         : `Only the last prediction is used: ${q("on")}. The others are discarded.`,
     },
   ]);
@@ -293,7 +293,7 @@ export function PrefillPass({ mode: initial = "prefill" }: { mode?: Mode }) {
       narrow={{ w: 360, h: draft ? 462 : 390 }}
       label={`One prefill pass over ${tokens.join(" ")}. Each layer processes every token at once, and each token saves its own K and V. Each token sees only itself and earlier tokens. After the last layer, every position predicts a next token. ${draft ? "The predictions from sat on are compared with the draft; the first two are discarded." : "Only the last prediction, on, is used."}`}
       toolbar={<Modes label="Pass" options={MODES} value={mode} onChange={setMode} />}
-      caption={<>Three of the layers are drawn. In the grid, a filled square means the row&apos;s token can see the column&apos;s token.</>}
+      caption={<>Three layers are shown. A filled square means the row&apos;s token can see the column&apos;s token.</>}
     />
   );
 }
