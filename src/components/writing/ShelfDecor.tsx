@@ -185,12 +185,21 @@ export function FloorLamp() {
   );
 }
 
-/** An olive tree in a seagrass basket. Stands on the floor at left. */
+/**
+ * An olive tree in a seagrass basket. Stands on the floor at left, in front of
+ * the case, on the same line as the floor lamp.
+ *
+ * It sits below eye level, so the basket is drawn seen slightly from above -
+ * an open rim with soil in it, a bottom edge that curves towards the viewer -
+ * and it is grounded by a contact shadow painted on the floor at its foot.
+ * The basket is about as wide as the bonsai's tray on the shelf behind it,
+ * the trunk long enough to stand a floor tree's height.
+ */
 export function OliveTree() {
   const random = seeded(7);
   const leaves: { x: number; y: number; a: number; tone: string }[] = [];
   const clusters = [
-    [60, 74, 42], [100, 50, 48], [142, 78, 40], [78, 120, 36], [126, 124, 34], [100, 94, 34], [40, 112, 26], [160, 116, 24],
+    [60, 104, 42], [100, 80, 48], [142, 108, 40], [78, 150, 36], [126, 154, 34], [100, 124, 34], [40, 142, 26], [160, 146, 24],
   ];
   for (const [cx, cy, r] of clusters) {
     for (let index = 0; index < 64; index++) {
@@ -204,10 +213,33 @@ export function OliveTree() {
       });
     }
   }
+  // Seagrass weave: rows following the basket's taper, bowed like its rim.
+  const weave = Array.from({ length: 12 }, (_, index) => {
+    const y = 440 + index * 9.4;
+    const inset = ((y - 428) / 119) * 14;
+    return `M${40 + inset} ${y} Q100 ${y + 8} ${160 - inset} ${y}`;
+  });
   return (
-    <svg className="room-tree" viewBox="0 0 200 420" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+    <svg className="room-tree" viewBox="0 0 200 560" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+      <defs>
+        <filter id="room-tree-contact" x="-30%" y="-200%" width="160%" height="500%">
+          <feGaussianBlur stdDeviation="3.5" />
+        </filter>
+      </defs>
+      {/* Contact shadow on the floor, darkest right under the foot. */}
+      <ellipse cx="98" cy="551" rx="70" ry="7" className="d-contact" opacity="0.5" filter="url(#room-tree-contact)" />
+      <ellipse cx="99" cy="551" rx="54" ry="3.5" className="d-contact" opacity="0.7" filter="url(#room-tree-contact)" />
+      {/* Basket: body, weave, the side away from the window, then the open rim. */}
+      <path d="M38 428 L52 547 Q100 557 148 547 L162 428 Z" className="d-basket" />
+      {weave.map((d, index) => (
+        <path key={index} d={d} className="d-weave" fill="none" strokeWidth="2.2" />
+      ))}
+      <path d="M124 428 L162 428 L148 547 Q131 551 116 552 Z" className="d-shade" />
+      <ellipse cx="100" cy="428" rx="62" ry="8" className="d-basket" />
+      <ellipse cx="100" cy="428" rx="62" ry="8" className="d-weave" fill="none" strokeWidth="2" />
+      <ellipse cx="100" cy="429.5" rx="55" ry="5.6" className="d-bark" />
       <path
-        d="M98 340 C96 290 104 250 96 212 C90 186 78 160 70 120 M98 250 C112 214 124 170 126 122 M97 214 C104 180 102 140 100 96"
+        d="M98 430 C96 370 104 330 96 268 C90 230 78 196 70 150 M98 330 C112 284 124 216 126 152 M97 268 C104 220 102 170 100 126"
         className="d-trunk"
         fill="none"
         strokeWidth="5"
@@ -216,11 +248,6 @@ export function OliveTree() {
       {leaves.map((leaf, index) => (
         <ellipse key={index} cx={leaf.x} cy={leaf.y} rx="7" ry="1.9" transform={`rotate(${leaf.a} ${leaf.x} ${leaf.y})`} className={leaf.tone} />
       ))}
-      <path d="M56 330 H144 L134 418 H66 Z" className="d-basket" />
-      {Array.from({ length: 11 }, (_, index) => (
-        <path key={index} d={`M${57 + index * 0.9} ${336 + index * 7.6} H${143 - index * 0.9}`} className="d-weave" strokeWidth="2.2" />
-      ))}
-      <path d="M118 330 H144 L134 418 H112 Z" className="d-shade" />
     </svg>
   );
 }

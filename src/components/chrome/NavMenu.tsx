@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import type { NavItem } from "@/content/nav";
 import { playInterfaceSound } from "@/lib/interface-sound";
+import { placeMenu } from "@/lib/menu-placement";
 
 interface NavMenuProps {
   items: NavItem[];
@@ -16,11 +17,54 @@ interface NavMenuProps {
 
 export const NAV_MENU_ID = "nav-overflow";
 
+/** Matches `top: calc(100% + 0.6rem)` on `.nav-menu`, below the trigger's wrapper. */
+const MENU_GAP_REM = 0.6;
+
+const px = (value: string) => Number.parseFloat(value) || 0;
+
+/**
+ * Keeps the open menu inside the viewport. The gutters come from the menu's
+ * own `scroll-margin`, which is where the CSS resolves them against the
+ * safe-area insets. Written straight to the element: it has to measure its
+ * natural size first, which a React style prop would already have changed.
+ */
+function positionMenu(menu: HTMLElement, wrapper: HTMLElement) {
+  menu.style.removeProperty("width");
+  menu.style.removeProperty("max-height");
+
+  const styles = getComputedStyle(menu);
+  const box = wrapper.getBoundingClientRect();
+  const viewport = window.visualViewport;
+  const rem = px(getComputedStyle(document.documentElement).fontSize) || 16;
+  const placement = placeMenu({
+    trigger: box,
+    menuWidth: menu.offsetWidth,
+    menuHeight: menu.scrollHeight,
+    viewport: { width: viewport?.width ?? window.innerWidth, height: viewport?.height ?? window.innerHeight },
+    gutter: {
+      top: px(styles.scrollMarginTop),
+      right: px(styles.scrollMarginRight),
+      bottom: px(styles.scrollMarginBottom),
+      left: px(styles.scrollMarginLeft),
+    },
+    gap: MENU_GAP_REM * rem,
+  });
+
+  menu.dataset.side = placement.side;
+  menu.dataset.align = placement.align;
+  menu.style.left = `${placement.left - box.left}px`;
+  menu.style.right = "auto";
+  menu.style.width = `${placement.width}px`;
+  menu.style.maxHeight = `${placement.maxHeight}px`;
+  menu.style.transformOrigin = `${placement.originX}px ${placement.side === "top" ? "100%" : "0"}`;
+}
+
 /** Holds the nav items that do not fit on screen. */
 export function NavMenu({ items, activeHref, triggerRef, onHover }: NavMenuProps) {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const holdsActive = items.some((item) => item.href === activeHref);
 
@@ -41,6 +85,26 @@ export function NavMenu({ items, activeHref, triggerRef, onHover }: NavMenuProps
     return () => {
       document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  // Placed before paint on every open, and again whenever the viewport changes
+  // underneath it (rotation, browser chrome, pinch zoom) while it is open.
+  useLayoutEffect(() => {
+    if (!open) return;
+    const menu = menuRef.current;
+    const wrapper = wrapperRef.current;
+    if (!menu || !wrapper) return;
+
+    const place = () => positionMenu(menu, wrapper);
+    place();
+
+    const viewport = window.visualViewport;
+    window.addEventListener("resize", place);
+    viewport?.addEventListener("resize", place);
+    return () => {
+      window.removeEventListener("resize", place);
+      viewport?.removeEventListener("resize", place);
     };
   }, [open]);
 
@@ -84,6 +148,7 @@ export function NavMenu({ items, activeHref, triggerRef, onHover }: NavMenuProps
       </button>
 
       <div
+        ref={menuRef}
         id={NAV_MENU_ID}
         role="menu"
         aria-label="More pages"
@@ -108,7 +173,7 @@ export function NavMenu({ items, activeHref, triggerRef, onHover }: NavMenuProps
           >
             {item.label}
             {activeHref === item.href && (
-              <span aria-hidden="true" className="size-1 rounded-full bg-primary" />
+              <span aria-hidden="true" className="size-1 shrink-0 rounded-full bg-primary" />
             )}
           </Link>
         ))}

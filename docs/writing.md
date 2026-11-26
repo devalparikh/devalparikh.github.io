@@ -89,20 +89,32 @@ lip hides the feet of what stands behind it, and turned books meet the shelf
 where it really is. Contact shadows are footprints lying on the shelf, soft
 in their own gradient because the shelf is seen nearly edge-on, and each
 object leaves a soft shadow on the back panel, offset away from the floor
-lamp. Face-out books and the print lean back against the panel. Rows are
+lamp. The print leans back against the panel. Rows are
 measured after layout; until then (and without JS) the flat planks stand in,
 on the same standing line. Phones use a flatter, shallower case with thinner
 shelves.
 
-Views: Same size, Scaled to length (sqrt of words), **Thickness** (default;
-spine depth linear in words) and Shelf (spines). The choice is remembered per
-browser. Geometry is in `src/lib/book-geometry.ts`.
+There is one view: each book is turned a little so its spine shows, as thick
+as the post is long (linear in words; `src/lib/book-geometry.ts`). With no
+book picked the shelf shows no count or hint - it speaks for itself.
 
 Hovering a cover with a mouse (or keyboard focus) lifts it and, after 320ms,
 plays its motif as a muted CSS loop; on touch the first tap previews and
 shows the caption, the second opens the post. Motion never runs under
 `prefers-reduced-motion`, `prefers-reduced-data` or Save-Data - the still
 drawing is always the poster.
+
+The caption sits under the shelf, so on a phone (and on desktop for the
+upper shelves) it is usually off screen. When it is not fully visible the
+same detail rises from the bottom edge as a card (`ShelfPreviewCard.tsx`);
+`src/lib/shelf-preview.ts` decides. A tapped or focused book gets Read and
+Close in the card and is scrolled clear of it if it would be covered; a
+hovered one gets a passive card that docks at the top instead of covering
+the book under the pointer. Where the card would take more than a third of
+the screen or leave no room for the book above it - landscape phones, a
+320px-wide phone - it becomes a one-line bar with the title and Read.
+Escape, the close button or a tap elsewhere dismisses it; reduced motion
+fades it instead of sliding it.
 
 ### Covers
 

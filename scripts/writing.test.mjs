@@ -12,6 +12,7 @@ import {
 } from "./lib/blog-import.mjs";
 import { countWords, formatWordCount } from "../src/lib/word-count.ts";
 import { bookGeometry } from "../src/lib/book-geometry.ts";
+import { choosePreviewLayout, MAX_CARD_SHARE } from "../src/lib/shelf-preview.ts";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const snapshot = JSON.parse(read("src/content/blog/snapshot.json"));
@@ -191,13 +192,66 @@ test("counts prose words and skips frontmatter, code, JSX and link targets", () 
   assert.equal(formatWordCount(4852), "4,852 words");
 });
 
-test("longer posts make thicker, larger books, within bounds", () => {
+test("longer posts make thicker books, within bounds", () => {
   const short = bookGeometry(479);
   const long = bookGeometry(4852);
   assert.ok(long.thickness > short.thickness * 3, "thickness is roughly linear in length");
-  assert.ok(long.scale > short.scale);
-  assert.ok(long.spine > short.spine);
   assert.equal(bookGeometry(0).thickness, 8);
   assert.equal(bookGeometry(1e6).thickness, 48);
-  assert.ok(bookGeometry(1e6).scale <= 1);
+  assert.deepEqual(Object.keys(bookGeometry(1000)), ["thickness"]);
+});
+
+/* ----------------------------------------------------- shelf preview -- */
+
+const phone = { viewport: { top: 0, height: 844 }, obstructedTop: 56, cardHeight: 176, compactHeight: 56, margin: 12 };
+const preview = (overrides) => choosePreviewLayout({ ...phone, caption: { top: 1500, bottom: 1620 }, book: { top: 150, bottom: 303 }, source: "tap", ...overrides });
+
+test("the caption under the shelf is used whenever it is fully on screen", () => {
+  assert.equal(preview({ caption: { top: 600, bottom: 720 } }).mode, "inline");
+  // Partly hidden under the sticky nav, or below the fold, it is not.
+  assert.equal(preview({ caption: { top: 30, bottom: 150 } }).mode, "card");
+  assert.equal(preview({ caption: { top: 800, bottom: 920 } }).mode, "card");
+});
+
+test("an off-screen caption becomes the bottom card on a phone", () => {
+  assert.deepEqual(preview({}), { mode: "card", dock: "bottom", scrollBy: 0 });
+});
+
+test("short or tiny screens get the one-line bar instead of the card", () => {
+  // Landscape phone: the card would take over a third of the height.
+  const landscape = preview({ viewport: { top: 0, height: 390 }, book: { top: 85, bottom: 309 } });
+  assert.equal(landscape.mode, "compact");
+  assert.ok((phone.cardHeight + 24) / 390 > MAX_CARD_SHARE);
+  // Small portrait phone where the card no longer leaves room for the book above it.
+  const small = preview({ viewport: { top: 0, height: 568 }, cardHeight: 190 });
+  assert.equal(small.mode, "compact");
+  // Even when the share is fine, the book must still fit above the card.
+  const tallBook = preview({ viewport: { top: 0, height: 700 }, book: { top: 60, bottom: 520 } });
+  assert.equal(tallBook.mode, "compact");
+});
+
+test("a tapped book under the overlay is scrolled clear of it, never under the nav", () => {
+  const low = preview({ book: { top: 600, bottom: 753 } });
+  assert.equal(low.dock, "bottom");
+  assert.equal(low.scrollBy, Math.ceil(753 - (844 - 176 - 24)));
+  // A book that would have to pass under the sticky nav only moves as far as it can.
+  const tall = preview({ viewport: { top: 0, height: 600 }, cardHeight: 120, book: { top: 80, bottom: 500 } });
+  assert.ok(tall.scrollBy <= 80 - 56 - 12);
+});
+
+test("a hovered book is never scrolled; its card docks at the top instead", () => {
+  const hover = preview({ source: "hover", viewport: { top: 0, height: 900 }, book: { top: 600, bottom: 820 } });
+  assert.deepEqual(hover, { mode: "card", dock: "top", scrollBy: 0 });
+  // No room above either: stay at the bottom rather than jump around.
+  const cramped = preview({ source: "hover", viewport: { top: 0, height: 900 }, book: { top: 120, bottom: 860 } });
+  assert.equal(cramped.dock, "bottom");
+  assert.equal(cramped.scrollBy, 0);
+});
+
+test("the shelf ships one view and no helper text in its resting state", () => {
+  const shelf = read("src/components/writing/Bookshelf.tsx");
+  assert.doesNotMatch(shelf, /Hover or tap|shelf-views|data-view|ShelfView/);
+  assert.ok(!existsSync(new URL("../src/lib/shelf-view.ts", import.meta.url)));
+  const css = read("src/components/writing/bookshelf.css");
+  assert.doesNotMatch(css, /data-view|shelf-views|shelf-caption-hint/);
 });
