@@ -42,7 +42,7 @@ export function SpeedupCalculator() {
           />
         </div>
 
-        <div className="sdv-chart" role="group" aria-label="Guesses per round. Each bar is the expected speedup for that k; choose one.">
+        <div className="sdv-chart" role="group" aria-label="Guesses per round. Choose a bar to see the expected speedup for that k.">
           <div className="sdv-bars">
             <div className="sdv-chart-grid" aria-hidden="true">
               {GRID.map((line) => (
@@ -94,9 +94,9 @@ export function SpeedupCalculator() {
       </div>
       <figcaption id={captionId} className="sdv-caption">
         Expected speedup is tokens per big pass divided by round time, from Leviathan et al. The formula assumes each
-        guess matches independently with chance α. It also assumes a draft pass costs 0.06 of a big pass, and that
-        checking k + 1 positions costs one normal pass. Below the 1x line the draft costs more time than it saves.
-        Real rounds take a little longer as k grows, so the best k in practice is smaller: Chen et al. found k = 3
+        guess matches independently with probability α. It also assumes a draft pass costs 0.06 of a big pass, and that
+        checking k + 1 positions costs one normal pass. Below the 1x line, the draft costs more time than it saves.
+        Real rounds take a little longer as k grows, so the best k in practice is smaller. Chen et al. found k = 3
         fastest on XSum with nucleus sampling.
       </figcaption>
     </figure>

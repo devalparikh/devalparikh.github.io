@@ -17,16 +17,16 @@ function narration(scenario: Scenario) {
   const quote = (token: string) => `“${token}”`;
   const compare =
     round.accepted === scenario.draft.length
-      ? `Code outside the model compares each prediction with the guess in the same slot. All ${scenario.draft.length} guesses match.`
+      ? `The serving code compares each prediction with the guess in the same slot. All ${scenario.draft.length} guesses match.`
       : round.accepted === 0
-        ? `Code outside the model compares each prediction with the guess in the same slot. In slot 1 the big model predicts ${quote(scenario.predictions[0])}, but the draft guessed ${quote(scenario.draft[0])}.`
-        : `Code outside the model compares each prediction with the guess in the same slot. Slots 1 to ${round.accepted} match. In slot ${round.accepted + 1} the big model predicts ${quote(scenario.predictions[round.accepted])}, but the draft guessed ${quote(scenario.draft[round.accepted])}.`;
+        ? `The serving code compares each prediction with the guess in the same slot. In slot 1, the big model predicts ${quote(scenario.predictions[0])}, but the draft guessed ${quote(scenario.draft[0])}.`
+        : `The serving code compares each prediction with the guess in the same slot. Slots 1 to ${round.accepted} match. In slot ${round.accepted + 1}, the big model predicts ${quote(scenario.predictions[round.accepted])}, but the draft guessed ${quote(scenario.draft[round.accepted])}.`;
   const keep =
     round.accepted === scenario.draft.length
-      ? `It keeps all ${scenario.draft.length} guesses. The prediction after the last guess, ${quote(own)}, is a free extra token, so the round adds ${round.kept.length} tokens.`
+      ? `The serving code keeps all ${scenario.draft.length} guesses. The prediction after the last guess, ${quote(own)}, is a free extra token, so the round adds ${round.kept.length} tokens.`
       : round.accepted === 0
-        ? `It keeps the big model's ${quote(own)} and drops the rest. The round adds 1 token, the same as a normal decode step.`
-        : `It keeps ${kept.map(quote).join(" and ")} and adds the big model's ${quote(own)}. The slots after it are dropped, because they were computed after the wrong guess.`;
+        ? `The serving code keeps the big model's ${quote(own)} and drops the rest. The round adds 1 token, the same as a normal decode step.`
+        : `The serving code keeps ${kept.map(quote).join(" and ")} and adds the big model's ${quote(own)}. It drops the later predictions because the big model used the wrong guess to make them.`;
   return buildSteps([
     { id: "draft", label: "Draft", span: 3, text: `The small model guesses ${scenario.draft.length} tokens, one quick pass each: ${scenario.draft.map(quote).join(", ")}.` },
     { id: "pass", label: "One pass", span: 3.2, text: `The big model reads ${quote(PROMPT[PROMPT.length - 1])} and the ${scenario.draft.length} guesses in one prefill pass. It predicts the next token at each of the ${scenario.predictions.length} positions.` },
@@ -284,8 +284,9 @@ export function OnePassCheck() {
       toolbar={<Modes label="Example" options={SCENARIOS.map(({ id: value, label }) => ({ id: value, label, short: SHORT[value] }))} value={id} onChange={setId} />}
       caption={
         <>
-          Greedy decoding, so a guess passes when it equals the big model&apos;s top token. The positions for “The” and
-          “cat” are in the pass too. Their predictions are not used.
+          In greedy decoding, a guess passes when it matches the big model&apos;s top token. In the first round the pass
+          also covers “The” and “cat”; in later rounds they are already in the cache. Their predictions are not used
+          either way.
         </>
       }
     />

@@ -32,7 +32,7 @@ export function SamplingRule() {
             <Bar label="big model" value={SAMPLING_SLOT.target[index]} kind="target" />
             <Bar label="draft" value={SAMPLING_SLOT.draft[index]} kind="draft" />
             <div className="sdv-prob">
-              <span className="sdv-prob-label">comes out</span>
+              <span className="sdv-prob-label">output</span>
               <span className="sdv-prob-track">
                 <span className="sdv-prob-bar" data-kind="kept" style={{ width: `${(outcome.kept[index] / MAX) * 100}%` }} />
                 {outcome.refill[index] > 0 && (
@@ -54,8 +54,8 @@ export function SamplingRule() {
       </div>
       <figcaption id="sdv-sampling-caption" className="sdv-caption">
         Out of 100 runs of slot 3, the draft&apos;s guess survives {outcome.keptTotal} times and is rejected{" "}
-        {outcome.rejected} times. Every replacement is “floor”, because it is the only token the draft proposed too
-        rarely. The totals come out at 50, 30 and 20, which are the big model&apos;s own odds. The probabilities are
+        {outcome.rejected} times. Every replacement is “floor” because it is the only token the draft proposed too
+        rarely. The totals of 50, 30 and 20 match the big model&apos;s odds. The probabilities are
         made up for the example.
       </figcaption>
     </figure>

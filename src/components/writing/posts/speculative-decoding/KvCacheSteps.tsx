@@ -22,19 +22,19 @@ const STEPS = buildSteps([
     id: "check",
     label: "Check",
     span: 3.2,
-    text: `Normal decoding needs a second pass to write the entries for ${q("on")}. On the speculative side, the serving code compares predictions with guesses: ${q("on")} and ${q("the")} match, and ${q("mat")} does not.`,
+    text: `Normal decoding needs a second pass to write the entries for ${q("on")}. In speculative decoding, the serving code compares the predictions with the guesses. ${q("on")} and ${q("the")} match, and ${q("mat")} does not.`,
   },
   {
     id: "cut",
     label: "Truncate",
     span: 3.2,
-    text: `Normal decoding's third pass writes the entries for ${q("the")}. The speculative side cuts the entries for ${q("mat")} and ${q(".")}. The entries before them never saw those two tokens, so they stay valid.`,
+    text: `Normal decoding's third pass writes the entries for ${q("the")}. The serving code drops the entries for ${q("mat")} and ${q(".")}. The earlier entries stay valid because their tokens couldn't see those two tokens.`,
   },
   {
     id: "same",
     label: "Same cache",
     span: 3.4,
-    text: `Both caches now hold ${q("The cat sat on the")}, and both texts end in ${q(fix)}. Its entries are written by the next pass, the one that reads it. Normal decoding used three big-model passes; speculative decoding used one.`,
+    text: `Both caches now hold ${q("The cat sat on the")}. Both texts end in ${q(fix)}. The next pass reads that token and writes its entries. Normal decoding needed three big-model passes to reach this point. Speculative decoding needed one.`,
   },
 ]);
 
@@ -191,11 +191,11 @@ export function KvCacheSteps() {
       scene={Scene}
       wide={{ w: 660, h: 260 }}
       narrow={{ w: 360, h: 260 }}
-      label={`The KV cache for ${PROMPT.join(" ")} plus the draft on the mat period. Normal decoding writes one token's entries per pass and takes three passes. Speculative decoding writes all seven tokens' entries in one pass, then cuts mat and the period. Both caches end with The cat sat on the, and floor waits for the next pass.`}
+      label={`The KV cache for ${PROMPT.join(" ")} plus the draft on the mat period. Normal decoding writes the three prompt entries in its first pass, then one token's entries per pass, and takes three passes. Speculative decoding writes all seven tokens' entries in one pass, then cuts mat and the period. Both caches end with The cat sat on the, and floor waits for the next pass.`}
       caption={
         <>
           Each column is one token&apos;s entry. The three bars under it are its K and V in three of the layers; a
-          real model has dozens. A dashed token has been chosen, but its entries come from the next pass.
+          real model has dozens. A dashed outline marks the chosen token. The next pass writes its entries.
         </>
       }
     />

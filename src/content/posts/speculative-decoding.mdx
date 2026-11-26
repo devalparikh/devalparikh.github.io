@@ -12,31 +12,31 @@ tags:
   - Transformers
 ---
 
-Speculative decoding makes an LLM write faster without changing what it writes. A small model guesses the next few tokens. The big model reads those guesses in one prefill pass. Plain code then keeps the guesses the big model agrees with, plus one token from the big model itself. In the two original papers this made generation 2 to 3 times faster.
+Speculative decoding makes an LLM write faster without changing its output. With greedy decoding the text is the same, and with sampling the odds of each token are the same. A small model guesses the next few tokens. The big model reads those guesses in one prefill pass. The serving code keeps the guesses the big model agrees with. It also adds one token from the big model itself. In the two original papers, this made generation 2 to 3 times faster.
 
 ## Is the big model a special model?
 
-No. It's the normal LLM you'd run without speculative decoding. It isn't retrained, and it gets no special prompt.
+No. It's the normal LLM you'd run without speculative decoding. It needs no retraining or special prompt.
 
 - **target model**: the big LLM you want answers from (a 27B model, say). Its weights and prompt don't change, and neither does its output. There is no separate verifier model.
 - **draft model**: a much smaller, faster model that guesses ahead (a 1.5B model from the same family, say).
   - it has to use the same tokenizer, because guesses are checked token by token
-  - it can be wrong as often as it likes; a guess only becomes output once the target agrees
+  - it can guess wrong. A guess only becomes output once the target agrees
 
-Pairs from the papers: Leviathan, Kalman and Matias used T5-small (77M) to draft for T5-XXL (11B), both existing checkpoints. They describe the method as working on "existing off-the-shelf models without retraining or architecture changes". Chen and coauthors at DeepMind trained a 4B draft with Chinchilla's tokenizer to draft for Chinchilla 70B.
+Leviathan, Kalman and Matias used T5-small (77M) to draft for T5-XXL (11B), both existing checkpoints. They describe the method as working on "existing off-the-shelf models without retraining or architecture changes". Chen and coauthors at DeepMind trained a 4B draft with Chinchilla's tokenizer to guess tokens for Chinchilla 70B.
 
 (note: some variants, like Medusa and EAGLE, replace the separate draft model with small extra layers trained on top of the big model. The big model is still the normal model in those too.)
 
 ## How can one pass check all the guesses?
 
-Any decoder LLM already predicts the next token at every position of its input, in one pass. That's how it reads a prompt. Usually only the last position's prediction is used.
+Any decoder LLM already predicts the next token at every position of its input, in one pass. That's how it reads a prompt. Usually the serving code uses only the last position's prediction.
 
 Speculative decoding puts the draft's guesses into the input and uses the predictions at each of those positions:
 
 1. the draft model guesses the next few tokens
-2. the guesses are added after the text, and the big model reads all of it once
-3. at each position, the big model predicts the next token. That's its own answer to "what comes after this?" for every guess.
-4. compare: keep the guesses while they match, swap the first mismatch for the big model's token, and throw away the rest
+2. the serving code adds the guesses after the text. The big model reads all of it once
+3. at each position, the big model predicts the next token. The prediction after "sat" checks the guess "on", the prediction after "on" checks the guess "the", and so on.
+4. the serving code keeps each guess that matches. At the first mismatch, it uses the big model's token and drops the rest
 
 With the text `The cat sat` and the draft guess `on the mat .`:
 
@@ -56,18 +56,18 @@ That's three new tokens from one big-model pass. Normal decoding needs three pas
 
 <OnePassCheck />
 
-The pass is cheap because a pass over five tokens takes about as long as a pass over one. Most of a pass is spent moving the model's weights from memory to the chip, and that cost is paid once either way. The numbers are in [Why checking 5 tokens costs about one pass](#why-checking-5-tokens-costs-about-one-pass).
+The pass is cheap because a pass over five tokens takes about as long as a pass over one. The chip spends most of that time reading the model's weights from memory. It reads them once either way. The numbers are in [Why checking 5 tokens costs about one pass](#why-checking-5-tokens-costs-about-one-pass).
 
 ## Is that the decode step? Who tells it to stop?
 
 It's the prefill step, run on the text plus the draft. A decode step feeds in one token. This pass feeds in all the guesses together and gets a prediction at every position, the same way the model reads a prompt.
 
-The big model never knows there's a difference, and nothing tells it to stop. It does what it always does on a prefill: it predicts the next token at every position.
+The big model predicts the next token at every position, just as it does during prefill. It never checks for a mismatch or stops at one.
 
 Ordinary code in the serving loop does the checking:
 
 - compare guess 1 with prediction 1, guess 2 with prediction 2, and so on
-- at the first mismatch, stop reading
+- at the first mismatch, stop comparing
 - keep the matching guesses, plus the big model's token at the mismatch
 - if every guess matches, also keep the prediction after the last guess (a free extra token)
 - throw away the rest, then repeat the loop with the draft guessing from the new end
@@ -79,7 +79,7 @@ Every kept token was predicted by the big model itself, from exactly the text be
 <details className="sdv-details">
 <summary>With sampling (temperature above 0)</summary>
 
-The round above is the greedy version: the target always picks its top token, so a guess passes when it equals that token.
+In greedy decoding, the target always picks its top token. The serving code accepts a guess when it matches that token.
 
 With sampling, the target picks at random from its probabilities, so equality isn't the right test. Both papers use the same accept/reject rule instead (Algorithm 1 in Leviathan et al., Algorithm 2 in Chen et al.):
 
@@ -89,24 +89,24 @@ With sampling, the target picks at random from its probabilities, so equality is
 - on a rejection, sample a replacement from `max(0, p − q)`, rescaled to add up to 1. That is the probability the draft left uncovered.
 - if all k guesses pass, sample the extra token from the target's probabilities after the last guess
 
-An example for slot 3, with made-up probabilities. The target gives floor 50%, mat 30% and rug 20%. The draft gives mat 60%, floor 20% and rug 20%.
+Suppose slot 3 has these made-up probabilities. The target gives floor 50%, mat 30% and rug 20%. The draft gives mat 60%, floor 20% and rug 20%.
 
 <SamplingRule />
 
-The draft proposes "mat" too often (60 against 30), so half of those proposals are rejected. Every rejection is refilled with "floor", the token it proposed too rarely. The output comes out at 50, 30 and 20, which are the target's own odds. Both papers prove this holds for any draft model, and vLLM's docs call it lossless "up to the precision limits of hardware numerics".
+The draft proposes "mat" too often (60 against 30). The serving code rejects half of those proposals. It replaces each one with "floor", the token the draft proposed too rarely. The output comes out at 50, 30 and 20, which are the target's own odds. Both papers prove this holds for any draft model, and vLLM's docs call it lossless "up to the precision limits of hardware numerics".
 
 </details>
 
 ## How prefill works
 
-During prefill the model goes through all the input tokens in parallel to fill the KV cache at each attention layer.
+During prefill, the model goes through all the input tokens in parallel to fill the KV cache at each attention layer.
 
 - each token gets its own KV cache entry at each layer
-- the model processes layer by layer, one after another, but within a layer all the tokens are processed in parallel
+- the model processes one layer after another. Within a layer, it processes all the tokens in parallel
 - each token can only see itself and the tokens before it, and it only writes the KV cache entry for itself
   - (each layer computes its K and V from the token vectors the layer below produced, so deeper layers' entries carry more of the earlier context)
 - each token fills its cache entries, and it also produces a prediction of the next token
-  - (only after the last layer: the token's final vector goes through the output projection to get a score for every token in the vocabulary. The middle layers don't predict; they refine the vector.)
+  - (only after the last layer: the token's final vector goes through the output projection to get a score for every token in the vocabulary. The middle layers refine the vector.)
 - if it's not the very last input token, just a token in the middle, that prediction gets discarded. Some runtimes don't even compute it.
 - the very last token's prediction becomes the first token of the reply. After that, decode runs on a loop: feed in that token, get the next one, repeat.
 
@@ -115,7 +115,7 @@ Speculative decoding keeps those middle predictions:
 1. the draft tokens go in as input to the big model, after the text
 2. the big model runs prefill over all of it
 3. the inference runtime compares each prediction with the draft's guess for that slot
-4. it keeps the matches, or cuts at the first mismatch
+4. it keeps the matching guesses up to the first mismatch
 
 To see why a middle prediction is correct, take the 5th token of `The cat sat on the mat .`, which is "the". The mask lets "the" see only `The cat sat on the`. It can't see "mat". So the prediction at "the" is exactly what the model would say if the text stopped at "the".
 
@@ -131,15 +131,13 @@ pass 3 (decode)    reads "the"           →  predicts "floor"
 
 Pass 2 can't start until pass 1 has picked "on". Prefill can run in parallel because the whole input is already known. Decode can't, because each token depends on the one before it. Speculative decoding uses the small model's guesses so the big model can check them in parallel, the way it reads a prompt.
 
-## The KV cache, with the cat example
+## How does each layer fill its KV cache in the cat example?
 
 Every attention layer has its own KV cache. For each token, that layer saves a key ("what I contain") and a value ("what I pass along").
 
-1. **Prefill `The cat sat`.** In each layer, all 3 tokens get their key and value computed at once. The cache now holds K and V for The, cat and sat. With 32 layers, this happens in all 32, and each layer has its own cache. The last position predicts "on".
+1. **Prefill `The cat sat`.** Each layer computes a key and a value for each of the 3 tokens at once. The cache now holds K and V for The, cat and sat. A model with 32 layers does this in all 32 caches. The last position predicts "on".
 2. **Decode "on".** Only "on" goes in. Each layer computes K and V for "on" and appends them, so the cache holds The, cat, sat, on. "on" also makes a query ("what am I looking for"). Attention compares that query with all 4 cached keys and mixes their values. Nothing is recomputed for the older tokens. The output predicts "the".
-3. **Speculative pass.** The cache holds `The cat sat`, and the draft is `on the mat .`. The big model appends K and V for all 4 draft tokens in one pass. The check rejects "mat" in favor of "floor", so the cache is cut back to `The cat sat on the`. The entries for "mat" and "." are dropped. "floor" gets its entries on the next pass, the one that reads it.
-
-So the cache grows optimistically, then gets cut back on a mismatch.
+3. **Speculative pass.** The cache holds `The cat sat`, and the draft is `on the mat .`. The big model appends K and V for all 4 draft tokens in one pass. The serving code rejects "mat" and uses "floor". It cuts the cache back to `The cat sat on the`. The entries for "mat" and "." are dropped. "floor" gets its entries on the next pass, the one that reads it.
 
 <KvCacheSteps />
 
@@ -147,19 +145,19 @@ So the cache grows optimistically, then gets cut back on a mismatch.
 
 No. Processing a token writes only that token's entry, in each layer. Later tokens read earlier entries and append their own.
 
-One precision: in layer N, a token's K and V are computed from that token's own vector coming into layer N. That vector already took in the earlier tokens through attention in the layers below. So the earlier tokens shape it, but the K and V come from just that token.
+One precision: layer N computes a token's K and V from that token's own incoming vector. That vector already took in the earlier tokens through attention in the layers below. So the earlier tokens shape it, but the K and V come from just that token.
 
 Once written, an entry never changes. That's why the cache stays valid. It's also why speculative decoding can safely cut rejected entries off the end: everything before the cut is unaffected.
 
-## Why it works this way: causal training
+## Why does it work this way?
 
-The root cause is how the model is trained: to predict the next token using only what came before.
+The root cause is causal training. The model learns to predict the next token using only what came before.
 
-During training the model sees a whole sentence and predicts every next token at once. If position 3 could see position 4, it would just copy the answer. So the mask blocks every token from seeing anything after it. (note: predicting every position of a training sentence in one pass is called teacher forcing. It's the same per-position prediction that prefill makes.)
+During training, the model sees a whole sentence and predicts every next token at once. If position 3 could see position 4, it would just copy the answer. So the mask blocks every token from seeing anything after it. (note: feeding in the real training sentence and predicting every position in one pass is called teacher forcing. It's the same per-position prediction that prefill makes.)
 
 So the model only ever learns to build each token's meaning from the past. Adding new tokens later can't change it. "cat" in "The cat" means the same whether the sentence goes on to "sat on the mat" or to "ate the fish".
 
-It's like writing in pen. Each new word is written by looking back at the page, but you never go back and edit an earlier word. So each word's K and V can be saved once and reused.
+It's like writing in pen. You look back at the page as you write each new word. The earlier words stay as you wrote them. So each word's K and V can be saved once and reused.
 
 Three things follow from that one rule:
 
@@ -175,14 +173,14 @@ Take the sentence "I saw her duck", read left to right the way the model does:
 
 1. "duck" arrives last. Up to "her", the model has no idea whether "duck" will be the bird or the move.
 2. "duck" looks back at "I saw her" and builds a meaning for itself: an ambiguous word that could be a noun or a verb.
-3. The sentence goes on: "I saw her duck under the table". The new token "under" looks back at "duck" and settles it: she ducked. That reading is stored in "under"'s own entry. The "duck" entry still says "ambiguous".
+3. The sentence goes on: "I saw her duck under the table". The new token "under" looks back at "duck". Now the model can tell that she ducked. That reading is stored in "under"'s own entry. The "duck" entry still says "ambiguous".
 4. The next prediction reads "under", which already carries "she ducked", so the model continues the right way.
 
 If the sentence goes "I saw her duck swimming in the pond" instead, "swimming" is the token that settles it as the bird.
 
-So an earlier word's entry never gets the new meaning. The corrected meaning lives in the later word's entry, and every later step reads both. It's like a notebook you can't erase: you wrote "bank" on line 2, and on line 4 you write "(line 2 meant riverbank)". Anyone reading later reads both lines.
+The earlier word's entry stays as it was. The new reading lives in the later word's entry. Every later step reads both. It's like a notebook you can't erase: you wrote "bank" on line 2, and on line 4 you write "(line 2 meant riverbank)". Anyone reading later reads both lines.
 
-This compounds through the layers. Tokens closer to the end have more context, and each layer builds on the vectors the layer below produced. By the last position, the model has gathered the right reading of everything before it, and that's the only place the meaning has to be right for the next prediction.
+This compounds through the layers. Tokens closer to the end have more context. Each layer builds on the vectors the layer below produced. By the last position, the model can gather the right reading of everything before it. That's the only place the meaning has to be right for the next prediction.
 
 ## Why checking 5 tokens costs about one pass
 
@@ -193,7 +191,7 @@ Every forward pass pays for two things:
 
 Rough numbers for a 27B model at 4 bits on a laptop GPU:
 
-- the weights take about 16 GB, and memory bandwidth is about 300 GB/s, so reading them takes about 53 ms
+- the weights take about 16 GB. At a memory bandwidth of about 300 GB/s, reading them takes about 53 ms
 - the math is about 2 operations per weight per token, so 54 billion per token. At about 10 trillion per second, that's about 5 ms.
 
 With one token, the math finishes long before the weights finish arriving. The GPU spends most of the pass waiting on memory. That's what "decoding is memory-bandwidth bound" means. Chen et al. write that "Transformer sampling is typically memory bandwidth bound", and Hugging Face's assisted generation post says "the bottleneck in the forward pass comes from loading the model layer weights into the computation cores of your device, not from performing the computations themselves".
@@ -202,18 +200,18 @@ In the middle of a generation, the cache already holds the text. So a check pass
 
 <PassTimeline />
 
-The draft adds its own time. A 1.5B draft at 4 bits is about 0.9 GB, so each guess costs about 3 ms and four of them about 12 ms. For this round that's about 65 ms for `on the floor`, against about 160 ms normally.
+The draft adds its own time. A 1.5B draft at 4 bits takes about 0.9 GB. Each guess costs about 3 ms, so four guesses take about 12 ms. For this round, that's about 65 ms for `on the floor`, against about 160 ms normally.
 
 (note: prefill is the opposite case. A long prompt puts hundreds of tokens through each weight read, so the math dominates. That's why a model reads a prompt much faster per token than it writes.)
 
-The second setting in the figure shows the limit. With 16 requests batched together, a normal step already carries 16 positions and its math outlasts the weight read. Four guesses per request make the check pass 80 positions long, and every extra position now costs real time.
+The second setting in the figure shows the limit. With 16 requests batched together, a normal step already carries 16 positions and its math outlasts the weight read. Four guesses per request make the check pass 80 positions long. Each extra position now makes the pass take longer.
 
-## How much faster
+## How much faster is it?
 
 Three numbers decide the gain:
 
-- **acceptance rate (α)**: how often a guess matches the target. It depends on how close the two models are and on the text; code and other predictable text match more often.
-- **guesses per round (k)**: more guesses can win more tokens per pass, but a guess only counts if every guess before it matched.
+- **acceptance rate (α)**: how often a guess matches the target. It depends on how close the two models are and on the text. Code and other predictable text match more often.
+- **guesses per round (k)**: more guesses can yield more tokens per pass. A guess only counts if every guess before it matched.
 - **draft cost (c)**: one draft pass divided by one target pass. About 3 / 53 ≈ 0.06 in the laptop example.
 
 If each guess matches with probability α, the expected number of tokens per target pass is (Leviathan et al., equation 1):
@@ -232,19 +230,19 @@ What the papers measured, both at batch size 1:
 - **Leviathan et al.**: T5-XXL (11B) with a T5-small (77M) draft on one TPU v4. 2.3x to 3.4x on translation and summarization, with α between 0.53 and 0.75.
 - **Chen et al.**: Chinchilla 70B with a 4B draft on 16 TPU v4s and k = 4. 1.92x on XSum summaries and 2.46x on HumanEval code, with benchmark scores unchanged.
 
-## When it doesn't help
+## When does it stop helping?
 
 - **busy servers**: with many requests batched, the GPU is no longer waiting on memory, so the extra positions cost real compute. vLLM recommends speculative decoding for "medium-to-low QPS (queries per second), memory-bound workloads", and TensorRT-LLM describes it as "a technique for accelerating LLM inference at low batch sizes".
 - **a draft that guesses badly**: most rounds return one or two tokens and the draft's time is wasted. A bigram model used as a draft had α ≈ 0.2 in Leviathan et al., worth 1.25x at most.
 - **a draft that's too slow**: a bigger draft guesses better but costs more. T5-large raised α to 0.82 yet only reached 1.7x, against 3.4x for the much smaller T5-small.
-- **too many guesses**: rounds take longer and fewer guesses survive. Chen et al. found k = 3 fastest on XSum with nucleus sampling.
+- **too many guesses**: each extra guess adds time, and a smaller share of the guesses survive. Chen et al. found k = 3 fastest on XSum with nucleus sampling.
 - **total compute**: rejected positions are wasted target math. Speculative decoding cuts the wait for each token but does more arithmetic overall (Leviathan et al., section 3.4).
 
-## Other ways to get the guesses
+## Where else can the guesses come from?
 
-The check stays the same. These change where the guesses come from:
+Most of these keep the same check. They change where the guesses come from:
 
-- **prompt lookup (n-gram)**: copy the tokens that followed the same few tokens earlier in the prompt. No model at all; it helps when the output repeats the input, as in summaries and code edits.
+- **prompt lookup (n-gram)**: copy the tokens that followed the same few tokens earlier in the prompt. This needs no draft model. It helps when the output repeats the input, as in summaries and code edits.
 - **Medusa**: a few extra heads on the target's last hidden state, each guessing one more position ahead. Its typical-acceptance check gives up the exact output for more speed.
 - **EAGLE**: one extra decoder layer that predicts the target's next hidden state from its current hidden states and tokens, then reuses the target's output head to turn it into a guess. It keeps the standard check, so the output stays exact. It reported 2.7x to 3.5x on LLaMA2-Chat 70B.
 

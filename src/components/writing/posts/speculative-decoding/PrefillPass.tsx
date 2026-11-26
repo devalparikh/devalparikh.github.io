@@ -59,8 +59,8 @@ function stepsFor(mode: Mode) {
       label: "Keep",
       span: 3,
       text: draft
-        ? `The predictions from ${q("sat")} on are kept, and the serving code compares them with the draft's guesses. ${q("first")} and ${q("is")} are discarded, as in any prefill.`
-        : `Only the last prediction is used. ${q("on")} becomes the first token of the reply, and ${q("first")} and ${q("is")} are discarded.`,
+        ? `Starting at ${q("sat")}, the serving code keeps the predictions so it can check the draft's guesses. ${q("first")} and ${q("is")} are discarded, as in any prefill.`
+        : `The serving code uses only the last prediction. ${q("on")} becomes the first token of the reply. The code discards ${q("first")} and ${q("is")}.`,
     },
   ]);
 }
@@ -326,7 +326,7 @@ export function PrefillPass({ mode: initial = "prefill" }: { mode?: Mode }) {
       toolbar={<Modes label="Pass" options={MODES} value={mode} onChange={setMode} />}
       caption={
         <>
-          Three of the layers are drawn; a real model has dozens. The small grid is the causal mask. A filled square
+          The drawing shows three layers. A real model has dozens. The small grid is the causal mask. A filled square
           means the token in that row can see the token in that column.
         </>
       }
