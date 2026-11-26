@@ -48,15 +48,13 @@ export function SamplingRule() {
           </div>
         ))}
         <div className="sdv-legend" aria-hidden="true">
-          <span><i data-strip="target" /> big model: its odds, and its replacement after a rejection</span>
-          <span><i data-strip="draft" /> draft: its odds, and its accepted guesses</span>
+          <span><i data-strip="target" /> big model</span>
+          <span><i data-strip="draft" /> draft</span>
         </div>
       </div>
       <figcaption id="sdv-sampling-caption" className="sdv-caption">
-        Out of 100 runs of slot 3, the draft&apos;s guess survives {outcome.keptTotal} times and is rejected{" "}
-        {outcome.rejected} times. Every replacement is “floor” because it is the only token the draft proposed too
-        rarely. The totals of 50, 30 and 20 match the big model&apos;s odds. The probabilities are
-        made up for the example.
+        Out of 100 runs of slot 3, the guess survives {outcome.keptTotal} times. All {outcome.rejected} replacements
+        are “floor”, so the totals match the big model&apos;s 50, 30 and 20.
       </figcaption>
     </figure>
   );

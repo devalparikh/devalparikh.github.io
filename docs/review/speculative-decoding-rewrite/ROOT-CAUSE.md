@@ -120,3 +120,30 @@ patterns are paraphrased here and nothing from the notes goes into the post.
   lit active part, routes and packets, numbered steps with one narration line each, and short
   muted captions. Fixed-width phone layouts so nothing wraps at 320px.
 - **Cover:** the origin/main cover, unchanged.
+
+## Round 3: round 2 overcorrected
+
+Deval, Nov 26, 10:44 AM: "good progress", but he wants a wiki or notes page, not his chat
+replayed. In his words: "instead of making it formatted sections based on my questions do it
+more as a learner… similar to ViT blog… it should just cover this content."
+
+- **What went wrong.** Round 2 took "answer his questions in the order he asked them" literally.
+  His questions became the headings ("Is that the decode step? Who tells it to stop?"), and the
+  page read like a transcript of how he learned it. The order he learned in is a guide to what
+  the page must explain and in what dependency order. It is not the page's structure.
+- **What he wants.** Topic headings, like the ViT post. The information comes through visuals and
+  the cat / "floor" example. Short paragraphs, no big blocks of text, simple and concise. Every
+  point from the chat stays covered: the target is a normal LLM; checking is a prefill pass, not
+  decode; plain code compares; the KV cache appends, then truncates; entries never change; causal
+  training is like writing in pen; later words carry the meaning.
+- **What to keep.** The "How prefill works" section's language. He likes it as it is.
+- **Terms.** Use the hover-preview term cards (`ArticleTerm`, as in the ViT post) for
+  vocabulary, so definitions don't sit in the main text. Link his other posts where they help:
+  Transformer basics for prefill, decode and the KV cache; the ViT post for a model whose tokens
+  see both directions.
+- **Visuals.** Less noise: drop counters, meta captions and extra labels that don't teach. On
+  phones, the step buttons show numbers only; the narration line names the step.
+- **Hints from his content-creation explainer skills.** Answer first. One running example built
+  up unit by unit. Introduce each fact on the one beat where it fits, and don't repeat it in
+  another beat. No on-screen meta or footer labels. One movement at a time, in cause-and-effect
+  order. Keep each frame to what the viewer needs.

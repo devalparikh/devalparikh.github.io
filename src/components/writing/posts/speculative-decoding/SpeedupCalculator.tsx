@@ -93,11 +93,8 @@ export function SpeedupCalculator() {
         </dl>
       </div>
       <figcaption id={captionId} className="sdv-caption">
-        Expected speedup is tokens per big pass divided by round time, from Leviathan et al. The formula assumes each
-        guess matches independently with probability α. It also assumes a draft pass costs 0.06 of a big pass, and that
-        checking k + 1 positions costs one normal pass. Below the 1x line, the draft costs more time than it saves.
-        Real rounds take a little longer as k grows, so the best k in practice is smaller. Chen et al. found k = 3
-        fastest on XSum with nucleus sampling.
+        Leviathan et al.&apos;s formula with c = 0.06. It assumes guesses match independently. Below 1x, the draft
+        costs more time than it saves.
       </figcaption>
     </figure>
   );

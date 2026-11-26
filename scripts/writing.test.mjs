@@ -181,6 +181,18 @@ test("the sync carries local slugs over from an old snapshot without importing t
   assert.ok(readdirSync(new URL(`../${LOCAL_POSTS_DIR}/`, import.meta.url)).includes("speculative-decoding.mdx"));
 });
 
+test("local post components only import vendored modules the snapshot carries", () => {
+  const root = new URL("../src/components/writing/posts/", import.meta.url);
+  const files = readdirSync(root, { recursive: true }).filter((file) => /\.(tsx?|mjs)$/.test(file));
+  for (const file of files) {
+    const source = readFileSync(new URL(file, root), "utf8");
+    for (const [, target] of source.matchAll(/from "@blog\/([^"]+)"/g)) {
+      const listed = snapshot.vendored.some((entry) => entry.replace(/\.(tsx?|css)$/, "") === target);
+      assert.ok(listed, `${file} imports @blog/${target}, which the snapshot does not vendor`);
+    }
+  }
+});
+
 /* ------------------------------------------------------------------ shelf -- */
 
 const writingSource = read("src/content/writing.ts");

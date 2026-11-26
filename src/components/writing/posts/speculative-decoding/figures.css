@@ -8,7 +8,8 @@
    Colours come from the --fig-* tokens in globals.css, so both themes work.
    ========================================================================== */
 
-.sdv-figure {
+.sdv-figure,
+.sdv-term-art {
   --sd-ink: var(--color-base-content);
   --sd-bg: var(--color-base-100);
   --sd-paper: color-mix(in srgb, var(--sd-ink) 3%, var(--sd-bg));
@@ -17,6 +18,8 @@
   margin: 0;
   color: var(--sd-ink);
 }
+
+.sdv-term-art { background: var(--sd-paper); border-radius: 4px; }
 
 .blog-prose > figure.sdv-figure,
 .blog-prose .sdv-details > figure.sdv-figure {

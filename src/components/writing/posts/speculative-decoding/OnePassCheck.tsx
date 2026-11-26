@@ -1,35 +1,41 @@
 "use client";
 
 import { memo, useState } from "react";
-import { PROMPT, SCENARIOS, verify, type Scenario, type SlotCheck } from "./model";
+import { PROMPT, SCENARIOS, verify, type Scenario } from "./model";
 import { buildSteps, phases, type Pt, type Step } from "./scene";
 import { Modes, SceneFigure, type SceneProps } from "./SceneFigure";
 import { Box, Mark, Packet, Route, Txt } from "./svg";
 
 const SHORT: Record<Scenario["id"], string> = { miss: "miss at 3", all: "all match", first: "miss at 1" };
 
-const WORD: Record<SlotCheck, string> = { match: "match", miss: "differs", skip: "dropped", bonus: "bonus", unused: "" };
+/** "Slot 1 matches." / "Slots 1 and 2 match." / "Slots 1, 2 and 3 match." */
+function matched(count: number) {
+  if (count === 1) return "Slot 1 matches.";
+  const slots = Array.from({ length: count }, (_, index) => String(index + 1));
+  return `Slots ${slots.slice(0, -1).join(", ")} and ${slots[slots.length - 1]} match.`;
+}
 
 function narration(scenario: Scenario) {
   const round = verify(scenario);
   const own = round.kept[round.kept.length - 1];
   const kept = scenario.draft.slice(0, round.accepted);
-  const quote = (token: string) => `“${token}”`;
+  const q = (token: string) => `“${token}”`;
+  const k = scenario.draft.length;
   const compare =
-    round.accepted === scenario.draft.length
-      ? `The serving code compares each prediction with the guess in the same slot. All ${scenario.draft.length} guesses match.`
+    round.accepted === k
+      ? `All ${k} guesses match the big model's predictions.`
       : round.accepted === 0
-        ? `The serving code compares each prediction with the guess in the same slot. In slot 1, the big model predicts ${quote(scenario.predictions[0])}, but the draft guessed ${quote(scenario.draft[0])}.`
-        : `The serving code compares each prediction with the guess in the same slot. Slots 1 to ${round.accepted} match. In slot ${round.accepted + 1}, the big model predicts ${quote(scenario.predictions[round.accepted])}, but the draft guessed ${quote(scenario.draft[round.accepted])}.`;
+        ? `Slot 1 already differs. The big model predicts ${q(scenario.predictions[0])}, and the draft guessed ${q(scenario.draft[0])}.`
+        : `${matched(round.accepted)} In slot ${round.accepted + 1}, the big model predicts ${q(scenario.predictions[round.accepted])} and the draft guessed ${q(scenario.draft[round.accepted])}.`;
   const keep =
-    round.accepted === scenario.draft.length
-      ? `The serving code keeps all ${scenario.draft.length} guesses. The prediction after the last guess, ${quote(own)}, is a free extra token, so the round adds ${round.kept.length} tokens.`
+    round.accepted === k
+      ? `The round keeps all ${k} guesses, plus the free extra token ${q(own)}.`
       : round.accepted === 0
-        ? `The serving code keeps the big model's ${quote(own)} and drops the rest. The round adds 1 token, the same as a normal decode step.`
-        : `The serving code keeps ${kept.map(quote).join(" and ")} and adds the big model's ${quote(own)}. It drops the later predictions because the big model used the wrong guess to make them.`;
+        ? `The round keeps only the big model's ${q(own)}, the same as one decode step.`
+        : `The round keeps ${kept.map(q).join(" and ")}, then the big model's ${q(own)}. The later slots are dropped.`;
   return buildSteps([
-    { id: "draft", label: "Draft", span: 3, text: `The small model guesses ${scenario.draft.length} tokens, one quick pass each: ${scenario.draft.map(quote).join(", ")}.` },
-    { id: "pass", label: "One pass", span: 3.2, text: `The big model reads ${quote(PROMPT[PROMPT.length - 1])} and the ${scenario.draft.length} guesses in one prefill pass. It predicts the next token at each of the ${scenario.predictions.length} positions.` },
+    { id: "draft", label: "Draft", span: 3, text: `The small model guesses ${k} tokens, one quick pass each.` },
+    { id: "pass", label: "One pass", span: 3.2, text: `The big model reads ${q(PROMPT[PROMPT.length - 1])} and the guesses in one prefill pass. It predicts the next token at every position.` },
     { id: "compare", label: "Compare", span: 3.6, text: compare },
     { id: "keep", label: "Keep", span: 3.4, text: keep },
   ]);
@@ -103,7 +109,6 @@ function makeScene(scenario: Scenario, steps: Step[]) {
     const predicted = p.done("pass", 0.35, 0.7);
     const compareAt = (slot: number) => p.done("compare", (Math.min(slot, round.targetSlot) / slots) * 0.9, (Math.min(slot, round.targetSlot) / slots) * 0.9 + 0.12);
     const kept = p.done("keep", 0, 0.5);
-    const counters = p.reached("keep");
 
     return (
       <>
@@ -177,17 +182,12 @@ function makeScene(scenario: Scenario, steps: Step[]) {
               <Route pts={[[x, L.predictsY + L.chipH + 3], [x, L.markY - 10]]} arrow={false} tone={check === "miss" ? "bad" : check === "skip" ? "muted" : "good"} on={check !== "skip"} />
               <Route pts={[[x, L.markY + 10], [x, L.draftY - 3]]} arrow={false} tone={check === "miss" ? "bad" : check === "skip" ? "muted" : "good"} on={check !== "skip"} />
               <Mark x={x} y={L.markY} kind={check === "unused" ? "skip" : check} size={6} />
-              {L.labels ? (
-                <Txt x={x + 12} y={L.markY} size={10} anchor="start" muted={check !== "miss"} tone={check === "miss" ? "bad" : undefined}>
-                  {WORD[check]}
-                </Txt>
-              ) : null}
             </g>
           );
         })}
 
         {/* The draft model and its guesses */}
-        <Box x={L.draftBox.x} y={L.draftBox.y} w={L.draftBox.w} h={L.draftBox.h} r={5} tone="draft" look={p.on("draft") ? "lit" : "soft"} label={compact ? "draft model · one quick pass per guess" : "draft guesses"} sub={compact ? undefined : "small model, 1 per pass"} labelSize={compact ? 10.5 : 11} />
+        <Box x={L.draftBox.x} y={L.draftBox.y} w={L.draftBox.w} h={L.draftBox.h} r={5} tone="draft" look={p.on("draft") ? "lit" : "soft"} label="draft model" labelSize={11} />
         {Array.from({ length: slots }, (_, slot) => {
           const token = scenario.draft[slot];
           if (token === undefined) {
@@ -222,7 +222,7 @@ function makeScene(scenario: Scenario, steps: Step[]) {
 
         {/* The text after the round */}
         <Txt x={compact ? 12 : 14} y={L.resultY - (compact ? 12 : -L.chipH / 2)} size={10.5} anchor="start" muted>
-          {compact ? "text after the round" : "text after"}
+          result
         </Txt>
         {[...PROMPT, ...round.kept].map((token, index) => {
           const added = index >= PROMPT.length;
@@ -243,15 +243,6 @@ function makeScene(scenario: Scenario, steps: Step[]) {
           );
         })}
 
-        {/* Counters */}
-        <g opacity={counters ? 1 : 0.35}>
-          <Txt x={compact ? 12 : 166} y={L.countersY} size={11} anchor="start">
-            {`big-model passes: ${p.reached("pass") ? 1 : 0} · ${compact ? "draft" : "small-model"} passes: ${Math.min(guesses, Math.ceil(p.done("draft", 0, 0.95) * guesses))}`}
-          </Txt>
-          <Txt x={compact ? 12 : 166} y={L.countersY + 20} size={11} anchor="start" muted>
-            {`tokens added: ${counters ? round.kept.length : 0} · normal${compact ? "" : " decoding"}: ${round.kept.length} big${compact ? "" : "-model"} ${round.kept.length === 1 ? "pass" : "passes"}`}
-          </Txt>
-        </g>
       </>
     );
   });
@@ -278,17 +269,11 @@ export function OnePassCheck() {
       stillStep="keep"
       durationMs={14000}
       scene={active.Scene}
-      wide={{ w: 660, h: 350 }}
-      narrow={{ w: 360, h: 396 }}
+      wide={{ w: 660, h: 300 }}
+      narrow={{ w: 360, h: 350 }}
       label={`One round of speculative decoding. Text so far: ${PROMPT.join(" ")}. The draft guesses ${active.scenario.draft.join(" ")}. The big model reads ${round.inputs.join(" ")} in one prefill pass and predicts ${active.scenario.predictions.join(", ")}. The round keeps ${round.kept.join(" ")}: ${round.kept.length} tokens from one big-model pass.`}
       toolbar={<Modes label="Example" options={SCENARIOS.map(({ id: value, label }) => ({ id: value, label, short: SHORT[value] }))} value={id} onChange={setId} />}
-      caption={
-        <>
-          In greedy decoding, a guess passes when it matches the big model&apos;s top token. In the first round the pass
-          also covers “The” and “cat”; in later rounds they are already in the cache. Their predictions are not used
-          either way.
-        </>
-      }
+      caption={<>Greedy decoding: a guess passes when it matches the big model&apos;s top token.</>}
     />
   );
 }

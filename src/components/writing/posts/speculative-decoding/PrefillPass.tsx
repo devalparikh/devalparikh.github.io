@@ -20,47 +20,25 @@ const q = (token: string) => `“${token}”`;
 function stepsFor(mode: Mode) {
   const draft = mode === "draft";
   return buildSteps([
-    {
-      id: "in",
-      label: "Tokens in",
-      span: 2,
-      text: draft
-        ? "The three tokens of the text and the four draft guesses go in together, seven tokens in all."
-        : "The three prompt tokens go in together.",
-    },
-    {
-      id: "layer1",
-      label: "Layer 1",
-      span: 3,
-      text: "Layer 1 processes every token at the same time. Each token computes its own K and V and saves them in this layer's cache.",
-    },
+    { id: "in", label: "Tokens in", span: 2, text: draft ? "The text and the four guesses go in together." : "The three prompt tokens go in together." },
+    { id: "layer1", label: "Layer 1", span: 3, text: "Layer 1 processes every token at once. Each token writes its own K and V." },
     {
       id: "mask",
       label: "Causal mask",
       span: 3,
       text: draft
-        ? `Each token can only look at itself and the tokens before it. ${q("the")} sees ${q("The cat sat on the")}. It can't see ${q("mat")}.`
-        : `Each token can only look at itself and the tokens before it. ${q("sat")} sees ${q("The")}, ${q("cat")} and itself.`,
+        ? `${q("the")} sees ${q("The cat sat on the")}. It can't see ${q("mat")}.`
+        : `Each token sees only itself and the tokens before it. ${q("sat")} sees all three.`,
     },
-    {
-      id: "layers",
-      label: "Next layers",
-      span: 3,
-      text: "Layer 2 does the same with the vectors layer 1 produced. The layers run one after another, up to the last one.",
-    },
-    {
-      id: "predict",
-      label: "Predict",
-      span: 3,
-      text: "After the last layer, each token's vector goes through the output projection. Each position gets its own prediction of the next token.",
-    },
+    { id: "layers", label: "Next layers", span: 3, text: "Each next layer does the same with the vectors from the layer below." },
+    { id: "predict", label: "Predict", span: 3, text: "After the last layer, the output projection gives a next-token prediction at every position." },
     {
       id: "keep",
       label: "Keep",
       span: 3,
       text: draft
-        ? `Starting at ${q("sat")}, the serving code keeps the predictions so it can check the draft's guesses. ${q("first")} and ${q("is")} are discarded, as in any prefill.`
-        : `The serving code uses only the last prediction. ${q("on")} becomes the first token of the reply. The code discards ${q("first")} and ${q("is")}.`,
+        ? `The predictions from ${q("sat")} on are compared with the guesses. ${q("first")} and ${q("is")} are discarded.`
+        : `Only the last prediction is used: ${q("on")}. The others are discarded.`,
     },
   ]);
 }
@@ -115,7 +93,7 @@ const NARROW: Layout = {
   projY: 208,
   predY: 252,
   noteY: 296,
-  grid: { x: 126, y: 350, cell: 18, titleY: 322 },
+  grid: { x: 126, y: 326, cell: 18, titleY: 298 },
 };
 
 function makeScene(mode: Mode, steps: Step[]) {
@@ -146,7 +124,7 @@ function makeScene(mode: Mode, steps: Step[]) {
       <>
         {/* Input tokens */}
         <Txt x={L.labelX} y={L.inY + 13} size={compact ? 9.5 : 10.5} anchor="start" muted>
-          {compact ? "in" : "tokens in"}
+          in
         </Txt>
         {tokens.map((token, index) => (
           <Box
@@ -227,7 +205,7 @@ function makeScene(mode: Mode, steps: Step[]) {
 
         {/* One prediction per position */}
         <Txt x={L.labelX} y={L.predY + 13} size={compact ? 9.5 : 10.5} anchor="start" muted>
-          {compact ? "next" : "predicts"}
+          out
         </Txt>
         {predictions.map((token, index) => {
           const used = draft ? index >= firstUsed : index === last;
@@ -249,19 +227,10 @@ function makeScene(mode: Mode, steps: Step[]) {
             </g>
           );
         })}
-        <Txt x={L.col(0)} y={L.noteY} size={compact ? 10 : 10.5} anchor="start" muted opacity={keep}>
-          {draft
-            ? compact
-              ? "from “sat” on: compared with the draft"
-              : "the predictions from “sat” on are compared with the draft"
-            : compact
-              ? "only the last one is used"
-              : "only the last prediction is used: “on”"}
-        </Txt>
 
         {/* Who each position can see */}
         <Txt x={compact ? L.grid.x - 30 : L.grid.x - 34} y={L.grid.titleY} size={10.5} anchor="start" bold>
-          who each token sees
+          causal mask
         </Txt>
         {tokens.map((token, column) => (
           <Txt key={`gc-${column}`} x={L.grid.x + column * L.grid.cell + L.grid.cell / 2 - 1} y={L.grid.y - 10} size={8.5} muted>
@@ -320,16 +289,11 @@ export function PrefillPass({ mode: initial = "prefill" }: { mode?: Mode }) {
       stillStep="keep"
       durationMs={16000}
       scene={active.Scene}
-      wide={{ w: 660, h: 330 }}
-      narrow={{ w: 360, h: draft ? 486 : 414 }}
+      wide={{ w: 660, h: 306 }}
+      narrow={{ w: 360, h: draft ? 462 : 390 }}
       label={`One prefill pass over ${tokens.join(" ")}. Each layer processes every token at once, and each token saves its own K and V. Each token sees only itself and earlier tokens. After the last layer, every position predicts a next token. ${draft ? "The predictions from sat on are compared with the draft; the first two are discarded." : "Only the last prediction, on, is used."}`}
       toolbar={<Modes label="Pass" options={MODES} value={mode} onChange={setMode} />}
-      caption={
-        <>
-          The drawing shows three layers. A real model has dozens. The small grid is the causal mask. A filled square
-          means the token in that row can see the token in that column.
-        </>
-      }
+      caption={<>Three of the layers are drawn. In the grid, a filled square means the row&apos;s token can see the column&apos;s token.</>}
     />
   );
 }

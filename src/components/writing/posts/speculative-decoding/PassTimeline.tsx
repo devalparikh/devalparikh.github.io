@@ -25,24 +25,24 @@ function stepsFor(requests: number) {
       label: "Same clock",
       span: 6,
       text: busy
-        ? `Both methods serve ${requests} requests at once. Each request gets “on the floor”. Normal decoding runs three big passes. Speculative decoding runs four small passes, then one big pass.`
-        : "Both sides write “on the floor”. Normal decoding runs three big passes in a row. Speculative decoding runs four small passes, then one big pass.",
+        ? `${requests} requests at once, each getting “on the floor”.`
+        : "Normal decoding runs three big passes. Speculative decoding runs four small passes and one big pass.",
     },
     {
       id: "inside",
       label: "Inside a pass",
       span: 3.4,
       text: busy
-        ? `The check pass now holds ${check.positions} positions. Its math takes about ${ms(check.math)}, far longer than the ${ms(check.read)} it takes to read the weights. Each extra position makes the pass take longer.`
-        : `Each big pass has to read all of the weights, which takes about ${ms(check.read)}. The math for the check pass's ${check.positions} positions takes about ${ms(check.math)} and finishes while the weights are still loading.`,
+        ? `The check pass now holds ${check.positions} positions, and its math outlasts the weight read.`
+        : "The math for five positions finishes while the weights are still loading.",
     },
     {
       id: "result",
       label: "Result",
       span: 2.6,
       text: busy
-        ? `Normal decoding finishes in about ${ms(normal.total)} and speculative decoding in about ${ms(speculative.total)}. Under this load, speculation is slower.`
-        : `Normal decoding finishes in about ${ms(normal.total)} and speculative decoding in about ${ms(speculative.total)}.`,
+        ? `About ${ms(normal.total)} against ${ms(speculative.total)}. Under this load, speculation is slower.`
+        : `About ${ms(normal.total)} against ${ms(speculative.total)}.`,
     },
   ]);
 }
@@ -196,14 +196,7 @@ export function PassTimeline() {
       narrow={{ w: 360, h: 266 }}
       label={`Timing for the round that writes on the floor. Normal decoding: three big-model passes, about ${ms(lanes.normal.total)}. Speculative decoding: four small-model passes and one big-model pass, about ${ms(lanes.speculative.total)}.`}
       toolbar={<Modes label="Load" options={MODES} value={id} onChange={setId} />}
-      caption={
-        <>
-          These times come from a calculation for a laptop GPU. The big model has 27B parameters at 4 bits (about 16 GB).
-          The draft has 1.5B (about 0.9 GB). Memory bandwidth is 300 GB/s. The GPU does about 10 trillion math
-          operations per second. The round is in the middle of a generation, so the check pass reads “sat” and four
-          guesses. With 16 requests, the calculation assumes every request gets the same three tokens.
-        </>
-      }
+      caption={<>Rough laptop numbers, not a benchmark: a 27B model at 4 bits (16 GB), a 1.5B draft, 300 GB/s and about 10 trillion operations per second.</>}
     />
   );
 }
