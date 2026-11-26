@@ -18,9 +18,11 @@
  *    link points at the live blog.
  *  - `canonicalUrl` frontmatter is dropped: these pages always canonicalise to
  *    themselves.
+ *  - A post with its own MDX in src/content/posts/ belongs to this site and is
+ *    never imported, but links to it from imported posts still stay in-site.
  */
 import { createHash } from "node:crypto";
-import { existsSync, realpathSync, statSync } from "node:fs";
+import { existsSync, readdirSync, realpathSync, statSync } from "node:fs";
 import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import yaml from "js-yaml";
@@ -32,6 +34,19 @@ export const BLOG_ORIGIN = "https://deval-blog.vercel.app";
 export const OVERRIDES = {
   "src/components/mdx/jev-use-cases/useLiveDemo": "@/components/writing/blog-overrides/useLiveDemo",
 };
+
+/**
+ * Posts this site maintains itself, one `<slug>.mdx` each. The sync skips
+ * these slugs so a re-sync cannot overwrite them. Delete the local file to
+ * hand a post back to deval-blog.
+ */
+export const LOCAL_POSTS_DIR = "src/content/posts";
+
+export function localPostSlugs(siteRoot) {
+  const dir = path.join(siteRoot, LOCAL_POSTS_DIR);
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir).filter((file) => file.endsWith(".mdx")).map((file) => file.slice(0, -4)).sort();
+}
 
 /** Upstream modules the overrides import, so the closure still carries them. */
 const OVERRIDE_DEPENDENCIES = ["src/lib/jev-demo.ts"];
@@ -229,7 +244,12 @@ const sha256 = (text) => createHash("sha256").update(text).digest("hex");
  * MDX filename must equal the slug, which is also the public URL.
  */
 export async function importSnapshot({ blogRoot, siteRoot, posts, commit, committedAt, reencodeImage }) {
-  const slugs = new Set(posts.map((post) => post.slug));
+  const local = localPostSlugs(siteRoot);
+  const clash = posts.filter((post) => local.includes(post.slug)).map((post) => post.slug);
+  if (clash.length) {
+    throw new Error(`${clash.join(", ")} ${clash.length > 1 ? "are" : "is"} maintained in ${LOCAL_POSTS_DIR}/. Delete the local MDX to import it from deval-blog again.`);
+  }
+  const slugs = new Set([...posts.map((post) => post.slug), ...local]);
   const index = parseComponentIndex(await readFile(sourcePath(blogRoot, "src/components/mdx/index.ts"), "utf8"));
   const contentDir = path.join(siteRoot, "src/content/blog");
   const vendorDir = path.join(siteRoot, "src/vendor/deval-blog");

@@ -42,6 +42,31 @@ re-sync**, never in place. The import is mechanical (see
 The vendored modules may import only `react`, `react-dom` and `next`; a sync
 that needs another package fails and says which.
 
+### Posts maintained here
+
+A post can move out of the snapshot and be maintained in this repository
+instead. Its MDX lives at `src/content/posts/<slug>.mdx`, its shelf metadata
+(title, summary, date, mirroring the frontmatter) in `src/content/posts/index.ts`,
+its figures in `src/components/writing/posts/<slug>/`, registered in
+`src/components/writing/posts/index.ts`, and its images under
+`public/img/posts/<slug>/`. None of those paths are touched by a sync.
+
+- The importer refuses to import a slug that has a local MDX file, and
+  `sync:blog` drops such slugs from the list it carries over from the old
+  snapshot (`LOCAL_POSTS_DIR` in `scripts/lib/blog-import.mjs`).
+- Links to a local post from imported posts still resolve to
+  `/writing/<slug>/`.
+- A local post renders only the components in `postComponents`, never the
+  vendored ones, so a re-sync that drops a vendored module cannot break it.
+- `test:writing` checks the metadata against the frontmatter, the
+  components against the registry, and that no asset lives under
+  `/img/writing/`.
+
+`speculative-decoding` is maintained this way (since November 2026). The
+deval-blog copy of that post is now stale; it still canonicalises here. To
+hand a post back to deval-blog, delete its local MDX, metadata, figures and
+images, then `npm run sync:blog -- --add tech/<slug>`.
+
 ### Refreshing it
 
 On a machine that can read deval-blog with git and has `gh` signed in:

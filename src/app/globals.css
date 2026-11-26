@@ -39,6 +39,14 @@
   --wash: color-mix(in oklab, var(--color-base-content) 7%, transparent);
   --noise-opacity: 0.035;
 
+  /* Article figures (the speculative decoding post). Marks only: labels stay
+     in the text colours. Checked as a categorical set on each theme's surface. */
+  --fig-draft: #3a64c8;
+  --fig-target: #b06a24;
+  --fig-math: #7a52c7;
+  --fig-accept: #2e7d4f;
+  --fig-reject: #b3413a;
+
   /* Writing covers - printed artwork, so the same in both themes. `paper`,
      `ink` and `clay` are the parchment tokens; the rest are flat riso-style
      grounds, warmed to sit beside them. Assigned by hand in content/writing.ts. */
@@ -152,6 +160,12 @@
   --rule-soft: color-mix(in oklab, var(--color-base-content) 7%, transparent);
   --wash: color-mix(in oklab, var(--color-base-content) 8%, transparent);
   --noise-opacity: 0.025;
+
+  --fig-draft: #6688e3;
+  --fig-target: #c4813f;
+  --fig-math: #9474d8;
+  --fig-accept: #6cbf8c;
+  --fig-reject: #e07a70;
 }
 
 /* ==========================================================================
