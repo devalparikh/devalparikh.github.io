@@ -5,4 +5,4 @@
 :HL["/_next/static/chunks/2jl4q6twwq-1u.css","style"]
 2:[["children",{"s":"__PAGE__","h":160}]]
 1:[["children",{"s":"photography","h":96,"c":"$Q2"}]]
-0:{"b":"UQL8GmdnNDKTMXH9B2EaW","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"cbO80Pwnq7rMjhL7lqMO5","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
