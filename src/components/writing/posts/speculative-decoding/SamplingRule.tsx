@@ -23,7 +23,7 @@ export function SamplingRule() {
   const outcome = samplingOutcome(SAMPLING_SLOT);
   return (
     <figure className="not-prose sdv-figure" aria-describedby="sdv-sampling-caption">
-      <div className="sdv-stage sdv-sampling">
+      <div className="sdv-stage sdv-panel sdv-sampling">
         {SAMPLING_SLOT.tokens.map((token, index) => (
           <div key={token} className="sdv-prob-group">
             <p className="sdv-prob-token">
@@ -52,10 +52,11 @@ export function SamplingRule() {
           <span><i data-strip="draft" /> draft: its odds, and its accepted guesses</span>
         </div>
       </div>
-      <figcaption id="sdv-sampling-caption">
-        Out of 100 runs of slot 3. The draft&apos;s guess survives {outcome.keptTotal} times and is rejected{" "}
-        {outcome.rejected} times. Every replacement is “floor”, the only token the draft proposed too rarely. The result
-        is 50, 30, 20: the big model&apos;s own odds. Illustrative numbers.
+      <figcaption id="sdv-sampling-caption" className="sdv-caption">
+        Out of 100 runs of slot 3, the draft&apos;s guess survives {outcome.keptTotal} times and is rejected{" "}
+        {outcome.rejected} times. Every replacement is “floor”, because it is the only token the draft proposed too
+        rarely. The totals come out at 50, 30 and 20, which are the big model&apos;s own odds. The probabilities are
+        made up for the example.
       </figcaption>
     </figure>
   );

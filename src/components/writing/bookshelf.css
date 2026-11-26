@@ -289,33 +289,43 @@
   100% { opacity: 0; transform: scale(1); }
 }
 
-/* Speculative: four quick guesses, then one pass that predicts at every
-   position at once; two match, the third is fixed, the rest are dropped.
-   The resting drawing is the final frame. */
-.cover .sd-dropped { opacity: 0.38; }
-.cover[data-playing="true"] .sd-guess { animation: sd-guess 4.6s infinite; }
-.cover[data-playing="true"] .sd-guess-2 { animation-name: sd-guess-2; }
-.cover[data-playing="true"] .sd-guess-3 { animation-name: sd-guess-3; }
-.cover[data-playing="true"] .sd-guess-4 { animation-name: sd-guess-4; }
-.cover[data-playing="true"] .sd-stair { animation: sd-stair 4.6s infinite; }
-.cover[data-playing="true"] .sd-pass { animation: sd-pass 4.6s infinite; }
-.cover[data-playing="true"] .sd-pred { animation: sd-pred 4.6s infinite; }
-.cover[data-playing="true"] .sd-tick-0 { animation: sd-tick-0 4.6s infinite; }
-.cover[data-playing="true"] .sd-tick-1 { animation: sd-tick-1 4.6s infinite; }
-.cover[data-playing="true"] .sd-fix { animation: sd-fix 4.6s infinite; }
-.cover[data-playing="true"] .sd-dropped { animation: sd-dropped 4.6s infinite; }
-@keyframes sd-guess { 0%, 3% { opacity: 0; transform: translateX(-8px); } 8%, 96% { opacity: 1; transform: none; } 100% { opacity: 0; } }
-@keyframes sd-guess-2 { 0%, 9% { opacity: 0; transform: translateX(-8px); } 14%, 96% { opacity: 1; transform: none; } 100% { opacity: 0; } }
-@keyframes sd-guess-3 { 0%, 15% { opacity: 0; transform: translateX(-8px); } 20%, 96% { opacity: 1; transform: none; } 100% { opacity: 0; } }
-@keyframes sd-guess-4 { 0%, 21% { opacity: 0; transform: translateX(-8px); } 26%, 96% { opacity: 1; transform: none; } 100% { opacity: 0; } }
-/* Every position rises together: one pass, not five. */
-@keyframes sd-stair { 0%, 30% { transform: scaleY(0); } 40%, 96% { transform: scaleY(1); } 100% { transform: scaleY(0); } }
-@keyframes sd-pass { 0%, 30% { opacity: 0; } 36%, 46% { opacity: 0.34; } 54%, 96% { opacity: 0.16; } 100% { opacity: 0; } }
-@keyframes sd-pred { 0%, 42% { opacity: 0; transform: translateY(6px); } 48%, 96% { opacity: 1; transform: none; } 100% { opacity: 0; } }
-@keyframes sd-tick-0 { 0%, 54% { opacity: 0; } 58%, 100% { opacity: 1; } }
-@keyframes sd-tick-1 { 0%, 60% { opacity: 0; } 64%, 100% { opacity: 1; } }
-@keyframes sd-fix { 0%, 68% { opacity: 0; transform: translateY(-10px); } 76%, 96% { opacity: 1; transform: none; } 100% { opacity: 0; } }
-@keyframes sd-dropped { 0%, 78% { opacity: 1; } 84%, 96% { opacity: 0.38; } 100% { opacity: 0; } }
+/* Speculative: a quick draft, one verifying pass, a rejection and its fix. */
+.cover[data-playing="true"] .sd-drafter { animation: sd-drafter 4.4s infinite; }
+.cover[data-playing="true"] .sd-tile { animation: sd-tile 4.4s infinite; }
+.cover[data-playing="true"] .sd-tile-1 { animation-name: sd-tile-1; }
+.cover[data-playing="true"] .sd-tile-2 { animation-name: sd-tile-2; }
+.cover[data-playing="true"] .sd-tile-3 { animation: sd-tile-3 4.4s infinite; }
+.cover[data-playing="true"] .sd-tile-4 { animation: sd-tile-4 4.4s infinite; }
+.cover[data-playing="true"] .sd-beam { animation: sd-beam 4.4s infinite; }
+.cover[data-playing="true"] .sd-eye { animation: sd-eye 4.4s infinite; }
+.cover[data-playing="true"] .sd-fix { animation: sd-fix 4.4s infinite; }
+@keyframes sd-drafter {
+  0%, 30%, 100% { transform: none; }
+  6%, 14%, 22% { transform: translateY(-3px); }
+}
+@keyframes sd-tile { 0%, 3% { opacity: 0; transform: translateX(-10px); } 8%, 96% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes sd-tile-1 { 0%, 9% { opacity: 0; transform: translateX(-10px); } 14%, 96% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes sd-tile-2 { 0%, 15% { opacity: 0; transform: translateX(-10px); } 20%, 96% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes sd-tile-3 {
+  0%, 21% { opacity: 0; transform: translateX(-10px); }
+  26%, 60% { opacity: 1; transform: none; }
+  63% { transform: translateX(-2px); }
+  66% { transform: translateX(2px); }
+  69%, 96% { opacity: 1; transform: none; }
+  100% { opacity: 0; }
+}
+@keyframes sd-tile-4 { 0%, 27% { opacity: 0; transform: translateX(-10px); } 32%, 62% { opacity: 1; transform: none; } 70%, 100% { opacity: 0.25; } }
+@keyframes sd-beam { 0%, 34% { opacity: 0; } 42%, 58% { opacity: 0.32; } 66%, 100% { opacity: 0.18; } }
+@keyframes sd-eye {
+  0%, 36% { transform: translateX(-8px); }
+  58% { transform: translateX(8px); }
+  70%, 100% { transform: none; }
+}
+@keyframes sd-fix {
+  0%, 68% { opacity: 0; transform: translateY(-26px); }
+  78%, 96% { opacity: 1; transform: none; }
+  100% { opacity: 0; }
+}
 
 /* VLA: one shared loop, each arm a third of a cycle further along. */
 .cover[data-playing="true"] .vla-shoulder { animation: vla-shoulder 4.2s infinite ease-in-out; }

@@ -42,10 +42,10 @@ test("article pages link in-site and never to the old /blog paths", () => {
 
 test("the speculative decoding post renders its own figures", () => {
   const page = html("writing/speculative-decoding/index.html");
-  for (const marker of ["sdv-mask", "sdv-grid", "sdv-kv-row", "sdv-lane", "sdv-bars", "sdv-sampling"]) {
+  for (const marker of ["sdv-stage", "sdv-narration", "sdv-bars", "sdv-sampling"]) {
     assert.match(page, new RegExp(`class="[^"]*${marker}`), `missing ${marker}`);
   }
-  assert.match(page, /Big model reads/);
+  assert.match(page, /big model · one prefill pass/);
 });
 
 test("the Jev demos fall back to the live post instead of calling /api", () => {

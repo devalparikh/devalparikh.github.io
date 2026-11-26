@@ -74,3 +74,29 @@ test("the sampling rule gives back exactly the big model's odds", () => {
   assert.equal(outcome.keptTotal, 70);
   assert.deepEqual(outcome.refill, [30, 0, 0]);
 });
+
+test("figure steps split the loop by span and land picks inside each step's hold", async () => {
+  const { buildSteps, phases, stepAt } = await import("../src/components/writing/posts/speculative-decoding/scene.ts");
+  const steps = buildSteps([
+    { id: "a", label: "A", text: "", span: 1 },
+    { id: "b", label: "B", text: "", span: 3 },
+  ]);
+  assert.deepEqual(steps.map((step) => [step.start, step.end]), [[0, 0.25], [0.25, 1]]);
+  for (const step of steps) assert.equal(stepAt(steps, step.hold).id, step.id);
+  const p = phases(steps, steps[1].hold);
+  assert.equal(p.done("a"), 1);
+  assert.equal(p.done("b"), 1, "motion is finished by the hold");
+  assert.equal(p.moving("b"), null);
+  assert.ok(p.on("b") && p.reached("a"));
+});
+
+test("a figure starts playing at 75% visible and keeps going down to 25%", async () => {
+  const { nextOnScreen, visibleShare } = await import("../src/components/writing/posts/speculative-decoding/usePlayback.ts");
+  const entry = (shown, height = 400) => ({ isIntersecting: shown > 0, intersectionRect: { height: shown }, boundingClientRect: { height } });
+  assert.equal(nextOnScreen(false, visibleShare(entry(280), 844)), false);
+  assert.equal(nextOnScreen(false, visibleShare(entry(300), 844)), true);
+  assert.equal(nextOnScreen(true, visibleShare(entry(120), 844)), true);
+  assert.equal(nextOnScreen(true, visibleShare(entry(80), 844)), false);
+  // A drawing taller than the screen counts as fully visible when it fills it.
+  assert.equal(visibleShare(entry(844, 1200), 844), 1);
+});

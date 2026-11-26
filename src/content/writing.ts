@@ -134,7 +134,7 @@ export const shelf: ShelfBook[] = [
     categories: ["ai"],
     cover: {
       title: ["Speculative", "decoding"],
-      subtitle: "Guess ahead, check every guess in one pass",
+      subtitle: "Draft ahead, verify together",
       ground: "fern",
       text: "paper",
       inks: ["saffron", "paper"],

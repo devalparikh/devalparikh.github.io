@@ -1,92 +1,71 @@
 import { ArtSvg, Halftone, type ArtProps } from "./shared";
 
-const X0 = 22;
-const STEP = 33;
-const TILE = 26;
-const colX = (index: number) => X0 + index * STEP;
-
-/** Bottom row: the last real token, then four drafted guesses. */
-const INPUT_Y = 138;
-/** The causal staircase: position i sees i + 1 tokens. */
-const CELL = 11;
-const STAIR_BASE = INPUT_Y - 6;
-/** Top row: what the one pass predicts after each input. */
-const PRED_Y = 42;
-
-const VERDICTS = ["accept", "accept", "fix", "drop", "drop"] as const;
+const TILE_Y = 124;
+const TILES = [
+  { x: 12, verdict: "accept" },
+  { x: 48, verdict: "accept" },
+  { x: 84, verdict: "accept" },
+  { x: 120, verdict: "reject" },
+  { x: 156, verdict: "discard" },
+] as const;
 
 /**
- * Speculative decoding - one pass, a prediction at every position. Bottom: the
- * last real token and four drafted guesses. Middle: the causal staircase, each
- * position seeing only the tokens up to it, all read in the same pass.
- * Top: the five predictions, one above each position, arriving together. Two match, the third is replaced
- * by the big model's own token (the accent ink), and what came after the
- * first difference is dropped.
+ * Speculative decoding - a small, quick drafter guesses five tokens ahead; a
+ * big checker reads them all in one pass, keeps the good prefix, rejects the
+ * first wrong guess and writes its own token in its place. The guesses after
+ * the rejection are thrown away.
  */
 export function SpeculativeArt({ uid }: ArtProps) {
   return (
     <ArtSvg>
       <defs>
-        <Halftone id={`${uid}-dots`} ink="k1" pitch={2.6} dot={0.78} />
+        <Halftone id={`${uid}-dots`} ink="k1" pitch={2.6} dot={0.8} />
       </defs>
 
-      {/* One forward pass: a single band across every position */}
-      <rect className="sd-pass k2" x={X0 - 8} y={PRED_Y + TILE + 6} width={STEP * 4 + TILE + 16} height={STAIR_BASE - PRED_Y - TILE - 4} rx="6" opacity="0.16" />
-      <text x={X0 - 3} y={PRED_Y + TILE + 17} className="cover-svg-type k2" fontSize="7.5">ONE PASS</text>
+      {/* The checker: big, slow, exact */}
+      <rect x="112" y="10" width="76" height="72" rx="12" fill={`url(#${uid}-dots)`} />
+      <rect x="104" y="4" width="76" height="72" rx="12" className="k2" />
+      <rect x="114" y="22" width="56" height="20" rx="10" className="g" />
+      <circle className="sd-eye k1" cx="142" cy="32" r="6.5" style={{ transformOrigin: "142px 32px" }} />
+      <path d="M118 56 H166 M118 64 H154" className="sg" strokeWidth="2.6" strokeLinecap="round" opacity="0.5" />
 
-      {VERDICTS.map((verdict, index) => {
-        const x = colX(index);
-        const dropped = verdict === "drop";
-        const stairTop = STAIR_BASE - (index + 1) * CELL;
-        return (
-          <g key={index} className={dropped ? "sd-dropped" : undefined}>
-            {/* What this position can see */}
-            <rect
-              className="sd-stair"
-              style={{ transformOrigin: `${x + TILE / 2}px ${STAIR_BASE}px` }}
-              x={x + 3}
-              y={stairTop}
-              width={TILE - 6}
-              height={(index + 1) * CELL - 2}
-              rx="2"
-              fill={`url(#${uid}-dots)`}
-            />
+      {/* The drafter: small and quick */}
+      <g className="sd-drafter" style={{ transformOrigin: "34px 96px" }}>
+        <rect x="18" y="64" width="32" height="30" rx="7" className="k1" />
+        <circle cx="34" cy="76" r="5" className="g" />
+        <circle cx="35.5" cy="76" r="2" className="k1" />
+        <path d="M34 64 v-7" className="sk1" strokeWidth="2.2" />
+        <circle cx="34" cy="55" r="2.6" className="k1" />
+      </g>
 
-            {/* The input token */}
-            {index === 0 ? (
-              <rect x={x} y={INPUT_Y} width={TILE} height="18" rx="4" className="k1" />
-            ) : (
-              <g className={`sd-guess sd-guess-${index}`}>
-                <rect x={x} y={INPUT_Y} width={TILE} height="18" rx="4" className="sk1" fill="none" strokeWidth="1.8" />
-                <rect x={x + 6} y={INPUT_Y + 7} width={TILE - 12} height="4" rx="2" className="k1" />
-              </g>
-            )}
+      {/* One verification pass reads every drafted token together */}
+      <path className="sd-beam k2" d="M134 76 L12 118 L186 118 L150 76 Z" opacity="0.18" />
 
-            {/* The prediction for the next slot */}
-            <g className={`sd-pred sd-pred-${verdict}`}>
-              {verdict === "accept" && (
-                <>
-                  <rect x={x} y={PRED_Y} width={TILE} height={TILE} rx="4" className="k1" />
-                  <path className={`sd-tick sd-tick-${index}`} d={`M${x + 7} ${PRED_Y + 13} l4 4.4 l8.5 -9`} fill="none" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: "var(--g)" }} />
-                </>
-              )}
-              {verdict === "fix" && (
-                <>
-                  <rect x={x} y={PRED_Y} width={TILE} height={TILE} rx="4" className="sk1" fill="none" strokeWidth="1.8" />
-                  <path d={`M${x + 8} ${PRED_Y + 8} l10 10 M${x + 18} ${PRED_Y + 8} l-10 10`} className="sk1" strokeWidth="2.4" strokeLinecap="round" />
-                  <g className="sd-fix">
-                    <rect x={x} y={PRED_Y - TILE - 8} width={TILE} height={TILE} rx="4" className="k2" />
-                    <path d={`M${x + TILE / 2} ${PRED_Y - TILE - 2} v12 M${x + 7.5} ${PRED_Y - 19} l5.5 5.5 l5.5 -5.5`} fill="none" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: "var(--g)" }} />
-                  </g>
-                </>
-              )}
-              {dropped && (
-                <rect x={x} y={PRED_Y} width={TILE} height={TILE} rx="4" className="sk1" fill="none" strokeWidth="1.4" strokeDasharray="3 3" />
-              )}
-            </g>
-          </g>
-        );
-      })}
+      {TILES.map((tile, index) => (
+        <g key={tile.x} className={`sd-tile sd-tile-${index}`} style={{ transformOrigin: `${tile.x + 15}px ${TILE_Y + 12}px` }}>
+          {tile.verdict === "accept" && (
+            <>
+              <rect x={tile.x} y={TILE_Y} width="30" height="24" rx="4" className="k1" />
+              <path d={`M${tile.x + 8} ${TILE_Y + 12} l4.5 4.8 l9.5 -10`} className="sg" fill="none" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </>
+          )}
+          {tile.verdict === "reject" && (
+            <>
+              <rect x={tile.x} y={TILE_Y} width="30" height="24" rx="4" className="sk1" fill="none" strokeWidth="2" />
+              <path d={`M${tile.x + 9} ${TILE_Y + 6} l12 12 M${tile.x + 21} ${TILE_Y + 6} l-12 12`} className="sk1" strokeWidth="2.6" strokeLinecap="round" />
+            </>
+          )}
+          {tile.verdict === "discard" && (
+            <rect x={tile.x} y={TILE_Y} width="30" height="24" rx="4" className="sk1" fill="none" strokeWidth="1.6" strokeDasharray="3 3" opacity="0.6" />
+          )}
+        </g>
+      ))}
+
+      {/* The checker's own token replaces the first wrong guess */}
+      <g className="sd-fix">
+        <rect x="120" y="94" width="30" height="24" rx="4" className="k2 sg" strokeWidth="1.6" />
+        <path d="M135 99 v14 M129 107 l6 6 l6 -6" className="sg" fill="none" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
     </ArtSvg>
   );
 }

@@ -1,154 +1,209 @@
 "use client";
 
-import { useId, useState } from "react";
-import { Choice, PlaybackControls } from "./Controls";
-import { timeline, type Lane } from "./model";
-import { usePlayback } from "./usePlayback";
-import "./figures.css";
+import { memo, useState } from "react";
+import { timeline, type Lane, type Pass } from "./model";
+import { buildSteps, phases, type Step } from "./scene";
+import { Modes, SceneFigure, type SceneProps } from "./SceneFigure";
+import { Txt, tone } from "./svg";
 
 const MODES = [
-  { id: "one", label: "1 request", requests: 1 },
-  { id: "busy", label: "16 requests at once", requests: 16 },
+  { id: "one", label: "1 request", short: "1 request", requests: 1 },
+  { id: "busy", label: "16 requests at once", short: "16 at once", requests: 16 },
 ] as const;
 
 type ModeId = (typeof MODES)[number]["id"];
 
-const STOPS = [0.5, 1] as const;
-const STOP_LABELS = ["Midway", "Finished"] as const;
-
 const ms = (value: number) => `${Math.round(value)} ms`;
 
-function niceTicks(max: number) {
-  const step = max > 300 ? 100 : 50;
-  const ticks: number[] = [];
-  for (let value = 0; value <= max; value += step) ticks.push(value);
-  return ticks;
+function stepsFor(requests: number) {
+  const { normal, speculative } = timeline(requests);
+  const check = speculative.passes[speculative.passes.length - 1];
+  const busy = requests > 1;
+  return buildSteps([
+    {
+      id: "run",
+      label: "Same clock",
+      span: 6,
+      text: busy
+        ? `Both sides serve ${requests} requests at once, and each request gets “on the floor”. Normal decoding runs three big passes. Speculative decoding runs four small passes, then one big pass.`
+        : "Both sides write “on the floor”. Normal decoding runs three big passes in a row. Speculative decoding runs four small passes, then one big pass.",
+    },
+    {
+      id: "inside",
+      label: "Inside a pass",
+      span: 3.4,
+      text: busy
+        ? `The check pass now holds ${check.positions} positions. Its math takes about ${ms(check.math)}, far longer than the ${ms(check.read)} it takes to read the weights. Every extra position now costs real time.`
+        : `Each big pass has to read all of the weights, which takes about ${ms(check.read)}. The math for the check pass's ${check.positions} positions takes about ${ms(check.math)} and finishes while the weights are still loading.`,
+    },
+    {
+      id: "result",
+      label: "Result",
+      span: 2.6,
+      text: busy
+        ? `Normal decoding finishes in about ${ms(normal.total)} and speculative decoding in about ${ms(speculative.total)}. Under this load speculation is slower.`
+        : `Normal decoding finishes in about ${ms(normal.total)} and speculative decoding in about ${ms(speculative.total)}.`,
+    },
+  ]);
 }
 
-function LaneRow({ title, lane, now, scale }: { title: string; lane: Lane; now: number; scale: number }) {
-  const finished = now >= lane.total;
-  const emitted = lane.passes.filter((pass) => now >= pass.start + pass.duration).flatMap((pass) => pass.emits);
-  const targetPasses = lane.passes.filter((pass) => pass.model === "target").length;
-  const draftPasses = lane.passes.length - targetPasses;
-  return (
-    <div className="sdv-lane">
-      <div className="sdv-lane-head">
-        <span className="sdv-lane-title">{title}</span>
-        <span className="sdv-lane-meta">
-          {targetPasses} big {targetPasses === 1 ? "pass" : "passes"}
-          {draftPasses > 0 && ` + ${draftPasses} small`}
-        </span>
-      </div>
-      <div className="sdv-track">
-        {lane.passes.map((pass, index) => {
-          const left = (pass.start / scale) * 100;
-          const width = (pass.duration / scale) * 100;
-          const fill = Math.max(0, Math.min(1, (now - pass.start) / pass.duration));
+interface Layout {
+  x0: number;
+  x1: number;
+  lanes: [number, number];
+  labelX: number;
+  totalX: number;
+  noteY: number;
+  axisY: number;
+  legendY: number;
+  legendRows: boolean;
+}
+
+const WIDE: Layout = { x0: 172, x1: 644, lanes: [44, 128], labelX: 14, totalX: 160, noteY: 178, axisY: 200, legendY: 236, legendRows: false };
+const NARROW: Layout = { x0: 12, x1: 348, lanes: [44, 132], labelX: 12, totalX: 348, noteY: 182, axisY: 204, legendY: 236, legendRows: true };
+
+function makeScene(requests: number, steps: Step[]) {
+  const lanes = timeline(requests);
+  const end = Math.max(lanes.normal.total, lanes.speculative.total);
+  const scale = end * 1.03;
+  const check = lanes.speculative.passes[lanes.speculative.passes.length - 1];
+  const tickStep = end > 300 ? 100 : 50;
+  const ticks = Array.from({ length: Math.floor(end / tickStep) + 1 }, (_, index) => index * tickStep);
+
+  return memo(function TimelineScene({ t, compact }: SceneProps) {
+    const L = compact ? NARROW : WIDE;
+    const p = phases(steps, t);
+    const now = p.reached("inside") ? end : p.done("run", 0, 0.92) * end;
+    const x = (value: number) => L.x0 + ((L.x1 - L.x0) * value) / scale;
+    const inside = p.reached("inside");
+
+    const bar = (pass: Pass, y: number, key: string, highlight: boolean) => {
+      const fill = Math.max(0, Math.min(1, (now - pass.start) / pass.duration));
+      const left = x(pass.start);
+      const width = Math.max(1.5, x(pass.start + pass.duration) - left - 2);
+      const shown = width * fill;
+      const readW = width * (pass.read / pass.duration);
+      const mathW = width * (pass.math / pass.duration);
+      const draft = pass.model === "draft";
+      return (
+        <g key={key}>
+          <clipPath id={`clip-${key}-${compact ? "n" : "w"}`}>
+            <rect x={left} y={y - 2} width={shown} height={32} />
+          </clipPath>
+          <rect x={left} y={y} width={width} height={28} rx={3} className={highlight ? "sdv-box-ghost" : "sdv-fill-hidden"} />
+          <g clipPath={`url(#clip-${key}-${compact ? "n" : "w"})`}>
+            <g className={tone(draft ? "draft" : "target")}>
+              <rect x={left} y={y + 5} width={readW} height={8} rx={2} className="sdv-fill-tone" />
+            </g>
+            <g className={tone(draft ? "draft" : "math")}>
+              <rect x={left} y={y + 16} width={Math.max(1, mathW)} height={8} rx={2} className="sdv-fill-tone" opacity={draft ? 0.55 : 1} />
+            </g>
+          </g>
+          {pass.emits.length > 0 && fill >= 0.999 ? (
+            <Txt x={left + width} y={y - 9} size={compact ? 10 : 11} anchor="end">
+              {pass.emits.join(" ")}
+            </Txt>
+          ) : null}
+        </g>
+      );
+    };
+
+    const lane = (data: Lane, y: number, title: string, prefix: string) => {
+      const finished = now >= data.total;
+      const shownTotal = Math.min(now, data.total);
+      return (
+        <g>
+          <Txt x={L.labelX} y={compact ? y - 24 : y + 8} size={compact ? 10.5 : 11} anchor="start" bold>
+            {title}
+          </Txt>
+          <Txt x={L.totalX} y={compact ? y - 24 : y + 22} size={compact ? 10.5 : 11} anchor="end" muted={!finished}>
+            {ms(shownTotal)}
+          </Txt>
+          <rect x={L.x0} y={y} width={L.x1 - L.x0} height={28} rx={3} className="sdv-fill-hidden" opacity={0.5} />
+          {data.passes.map((pass, index) => bar(pass, y, `${prefix}${index}`, inside && pass === check))}
+        </g>
+      );
+    };
+
+    const noteX = x(check.start);
+    return (
+      <>
+        {lane(lanes.normal, L.lanes[0], "normal decoding", "n")}
+        {lane(lanes.speculative, L.lanes[1], "speculative decoding", "s")}
+
+        {/* What fills the check pass */}
+        <g opacity={inside ? 1 : 0}>
+          <path d={`M${noteX} ${L.lanes[1] + 32} v5 H${x(check.start + check.duration) - 2} v-5`} className="sdv-route" />
+          <Txt x={Math.min(noteX, compact ? 12 : noteX)} y={L.noteY} size={compact ? 10 : 10.5} anchor="start">
+            {`${check.positions} positions: math ${ms(check.math)} ${check.math < check.read ? "<" : ">"} weights ${ms(check.read)}`}
+          </Txt>
+        </g>
+
+        {/* Time axis */}
+        <path d={`M${L.x0} ${L.axisY} H${L.x1}`} className="sdv-route" />
+        {ticks.map((tick, index) => (
+          <Txt key={tick} x={x(tick)} y={L.axisY + 12} size={9.5} muted anchor={index === 0 ? "start" : "middle"}>
+            {index === ticks.length - 1 ? `${tick} ms` : String(tick)}
+          </Txt>
+        ))}
+
+        {/* Legend */}
+        {[
+          { label: "reading the weights", t: "target" as const },
+          { label: "math for every position", t: "math" as const },
+          { label: "small-model pass", t: "draft" as const },
+        ].map((item, index) => {
+          const lx = L.legendRows ? L.labelX + (index === 2 ? 0 : index * 170) : L.x0 + index * 172;
+          const ly = L.legendRows ? L.legendY + (index === 2 ? 18 : 0) : L.legendY;
           return (
-            <div
-              key={index}
-              className="sdv-bar"
-              data-model={pass.model}
-              style={{ left: `${left}%`, width: `${width}%` }}
-              title={`${pass.model === "target" ? "Big" : "Small"} model pass over ${pass.positions} position${pass.positions === 1 ? "" : "s"}: reading weights ${ms(pass.read)}, math ${ms(pass.math)}`}
-            >
-              <span className="sdv-bar-clip" style={{ width: `${fill * 100}%` }}>
-                <span className="sdv-strip sdv-strip-read" style={{ width: `${(pass.read / pass.duration) * 100 / Math.max(fill, 1e-6)}%` }} />
-                <span className="sdv-strip sdv-strip-math" style={{ width: `${(pass.math / pass.duration) * 100 / Math.max(fill, 1e-6)}%` }} />
-              </span>
-              {pass.emits.length > 0 && now >= pass.start + pass.duration && (
-                <span className="sdv-bar-emit">{pass.emits.join(" ")}</span>
-              )}
-            </div>
+            <g key={item.label}>
+              <g className={tone(item.t)}>
+                <rect x={lx} y={ly - 5} width={10} height={10} rx={2} className="sdv-fill-tone" />
+              </g>
+              <Txt x={lx + 16} y={ly} size={10} anchor="start" muted>
+                {item.label}
+              </Txt>
+            </g>
           );
         })}
-      </div>
-      <div className="sdv-lane-foot">
-        <span>{emitted.length} of {lane.tokens.length} tokens</span>
-        <span className="sdv-mono">{finished ? ms(lane.total) : ms(Math.min(now, lane.total))}</span>
-      </div>
-    </div>
-  );
+      </>
+    );
+  });
 }
 
+const CASES = MODES.map((mode) => {
+  const steps = stepsFor(mode.requests);
+  return { id: mode.id, steps, Scene: makeScene(mode.requests, steps) };
+});
+
 /**
- * Where the time goes in the "on the floor" round. Each big-model bar holds
- * two strips on the same clock: reading the weights once and doing the math
- * for every position in the pass. The pass lasts as long as the longer one.
+ * Where the time goes in the "on the floor" round, on one shared clock. Each
+ * pass bar holds two strips: reading the weights once, and the math for every
+ * position in the pass. A pass lasts as long as the longer strip.
  */
 export function PassTimeline() {
-  const [modeId, setModeId] = useState<ModeId>("one");
-  const mode = MODES.find((item) => item.id === modeId) ?? MODES[0];
-  const lanes = timeline(mode.requests);
-  const end = Math.max(lanes.normal.total, lanes.speculative.total);
-  const scale = end * 1.04;
-  const { ref: stageRef, ...playback } = usePlayback(STOPS, 9000, 3600);
-  const now = playback.progress * end;
-  const captionId = useId();
-  const ratio = lanes.normal.total / lanes.speculative.total;
-  const done = playback.progress >= 1;
-  const check = lanes.speculative.passes[lanes.speculative.passes.length - 1];
-
+  const [id, setId] = useState<ModeId>("one");
+  const active = CASES.find((item) => item.id === id) ?? CASES[0];
+  const lanes = timeline(MODES.find((mode) => mode.id === id)?.requests ?? 1);
   return (
-    <figure className="not-prose sdv-figure" aria-describedby={captionId}>
-      <div className="sdv-stage" ref={stageRef}>
-        <div className="sdv-toolbar">
-          <Choice
-            label="Load"
-            options={MODES}
-            value={modeId}
-            onChange={(id) => {
-              setModeId(id);
-              playback.restart();
-            }}
-          />
-        </div>
-
-        <LaneRow title="Normal decoding" lane={lanes.normal} now={now} scale={scale} />
-        <LaneRow title="Speculative decoding" lane={lanes.speculative} now={now} scale={scale} />
-
-        <div className="sdv-axis" aria-hidden="true">
-          {niceTicks(end).map((tick, index, ticks) => (
-            <span key={tick} style={{ left: `${(tick / scale) * 100}%` }}>
-              {index === ticks.length - 1 ? `${tick} ms` : tick}
-            </span>
-          ))}
-        </div>
-
-        <div className="sdv-legend" aria-hidden="true">
-          <span><i data-strip="read" /> reading the weights</span>
-          <span><i data-strip="math" /> math for every position</span>
-          <span><i data-strip="draft" /> small-model pass</span>
-        </div>
-
-        <p className="sdv-step">
-          {done
-            ? ratio >= 1
-              ? `The check pass reads ${check.positions} positions. Its math (${ms(check.math)}) still fits inside the ${ms(check.read)} weight read, so 3 tokens cost about one pass: ${ratio.toFixed(1)}x faster here.`
-              : `Batched, the check pass holds ${check.positions} positions. Its math (${ms(check.math)}) now outlasts the weight read, so the extra positions cost real time: ${(1 / ratio).toFixed(1)}x slower here.`
-            : "Same three tokens, “on the floor”, on one shared clock."}
-        </p>
-
-        <PlaybackControls
-          stops={STOP_LABELS}
-          phase={playback.phase}
-          playing={playback.playing}
-          progress={playback.progress}
-          reducedMotion={playback.reducedMotion}
-          onSelect={playback.select}
-          onToggle={playback.toggle}
-        />
-        <p className="sr-only">
-          {`${mode.label}. Normal decoding: 3 big-model passes, ${ms(lanes.normal.total)}. Speculative decoding: 4 small-model passes and 1 big-model pass, ${ms(lanes.speculative.total)}.`}
-        </p>
-      </div>
-      <figcaption id={captionId}>
-        A round in the middle of a generation: the cache already holds the text and “sat” was just chosen, so each
-        normal step reads one token and the check pass reads “sat” plus four guesses. Rough arithmetic for a laptop
-        GPU, not a benchmark: a 27B model at 4 bits (about 16 GB) and a 1.5B draft
-        (about 0.9 GB), 300 GB/s of memory bandwidth and about 10 trillion math operations per second. A pass lasts
-        as long as the slower of its two strips. With 16 requests, each one is assumed to get the same three tokens.
-      </figcaption>
-    </figure>
+    <SceneFigure
+      key={id}
+      steps={active.steps}
+      stillStep="result"
+      durationMs={12000}
+      scene={active.Scene}
+      wide={{ w: 660, h: 254 }}
+      narrow={{ w: 360, h: 266 }}
+      label={`Timing for the round that writes on the floor. Normal decoding: three big-model passes, about ${ms(lanes.normal.total)}. Speculative decoding: four small-model passes and one big-model pass, about ${ms(lanes.speculative.total)}.`}
+      toolbar={<Modes label="Load" options={MODES} value={id} onChange={setId} />}
+      caption={
+        <>
+          Rough arithmetic for a laptop GPU, not a benchmark. The big model is 27B parameters at 4 bits (about 16 GB),
+          the draft is 1.5B (about 0.9 GB), memory bandwidth is 300 GB/s, and the GPU does about 10 trillion math
+          operations per second. The round is in the middle of a generation, so the check pass reads “sat” and four
+          guesses. With 16 requests, each one is assumed to get the same three tokens.
+        </>
+      }
+    />
   );
 }
