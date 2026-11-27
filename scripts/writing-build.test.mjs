@@ -8,10 +8,17 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 
 const out = new URL("../out/", import.meta.url);
 const snapshot = JSON.parse(readFileSync(new URL("../src/content/blog/snapshot.json", import.meta.url), "utf8"));
+/** Imported posts plus the ones maintained in src/content/posts. */
+const posts = [
+  ...snapshot.posts,
+  ...readdirSync(new URL("../src/content/posts/", import.meta.url))
+    .filter((file) => file.endsWith(".mdx"))
+    .map((file) => ({ slug: file.slice(0, -4) })),
+];
 const html = (path) => readFileSync(new URL(path, out), "utf8");
 
 test("each post is exported at /writing/<slug>/ with one self-referencing canonical and matching og:url", () => {
-  for (const { slug } of snapshot.posts) {
+  for (const { slug } of posts) {
     const file = `writing/${slug}/index.html`;
     assert.ok(existsSync(new URL(file, out)), `${file} was not exported`);
     const page = html(file);
@@ -27,10 +34,18 @@ test("each post is exported at /writing/<slug>/ with one self-referencing canoni
 });
 
 test("article pages link in-site and never to the old /blog paths", () => {
-  for (const { slug } of snapshot.posts) {
+  for (const { slug } of posts) {
     const page = html(`writing/${slug}/index.html`);
     assert.doesNotMatch(page, /href="\/blog\//, `${slug} links to /blog/`);
   }
+});
+
+test("the speculative decoding post renders its own figures", () => {
+  const page = html("writing/speculative-decoding/index.html");
+  for (const marker of ["sdv-stage", "sdv-narration", "sdv-bars", "sdv-sampling"]) {
+    assert.match(page, new RegExp(`class="[^"]*${marker}`), `missing ${marker}`);
+  }
+  assert.match(page, /big model · one prefill pass/);
 });
 
 test("the Jev demos fall back to the live post instead of calling /api", () => {
@@ -42,7 +57,7 @@ test("the shelf links every cover to its in-site post", () => {
   const page = html("writing/index.html");
   assert.match(page, /<link rel="canonical" href="https:\/\/devalparikh\.me\/writing\/"/);
   assert.match(page, /<meta property="og:url" content="https:\/\/devalparikh\.me\/writing\/"/);
-  for (const { slug } of snapshot.posts) assert.match(page, new RegExp(`href="/writing/${slug}/"`));
+  for (const { slug } of posts) assert.match(page, new RegExp(`href="/writing/${slug}/"`));
   assert.match(page, /rolodex\.dev/);
 });
 

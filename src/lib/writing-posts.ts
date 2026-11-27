@@ -6,13 +6,17 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
 import { mdxComponents } from "@blog/components/mdx";
+import { postComponents } from "@/components/writing/posts";
 import snapshot from "@/content/blog/snapshot.json";
+import { localPosts } from "@/content/posts";
 import { shelf, type ShelfBook } from "@/content/writing";
 import { countWords } from "./word-count";
 
 /**
- * Build-time access to the imported deval-blog posts. Only Server Components
- * call this - the static export reads the MDX once, while rendering.
+ * Build-time access to the posts: the imported deval-blog snapshot
+ * (src/content/blog) and the few this site maintains itself
+ * (src/content/posts). Only Server Components call this - the static export
+ * reads the MDX once, while rendering.
  */
 
 export const SITE_ORIGIN = "https://devalparikh.me";
@@ -50,11 +54,15 @@ interface Frontmatter {
   // to themselves on devalparikh.me (the importer also strips it).
 }
 
-const contentDir = path.join(process.cwd(), "src/content/blog");
+const importedDir = path.join(process.cwd(), "src/content/blog");
+const localDir = path.join(process.cwd(), "src/content/posts");
+const localSlugs = new Set(localPosts.map((post) => post.slug));
 
-export const postSlugs: string[] = snapshot.posts.map((post) => post.slug);
+export const postSlugs: string[] = [...snapshot.posts.map((post) => post.slug), ...localSlugs];
 
-const readSource = cache((slug: string) => readFileSync(path.join(contentDir, `${slug}.mdx`), "utf8"));
+const readSource = cache((slug: string) =>
+  readFileSync(path.join(localSlugs.has(slug) ? localDir : importedDir, `${slug}.mdx`), "utf8"),
+);
 
 function parseFrontmatter(source: string): Frontmatter {
   const match = /^---\r?\n([\s\S]*?)\r?\n---/.exec(source);
@@ -96,7 +104,9 @@ export function postUrl(slug: string) {
 export const renderPost = cache(async (slug: string) => {
   const { content } = await compileMDX({
     source: readSource(slug),
-    components: mdxComponents,
+    // A local post renders only this repo's components, so a re-sync that
+    // drops a vendored module can never break it.
+    components: localSlugs.has(slug) ? postComponents : mdxComponents,
     options: {
       parseFrontmatter: true,
       mdxOptions: {

@@ -7,7 +7,6 @@ import { CompoundEngineeringLoop } from "./CompoundEngineeringLoop";
 import { CoordinationExplorer, ParallelWorkExplorer } from "./MultiAgentSystemsVisuals";
 import { EmbodiedArchitectureExplorer } from "./EmbodiedArchitectureExplorer";
 import { EmbodiedFamilyComparison } from "./EmbodiedFamilyComparison";
-import { ExactnessVisual, SerialVsSpeculative, ShortProof, SpeculativeGlossary, SpeculativeRoundExplorer, TechnicalTerm } from "./SpeculativeDecodingVisuals";
 import { JevBatchComparison, JevCalibrationExplorer, JevInferenceExplorer, JevTrainingComparison } from "./JevVisuals";
 import { JevBrowserLoop, JevCandidateExplorer, JevClippingArchitecture, JevGlinerGraph, JevIncidentGraph, JevSearchArchitecture, JevZillowArchitecture } from "./JevUseCasesVisuals";
 import { JevCacheExplorer } from "./jev-use-cases/CacheExplorer";
@@ -30,7 +29,6 @@ export const mdxComponents = {
   DurableConceptDiagram,
   EmbodiedArchitectureExplorer,
   EmbodiedFamilyComparison,
-  ExactnessVisual,
   JevBatchComparison,
   JevBrowserLoop,
   JevCacheExplorer,
@@ -53,11 +51,6 @@ export const mdxComponents = {
   MotionControlledGif,
   ParallelWorkExplorer,
   QueueRecoveryDiagram,
-  SerialVsSpeculative,
-  ShortProof,
-  SpeculativeGlossary,
-  SpeculativeRoundExplorer,
-  TechnicalTerm,
   TransformerAttentionExplorer,
   TransformerCacheExplorer,
   TransformerOutputComparison,

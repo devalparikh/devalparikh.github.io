@@ -19,7 +19,7 @@
     "test:map": "node --experimental-strip-types --test scripts/map-touch.test.mjs scripts/town-wheels.test.mjs",
     "test:notes": "node --experimental-strip-types --test scripts/notes.test.mjs scripts/notes-navigation.test.mjs",
     "sync:blog": "node scripts/sync-blog.mjs",
-    "test:writing": "node --experimental-strip-types --test scripts/writing.test.mjs",
+    "test:writing": "node --experimental-strip-types --test scripts/writing.test.mjs scripts/speculative-decoding.test.mjs",
     "test:writing:build": "node --test scripts/writing-build.test.mjs"
   },
   "dependencies": {

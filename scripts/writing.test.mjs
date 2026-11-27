@@ -1,9 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import {
   dropFrontmatterKey,
   findUsedComponents,
+  frontmatterValue,
+  importSnapshot,
+  LOCAL_POSTS_DIR,
+  localPostSlugs,
   parseComponentIndex,
   resolveImport,
   rewriteAssets,
@@ -16,6 +22,10 @@ import { choosePreviewLayout, MAX_CARD_SHARE } from "../src/lib/shelf-preview.ts
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const snapshot = JSON.parse(read("src/content/blog/snapshot.json"));
+const siteRoot = new URL("../", import.meta.url).pathname;
+const localSlugs = localPostSlugs(siteRoot);
+/** Where a post's MDX lives: imported from deval-blog, or maintained here. */
+const postPath = (slug) => (localSlugs.includes(slug) ? `${LOCAL_POSTS_DIR}/${slug}.mdx` : `src/content/blog/${slug}.mdx`);
 
 /** The URLs agreed with the deval-blog side. They must not drift. */
 const AGREED_SLUGS = [
@@ -91,10 +101,12 @@ test("a canonicalUrl added on the blog side is dropped on import", () => {
 
 /* -------------------------------------------------------------- snapshot -- */
 
-test("the snapshot is pinned to one deval-blog commit and holds exactly the agreed posts", () => {
+test("the snapshot plus the local posts hold exactly the agreed posts, each once", () => {
   assert.match(snapshot.commit, /^[0-9a-f]{40}$/);
   assert.equal(snapshot.repository, "devalparikh/deval-blog");
-  assert.deepEqual(snapshot.posts.map((post) => post.slug).sort(), [...AGREED_SLUGS].sort());
+  const imported = snapshot.posts.map((post) => post.slug);
+  assert.deepEqual([...imported, ...localSlugs].sort(), [...AGREED_SLUGS].sort());
+  for (const slug of localSlugs) assert.ok(!imported.includes(slug), `${slug} is both imported and local`);
   for (const post of snapshot.posts) {
     // The MDX filename is the slug, which is the public URL.
     assert.equal(post.source, `content/posts/${post.category}/${post.slug}.mdx`);
@@ -104,7 +116,7 @@ test("the snapshot is pinned to one deval-blog commit and holds exactly the agre
 
 test("imported posts have no links back to /blog and no canonicalUrl", () => {
   for (const slug of AGREED_SLUGS) {
-    const mdx = read(`src/content/blog/${slug}.mdx`);
+    const mdx = read(postPath(slug));
     assert.doesNotMatch(mdx, /\]\(\/blog|href=["']\/blog/, `${slug} still links to /blog`);
     assert.doesNotMatch(mdx, /^canonicalUrl:/m);
   }
@@ -124,6 +136,63 @@ test("every referenced asset was copied", () => {
   }
 });
 
+/* ------------------------------------------------------------ local posts -- */
+
+test("local posts match their shelf metadata and render only this repo's components", () => {
+  const index = read(`${LOCAL_POSTS_DIR}/index.ts`);
+  const declared = [...index.matchAll(/slug: "([^"]+)"/g)].map((match) => match[1]).sort();
+  assert.deepEqual(declared, localSlugs, "src/content/posts/index.ts lists exactly the local MDX files");
+  const registry = read("src/components/writing/posts/index.ts");
+  for (const slug of localSlugs) {
+    const mdx = read(postPath(slug));
+    for (const key of ["title", "summary", "date"]) {
+      const value = frontmatterValue(mdx, key);
+      assert.ok(index.includes(JSON.stringify(value)), `${slug}: ${key} in index.ts must equal the frontmatter`);
+    }
+    for (const name of findUsedComponents(mdx)) {
+      assert.match(registry, new RegExp(`\\b${name},`), `${slug} renders <${name}>, which postComponents does not register`);
+    }
+    assert.doesNotMatch(mdx, /\/img\/writing\//, `${slug} must not use assets the sync deletes`);
+  }
+});
+
+test("the importer never imports a local post, and links to one stay in-site", async () => {
+  const root = mkdtempSync(path.join(os.tmpdir(), "local-posts-"));
+  try {
+    mkdirSync(path.join(root, LOCAL_POSTS_DIR), { recursive: true });
+    writeFileSync(path.join(root, LOCAL_POSTS_DIR, "mine.mdx"), "---\ntitle: x\n---\n");
+    assert.deepEqual(localPostSlugs(root), ["mine"]);
+    await assert.rejects(
+      importSnapshot({ blogRoot: root, siteRoot: root, posts: [{ slug: "mine", category: "tech" }], commit: "x", committedAt: "x" }),
+      /maintained in src\/content\/posts/,
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+  const slugs = new Set(["jev-and-system-one-models", ...localSlugs]);
+  assert.equal(rewriteHref("/blog/tech/speculative-decoding#exact", slugs), "/writing/speculative-decoding/#exact");
+});
+
+test("the sync carries local slugs over from an old snapshot without importing them", () => {
+  const sync = read("scripts/sync-blog.mjs");
+  assert.match(sync, /\.filter\(\(\{ slug \}\) => !local\.has\(slug\)\)/);
+  assert.match(sync, /is maintained in \$\{LOCAL_POSTS_DIR\}\/, not imported/);
+  assert.ok(!existsSync(new URL("../src/vendor/deval-blog/components/mdx/SpeculativeDecodingVisuals.tsx", import.meta.url)));
+  assert.ok(readdirSync(new URL(`../${LOCAL_POSTS_DIR}/`, import.meta.url)).includes("speculative-decoding.mdx"));
+});
+
+test("local post components only import vendored modules the snapshot carries", () => {
+  const root = new URL("../src/components/writing/posts/", import.meta.url);
+  const files = readdirSync(root, { recursive: true }).filter((file) => /\.(tsx?|mjs)$/.test(file));
+  for (const file of files) {
+    const source = readFileSync(new URL(file, root), "utf8");
+    for (const [, target] of source.matchAll(/from "@blog\/([^"]+)"/g)) {
+      const listed = snapshot.vendored.some((entry) => entry.replace(/\.(tsx?|css)$/, "") === target);
+      assert.ok(listed, `${file} imports @blog/${target}, which the snapshot does not vendor`);
+    }
+  }
+});
+
 /* ------------------------------------------------------------------ shelf -- */
 
 const writingSource = read("src/content/writing.ts");
@@ -137,7 +206,7 @@ const shelfBooks = writingSource
     inks: /inks: \["(\w+)", "(\w+)"\]/.exec(chunk).slice(1),
   }));
 
-test("every shelf book is in the snapshot and has a hand-drawn cover", () => {
+test("every shelf book is a post and has a hand-drawn cover", () => {
   const covers = read("src/components/writing/covers/index.ts");
   assert.deepEqual(shelfBooks.map((book) => book.slug).sort(), [...AGREED_SLUGS].sort());
   for (const book of shelfBooks) assert.match(covers, new RegExp(`"${book.slug}": \\w+Art`));

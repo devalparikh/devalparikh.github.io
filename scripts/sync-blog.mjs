@@ -9,6 +9,9 @@
  *   npm run sync:blog -- --no-pr            # update the working tree only
  *   npm run sync:blog -- --force            # re-import the same commit
  *
+ * Posts with their own MDX in src/content/posts/ are maintained here and are
+ * never imported; see LOCAL_POSTS_DIR in lib/blog-import.mjs.
+ *
  * It runs on a machine that can already read deval-blog with git (your own
  * credentials) and that has `gh` signed in. CI never runs it and holds no
  * token for the blog: GitHub Pages keeps building only from this repository.
@@ -19,7 +22,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { BLOG_REPO, importSnapshot } from "./lib/blog-import.mjs";
+import { BLOG_REPO, importSnapshot, LOCAL_POSTS_DIR, localPostSlugs } from "./lib/blog-import.mjs";
 
 const siteRoot = fileURLToPath(new URL("../", import.meta.url));
 const manifestPath = path.join(siteRoot, "src/content/blog/snapshot.json");
@@ -64,10 +67,14 @@ async function reencodeImage(from, to) {
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   const previous = existsSync(manifestPath) ? JSON.parse(await readFile(manifestPath, "utf8")) : null;
-  const posts = (previous?.posts ?? []).map(({ slug, category }) => ({ slug, category }));
+  const local = new Set(localPostSlugs(siteRoot));
+  const posts = (previous?.posts ?? [])
+    .filter(({ slug }) => !local.has(slug))
+    .map(({ slug, category }) => ({ slug, category }));
   for (const spec of options.add) {
     const [category, slug] = spec.split("/");
     if (!category || !slug) throw new Error(`--add expects <category>/<slug>, got "${spec}"`);
+    if (local.has(slug)) throw new Error(`${slug} is maintained in ${LOCAL_POSTS_DIR}/, not imported.`);
     if (!posts.some((post) => post.slug === slug)) posts.push({ slug, category });
   }
   if (!posts.length) throw new Error("No posts to import. Pass --add <category>/<slug>.");

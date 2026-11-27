@@ -1,9 +1,11 @@
 import snapshot from "./blog/snapshot.json";
+import { localPosts } from "./posts";
 import { ALL_FILTER, type Collection, type Entry, type Filter } from "./types";
 
 /**
  * /writing is the canonical home for the posts imported from deval-blog
- * (`src/content/blog`, refreshed with `npm run sync:blog`). Each one sits on
+ * (`src/content/blog`, refreshed with `npm run sync:blog`) and the few
+ * maintained here (`src/content/posts`). Each one sits on
  * the shelf as a code-built cover; a few pieces published elsewhere stay as
  * outbound links in a small group below it.
  */
@@ -198,13 +200,13 @@ export const elsewhere: Entry[] = [
   },
 ];
 
-const postsBySlug = new Map(snapshot.posts.map((post) => [post.slug, post]));
+const postsBySlug = new Map([...snapshot.posts, ...localPosts].map((post) => [post.slug, post]));
 
 /** Shelf books newest first, as plain rows - for the home page and site search. */
 const bookEntries: Entry[] = shelf
   .map((book) => {
     const post = postsBySlug.get(book.slug);
-    if (!post) throw new Error(`Shelf book "${book.slug}" is not in the deval-blog snapshot. Run npm run sync:blog -- --add tech/${book.slug}.`);
+    if (!post) throw new Error(`Shelf book "${book.slug}" is not in the deval-blog snapshot or src/content/posts. Run npm run sync:blog -- --add tech/${book.slug}.`);
     return { book, post };
   })
   .sort((a, b) => b.post.date.localeCompare(a.post.date))
